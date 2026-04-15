@@ -17,7 +17,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
-    if (onClose) setSubmitted(false);
+    if (isOpen) setSubmitted(false);
   }, [isOpen]);
 
   const generateUPIUrl = () => {

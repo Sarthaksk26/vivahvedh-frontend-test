@@ -433,7 +433,7 @@ export default function Home() {
         isOpen={isPaymentModalOpen}
         onClose={() => setIsPaymentModalOpen(false)}
         planType={selectedPlan?.type || 'SILVER'}
-        amount={selectedPlan?.price || 2000}
+        price={selectedPlan?.price || 2000}
       />
     </div>
   );
