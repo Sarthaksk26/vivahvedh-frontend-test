@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import apiClient from '../../lib/apiClient';
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'enquiries'>('pending');
+  const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'enquiries' | 'payments'>('pending');
   const [users, setUsers] = useState<any[]>([]);
   const [enquiries, setEnquiries] = useState<any[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
@@ -13,6 +14,9 @@ export default function AdminPanel() {
       if (activeTab === 'enquiries') {
         const response = await apiClient.get('/admin/enquiries');
         setEnquiries(response.data);
+      } else if (activeTab === 'payments') {
+        const response = await apiClient.get('/payments/admin/pending');
+        setPayments(response.data);
       } else {
         const endpoint = activeTab === 'pending' ? '/admin/pending' : '/admin/all-users';
         const response = await apiClient.get(endpoint);
@@ -29,6 +33,17 @@ export default function AdminPanel() {
   useEffect(() => {
     fetchData();
   }, [activeTab]);
+
+  const handlePaymentVerify = async (paymentId: string, status: 'APPROVED' | 'REJECTED') => {
+    try {
+      await apiClient.patch(`/payments/admin/verify/${paymentId}`, { status });
+      alert(`Payment ${status.toLowerCase()} successfully.`);
+      fetchData();
+    } catch (error) {
+      alert(`Failed to ${status.toLowerCase()} payment.`);
+      console.error(error);
+    }
+  };
 
   const handleAction = async (action: 'approve' | 'ban' | 'delete', userId: string) => {
     if (action === 'delete') {
@@ -107,6 +122,13 @@ export default function AdminPanel() {
             >
               Contact Enquiries
             </button>
+            <button
+              onClick={() => setActiveTab('payments')}
+              className={`px-4 py-3 text-left rounded-md transition-colors text-sm ${activeTab === 'payments' ? 'bg-green-100 text-green-700 font-bold border border-green-300' : 'hover:bg-muted font-medium text-muted-foreground'}`}
+            >
+              Payment Verifications
+              {payments.length > 0 && activeTab === 'payments' && <span className="ml-2 px-2 py-0.5 bg-green-600 text-white rounded-full text-xs">{payments.length}</span>}
+            </button>
           </nav>
         </aside>
 
@@ -114,12 +136,72 @@ export default function AdminPanel() {
         <div className="flex-1 bg-card border shadow-xl rounded-2xl overflow-hidden w-full">
           <div className="bg-muted/50 px-6 py-4 border-b">
             <h2 className="font-bold text-lg">
-              {activeTab === 'pending' ? 'Users Awaiting Approval' : activeTab === 'all' ? 'All Users' : 'Support Inbox'}
+              {activeTab === 'pending' ? 'Users Awaiting Approval' : activeTab === 'all' ? 'All Users' : activeTab === 'payments' ? 'Payment Verifications' : 'Support Inbox'}
             </h2>
           </div>
 
           {loading ? (
             <div className="p-12 text-center animate-pulse font-medium text-muted-foreground">Loading...</div>
+          ) : activeTab === 'payments' ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-muted text-muted-foreground text-sm border-b">
+                  <tr>
+                    <th className="p-4 font-semibold">User</th>
+                    <th className="p-4 font-semibold">Plan</th>
+                    <th className="p-4 font-semibold">Amount</th>
+                    <th className="p-4 font-semibold">TxID</th>
+                    <th className="p-4 font-semibold">Proof</th>
+                    <th className="p-4 text-right font-semibold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y text-sm">
+                  {payments.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="p-12 text-center text-muted-foreground">No pending payments found.</td>
+                    </tr>
+                  ) : (
+                    payments.map((pay) => (
+                      <tr key={pay.id} className="hover:bg-muted/30 transition-colors">
+                        <td className="p-4">
+                          <div className="font-bold">{pay.user.regId}</div>
+                          <div className="text-xs text-muted-foreground">{pay.user.mobile}</div>
+                        </td>
+                        <td className="p-4 font-medium">{pay.planType}</td>
+                        <td className="p-4 font-bold">₹{pay.amount}</td>
+                        <td className="p-4 font-mono text-xs">{pay.transactionId}</td>
+                        <td className="p-4">
+                          <a
+                            href={`/uploads/${pay.screenshotUrl}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-primary underline font-medium"
+                          >
+                            View Proof
+                          </a>
+                        </td>
+                        <td className="p-4 text-right">
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => handlePaymentVerify(pay.id, 'APPROVED')}
+                              className="px-3 py-1.5 bg-green-600 text-white rounded-md font-bold text-xs hover:bg-green-700 transition"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handlePaymentVerify(pay.id, 'REJECTED')}
+                              className="px-3 py-1.5 bg-red-600 text-white rounded-md font-bold text-xs hover:bg-red-700 transition"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           ) : activeTab === 'enquiries' ? (
             <div className="divide-y max-h-[80vh] overflow-y-auto">
               {enquiries.length === 0 ? (

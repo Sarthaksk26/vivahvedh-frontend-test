@@ -10,7 +10,7 @@ const registerSchema = z.object({
   firstName: z.string().min(2, "First Name is required"),
   lastName: z.string().min(2, "Last Name is required"),
   mobile: z.string().min(10, "Valid mobile required").max(15),
-  email: z.string().email("Valid email required").optional().or(z.literal('')),
+  email: z.string().email("Valid email required"),
   gender: z.enum(['MALE', 'FEMALE', 'OTHER']),
   maritalStatus: z.enum(['UNMARRIED', 'DIVORCED', 'WIDOWED', 'SEPARATED']),
   password: z.string().min(6, "Password must be 6+ characters"),
@@ -113,7 +113,7 @@ export default function Register() {
                   {errors.mobile && <p className="text-red-500 text-xs font-medium">{errors.mobile.message}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-foreground/80">Email (Optional)</label>
+                  <label className="text-sm font-bold text-foreground/80">Email *</label>
                   <input {...register("email")} type="email" className={inputClass} placeholder="email@example.com" />
                   {errors.email && <p className="text-red-500 text-xs font-medium">{errors.email.message}</p>}
                 </div>

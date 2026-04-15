@@ -14,6 +14,9 @@ export default function PublicProfile() {
   const [isShortlisted, setIsShortlisted] = useState(false);
 
   const handleSendInterest = async () => {
+    if (!localStorage.getItem('vivah_auth_token')) {
+      return navigate('/login');
+    }
     setIsSending(true);
     try {
       await apiClient.post('/connections/send', { receiverId: id });
@@ -26,6 +29,9 @@ export default function PublicProfile() {
   };
 
   const handleShortlist = async () => {
+    if (!localStorage.getItem('vivah_auth_token')) {
+      return navigate('/login');
+    }
     try {
       const { data } = await apiClient.post('/user/shortlist', { targetUserId: id });
       setIsShortlisted(data.shortlisted);
@@ -102,7 +108,7 @@ export default function PublicProfile() {
             <span className="px-3 py-1 bg-muted rounded-md text-sm font-medium">{profile.profile?.maritalStatus}</span>
             <span className="px-3 py-1 bg-muted rounded-md text-sm font-medium">{profile.profile?.gender}</span>
             {profile.physical?.height && (
-              <span className="px-3 py-1 bg-muted rounded-md text-sm font-medium">{profile.physical.height} cm</span>
+              <span className="px-3 py-1 bg-muted rounded-md text-sm font-medium">{profile.physical.height} in</span>
             )}
           </div>
 
@@ -155,11 +161,14 @@ export default function PublicProfile() {
         <section className="bg-card border rounded-2xl p-8 shadow-sm">
           <h2 className="text-xl font-bold mb-6 border-b pb-4">Physical Attributes</h2>
           <ul className="space-y-4">
-            <li className="flex justify-between"><span className="text-muted-foreground font-medium">Height</span><span className="font-semibold">{profile.physical?.height ? `${profile.physical.height} cm` : '-'}</span></li>
+            <li className="flex justify-between"><span className="text-muted-foreground font-medium">Height</span><span className="font-semibold">{profile.physical?.height ? `${profile.physical.height} in` : '-'}</span></li>
             <li className="flex justify-between"><span className="text-muted-foreground font-medium">Weight</span><span className="font-semibold">{profile.physical?.weight ? `${profile.physical.weight} kg` : '-'}</span></li>
             <li className="flex justify-between"><span className="text-muted-foreground font-medium">Diet</span><span className="font-semibold">{profile.physical?.diet || '-'}</span></li>
             <li className="flex justify-between"><span className="text-muted-foreground font-medium">Blood Group</span><span className="font-semibold">{profile.physical?.bloodGroup || '-'}</span></li>
             <li className="flex justify-between"><span className="text-muted-foreground font-medium">Complexion</span><span className="font-semibold">{profile.physical?.complexion || '-'}</span></li>
+            {profile.physical?.disease && (
+              <li className="flex justify-between"><span className="text-muted-foreground font-medium">Medical / Disease</span><span className="font-semibold text-amber-600">{profile.physical.disease}</span></li>
+            )}
           </ul>
         </section>
 
@@ -198,6 +207,24 @@ export default function PublicProfile() {
             <div><p className="text-sm font-semibold text-muted-foreground mb-1">Sisters</p><p className="font-medium">{profile.family?.sisters ?? '0'}</p></div>
           </div>
         </section>
+        {/* Contact Info (If conditionally provided by backend) */}
+        {profile.mobile && (
+          <section className="bg-green-50 border border-green-200 rounded-2xl p-8 shadow-sm md:col-span-2">
+            <h2 className="text-xl font-bold mb-4 text-green-900 border-b border-green-200 pb-4">Contact Information</h2>
+            <div className="flex flex-col md:flex-row gap-8">
+              <div>
+                <p className="text-sm font-semibold text-green-700 mb-1">Mobile Number</p>
+                <p className="font-bold text-lg text-green-950">{profile.mobile}</p>
+              </div>
+              {profile.email && (
+                <div>
+                  <p className="text-sm font-semibold text-green-700 mb-1">Email Address</p>
+                  <p className="font-bold text-lg text-green-950">{profile.email}</p>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

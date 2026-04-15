@@ -45,6 +45,7 @@ export default function ProfileEditor({
     // Physical
     height: currentData.physical?.height || '',
     weight: currentData.physical?.weight || '',
+    disease: currentData.physical?.disease || '',
     bloodGroup: currentData.physical?.bloodGroup || '',
     complexion: currentData.physical?.complexion || '',
     diet: currentData.physical?.diet || '',
@@ -99,8 +100,9 @@ export default function ProfileEditor({
         aboutMe: formData.aboutMe || null
       },
       physical: {
-        height: parseInt(String(formData.height)) || null,
+        height: formData.height ? String(formData.height) : null,
         weight: parseInt(String(formData.weight)) || null,
+        disease: formData.disease || null,
         bloodGroup: formData.bloodGroup || null,
         complexion: formData.complexion || null,
         diet: formData.diet || null,
@@ -166,8 +168,8 @@ export default function ProfileEditor({
       <CollapsibleSection title="Physical Attributes" icon="📏">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1">
-            <label className="text-sm font-semibold text-muted-foreground">Height (cm)</label>
-            <input type="number" name="height" value={formData.height} onChange={handleChange} className={inputClass} placeholder="175" />
+            <label className="text-sm font-semibold text-muted-foreground">Height (in inches)</label>
+            <input type="text" name="height" value={formData.height} onChange={handleChange} className={inputClass} placeholder="e.g. 64 or 5'4" />
           </div>
           <div className="space-y-1">
             <label className="text-sm font-semibold text-muted-foreground">Weight (kg)</label>
@@ -189,6 +191,10 @@ export default function ProfileEditor({
               <option value="Medium">Medium</option>
               <option value="Dark">Dark</option>
             </select>
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-semibold text-muted-foreground">Disease / Illness</label>
+            <input type="text" name="disease" value={formData.disease} onChange={handleChange} className={inputClass} placeholder="Any medical conditions..." />
           </div>
           <div className="space-y-1">
             <label className="text-sm font-semibold text-muted-foreground">Diet</label>

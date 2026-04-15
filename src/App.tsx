@@ -24,12 +24,12 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/rules" element={<Rules />} />
           <Route path="/about" element={<About />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/profile/:id" element={<PublicProfile />} />
 
           {/* Private Logged-In Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/profile/:id" element={<PublicProfile />} />
             <Route path="/admin" element={<AdminPanel />} />
           </Route>
         </Route>

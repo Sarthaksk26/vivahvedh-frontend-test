@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Heart, Shield, Star, ArrowRight, Sparkles, Quote } from 'lucide-react';
+import apiClient from '../lib/apiClient';
+import { PaymentModal } from '../components/PaymentModal';
 
 const fadeUp = (delay = 0) => ({
   initial: { y: 30, opacity: 0 },
@@ -9,6 +12,21 @@ const fadeUp = (delay = 0) => ({
 });
 
 export default function Home() {
+  const navigate = useNavigate();
+  const [featuredProfiles, setFeaturedProfiles] = useState<any[]>([]);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<{ type: 'SILVER' | 'GOLD', price: number } | null>(null);
+
+  useEffect(() => {
+    // Fetch generic/public profiles
+    apiClient.get('/search')
+      .then(res => {
+        // take first 4 for home page
+        setFeaturedProfiles(res.data.results.slice(0, 4));
+      })
+      .catch(err => console.error("Failed to load featured profiles", err));
+  }, []);
+
   return (
     <div className="flex-1 w-full flex flex-col items-center overflow-hidden">
 
@@ -160,6 +178,67 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ========== FEATURED PROFILES (PUBLIC PREVIEW) ========== */}
+      {featuredProfiles.length > 0 && (
+        <section className="w-full py-24 relative bg-muted/20 border-y">
+          <div className="max-w-6xl mx-auto px-6">
+            <motion.div {...fadeUp()} className="text-center mb-12">
+              <span className="text-xs font-bold uppercase tracking-[4px] text-primary/80">नवीन स्थळे</span>
+              <h2 className="text-4xl font-extrabold mt-3 tracking-tight">Featured Profiles</h2>
+              <p className="text-muted-foreground mt-3">विवाहवेध वर नवीन नोंदणी केलेली काही स्थळे</p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {featuredProfiles.map((p, i) => {
+                const imgUrl = p.images?.[0]?.url;
+                const initial = p.profile?.firstName?.[0] || 'V';
+                return (
+                  <motion.div 
+                    key={p.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    onClick={() => navigate(`/profile/${p.id}`)}
+                    className="group bg-card border rounded-2xl overflow-hidden shadow-sm hover:shadow-xl cursor-pointer transition-all duration-300"
+                  >
+                    <div className="h-64 relative bg-muted/50 overflow-hidden">
+                      {imgUrl ? (
+                         <img src={imgUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-primary/5">
+                          <span className="text-5xl font-bold text-primary/20">{initial}</span>
+                        </div>
+                      )}
+                      
+                      {/* Only Surname Display Note (Handled by backend masking for guests, but here we just show what we have) */}
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 pb-3">
+                         <h3 className="text-white font-bold text-lg leading-tight truncate">
+                           {p.profile?.firstName} {p.profile?.lastName}
+                         </h3>
+                         <p className="text-white/70 text-xs font-medium uppercase tracking-wide mt-0.5">{p.regId}</p>
+                      </div>
+                    </div>
+                    <div className="p-4 space-y-2">
+                       <ul className="text-sm text-muted-foreground space-y-1">
+                         <li className="font-semibold text-foreground/90">{p.profile?.maritalStatus} • {p.profile?.gender}</li>
+                         {p.education?.trade && <li>🎓 {p.education.trade}</li>}
+                       </ul>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+            
+            <div className="mt-12 text-center">
+               <Link to="/search" className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-white font-bold rounded-xl shadow hover:bg-primary/90 transition-all">
+                 अधिक स्थळे पहा — View More <ArrowRight size={18} />
+               </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ========== HAPPY COUPLE BANNER ========== */}
       <section className="w-full py-0 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
@@ -265,9 +344,9 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             {[
-              { name: 'Free', price: '₹0', sub: 'Forever', color: 'text-green-600', bg: 'bg-green-50 border-green-200', features: ['Profile creation', 'Browse profiles', 'Receive proposals'] },
-              { name: 'Silver', price: '₹2,000', sub: '6 Months', color: 'text-primary', bg: 'bg-primary/5 border-primary/20 ring-2 ring-primary/10 shadow-lg', features: ['Send proposals', 'View contacts', 'Full gallery', 'Advanced filters'] },
-              { name: 'Gold', price: '₹5,000', sub: '1 Year', color: 'text-amber-700', bg: 'bg-amber-50 border-amber-300', features: ['All Silver features', 'Priority listing ⭐', 'Verified badge ✅', 'Personal manager 🤝'] },
+              { name: 'Free', price: '₹0', amount: 0, sub: 'Forever', color: 'text-green-600', bg: 'bg-green-50 border-green-200', features: ['Profile creation', 'Browse profiles', 'Receive proposals'] },
+              { name: 'Silver', price: '₹2,000', amount: 2000, sub: '6 Months', color: 'text-primary', bg: 'bg-primary/5 border-primary/20 ring-2 ring-primary/10 shadow-lg', features: ['Send proposals', 'View contacts', 'Full gallery', 'Advanced filters'] },
+              { name: 'Gold', price: '₹5,000', amount: 5000, sub: '1 Year', color: 'text-amber-700', bg: 'bg-amber-50 border-amber-300', features: ['All Silver features', 'Priority listing ⭐', 'Verified badge ✅', 'Personal manager 🤝'] },
             ].map((plan, i) => (
               <motion.div
                 key={i}
@@ -280,13 +359,25 @@ export default function Home() {
                 <p className={`text-sm font-bold uppercase tracking-widest ${plan.color} mb-2`}>{plan.name}</p>
                 <p className={`text-4xl font-extrabold ${plan.color} mb-1`}>{plan.price}</p>
                 <p className="text-sm text-muted-foreground mb-5">{plan.sub}</p>
-                <ul className="space-y-2 text-sm text-left">
+                <ul className="space-y-2 text-sm text-left mb-8">
                   {plan.features.map((f, j) => (
                     <li key={j} className="flex items-center gap-2">
                       <span className="text-green-500">✓</span> {f}
                     </li>
                   ))}
                 </ul>
+                {plan.name !== 'Free' && (
+                  <button
+                    onClick={() => {
+                      setSelectedPlan({ type: plan.name as 'SILVER' | 'GOLD', price: plan.amount });
+                      setIsPaymentModalOpen(true);
+                    }}
+                    className={`w-full py-3 rounded-xl font-bold transition-all shadow-sm
+                      ${plan.name === 'Gold' ? 'bg-amber-600 text-white hover:bg-amber-700' : 'bg-primary text-white hover:bg-primary/90'}`}
+                  >
+                    आता खरेदी करा — Buy Now
+                  </button>
+                )}
               </motion.div>
             ))}
           </div>
@@ -338,6 +429,12 @@ export default function Home() {
         </div>
       </section>
 
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        planType={selectedPlan?.type || 'SILVER'}
+        amount={selectedPlan?.price || 2000}
+      />
     </div>
   );
 }

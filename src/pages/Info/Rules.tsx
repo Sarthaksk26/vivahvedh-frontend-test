@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Check, X } from 'lucide-react';
+import { useState } from 'react';
+import { PaymentModal } from '../../components/PaymentModal';
 
 const features = [
   { name: 'Create & complete profile', free: true, silver: true, gold: true },
@@ -25,6 +27,14 @@ function FeatureValue({ value }: { value: boolean | string }) {
 }
 
 export default function Rules() {
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<{ type: 'SILVER' | 'GOLD', price: number } | null>(null);
+
+  const handleUpgrade = (type: 'SILVER' | 'GOLD', price: number) => {
+    setSelectedPlan({ type, price });
+    setIsPaymentModalOpen(true);
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-6 md:p-12 mb-20">
 
@@ -69,9 +79,12 @@ export default function Rules() {
             <li className="flex items-center gap-3 text-sm"><Check size={16} className="flex-shrink-0" /> Who viewed my profile</li>
             <li className="flex items-center gap-3 text-sm"><Check size={16} className="flex-shrink-0" /> Email support</li>
           </ul>
-          <Link to="/contact" className="block w-full py-3 bg-white text-primary font-bold rounded-xl shadow-lg hover:bg-gray-100 transition text-center">
+          <button 
+            onClick={() => handleUpgrade('SILVER', 2000)}
+            className="block w-full py-3 bg-white text-primary font-bold rounded-xl shadow-lg hover:bg-gray-100 transition text-center"
+          >
             Upgrade to Silver
-          </Link>
+          </button>
         </div>
 
         {/* GOLD */}
@@ -90,9 +103,12 @@ export default function Rules() {
             <li className="flex items-center gap-3"><Check size={16} className="text-amber-600 flex-shrink-0" /> Meeting arrangement</li>
             <li className="flex items-center gap-3"><Check size={16} className="text-amber-600 flex-shrink-0" /> Personal counselling</li>
           </ul>
-          <Link to="/contact" className="block w-full py-3 bg-amber-500 text-white font-bold rounded-xl shadow hover:bg-amber-600 transition text-center">
-            Contact for Gold
-          </Link>
+          <button 
+            onClick={() => handleUpgrade('GOLD', 5000)}
+            className="block w-full py-3 bg-amber-500 text-white font-bold rounded-xl shadow hover:bg-amber-600 transition text-center"
+          >
+            Upgrade to Gold
+          </button>
         </div>
       </div>
 
@@ -144,6 +160,13 @@ export default function Rules() {
           </Link>
         </div>
       </div>
+
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        planType={selectedPlan?.type || 'SILVER'}
+        amount={selectedPlan?.price || 2000}
+      />
     </div>
   );
 }
