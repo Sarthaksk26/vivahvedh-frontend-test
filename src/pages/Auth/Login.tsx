@@ -22,9 +22,17 @@ export default function Login() {
   const onSubmit = async (data: LoginForm) => {
     try {
       const response = await apiClient.post('/auth/login', data);
-      const { token } = response.data;
+      const { token, user } = response.data;
       localStorage.setItem('vivah_auth_token', token);
-      navigate('/dashboard');
+
+      // If admin-created account, force password change on first login
+      if (user.requiresPasswordChange) {
+        localStorage.setItem('vivah_force_password_change', 'true');
+        alert('⚠️ Your account was created by an admin. You MUST change your password now for security.');
+        navigate('/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       alert(err.response?.data?.error || "Login failed. Please check your credentials.");
       console.error(err);

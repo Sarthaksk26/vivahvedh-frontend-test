@@ -13,6 +13,7 @@ const registerSchema = z.object({
   email: z.string().email("Valid email required"),
   gender: z.enum(['MALE', 'FEMALE', 'OTHER']),
   maritalStatus: z.enum(['UNMARRIED', 'DIVORCED', 'WIDOWED', 'SEPARATED']),
+  profileCreatedBy: z.enum(['Self', 'Father', 'Mother', 'Sibling', 'Relative', 'Friend', 'Marriage Bureau']).optional(),
   password: z.string().min(6, "Password must be 6+ characters"),
 });
 
@@ -21,7 +22,8 @@ type RegisterForm = z.infer<typeof registerSchema>;
 export default function Register() {
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterForm>({
-    resolver: zodResolver(registerSchema)
+    resolver: zodResolver(registerSchema),
+    defaultValues: { profileCreatedBy: 'Self' }
   });
 
   const onSubmit = async (data: RegisterForm) => {
@@ -140,6 +142,21 @@ export default function Register() {
                   </select>
                   {errors.maritalStatus && <p className="text-red-500 text-xs font-medium">Required</p>}
                 </div>
+              </div>
+
+              {/* Profile Created By — New Field */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-bold text-foreground/80">Profile Created By</label>
+                <select {...register("profileCreatedBy")} className={inputClass}>
+                  <option value="Self">स्वतः — Self</option>
+                  <option value="Father">वडील — Father</option>
+                  <option value="Mother">आई — Mother</option>
+                  <option value="Sibling">भाऊ/बहीण — Sibling</option>
+                  <option value="Relative">नातेवाईक — Relative</option>
+                  <option value="Friend">मित्र — Friend</option>
+                  <option value="Marriage Bureau">विवाह संस्था — Marriage Bureau</option>
+                </select>
+                {errors.profileCreatedBy && <p className="text-red-500 text-xs font-medium">Please select an option</p>}
               </div>
 
               <div className="space-y-1.5">

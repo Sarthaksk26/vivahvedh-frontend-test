@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
+import { motion } from 'framer-motion';
 import { X, Upload, CheckCircle, AlertCircle } from 'lucide-react';
 import apiClient from '../lib/apiClient';
 
@@ -21,7 +22,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
   }, [isOpen]);
 
   const generateUPIUrl = () => {
-    const vpa = "YOUR_VPA@okaxis"; // Replace with actual VPA
+    const vpa = "YOUR_VPA@okaxis"; 
     const name = "Vivahvedh Matrimony";
     const txNote = `Plan_${planType}`;
     return `upi://pay?pa=${vpa}&pn=${encodeURIComponent(name)}&am=${price}&cu=INR&tn=${encodeURIComponent(txNote)}`;
@@ -53,121 +54,127 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/40 backdrop-blur-md">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="glass-card bg-white w-full max-w-xl overflow-hidden shadow-premium"
+      >
         {/* Header */}
-        <div className="p-6 border-b flex justify-between items-center bg-gray-50">
+        <div className="p-10 pb-6 flex justify-between items-start">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">
-              {planType === 'GOLD' ? 'गोल्ड योजना — Gold Plan' : 'सिल्व्हर योजना — Silver Plan'}
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2 block">Premium Upgrade</span>
+            <h2 className="text-3xl font-display font-black text-foreground">
+              {planType === 'GOLD' ? 'Gold Membership' : 'Silver Membership'}
             </h2>
-            <p className="text-sm text-gray-500">कृपया खालील सूचनांचे पालन करा — Please follow instructions below</p>
+            <p className="text-sm text-foreground/40 mt-1 font-medium italic">Transform your search into a royal experience</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
-            <X className="w-6 h-6 text-gray-500" />
+          <button onClick={onClose} className="p-3 hover:bg-[#F2F4F6] rounded-full transition-colors text-foreground/20 hover:text-foreground">
+            <X className="w-6 h-6" />
           </button>
         </div>
 
         {submitted ? (
-          <div className="p-12 text-center flex flex-col items-center justify-center space-y-4">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-10 h-10 text-green-600" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900">अर्ज सादर झाला! — Submission Received!</h3>
-            <p className="text-gray-600 max-w-xs mx-auto">
-              तुमचा पेमेंट पुरावा मिळाला आहे. आम्ही पडताळणी करून तुम्हाला सूचित करू. <br />
-              Your payment proof has been received. We will notify you after verification.
+          <div className="p-16 text-center flex flex-col items-center justify-center">
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mb-8"
+            >
+              <CheckCircle className="w-12 h-12 text-primary" />
+            </motion.div>
+            <h3 className="text-2xl font-display font-black text-foreground mb-4">Submission Received</h3>
+            <p className="text-foreground/50 max-w-sm mx-auto font-medium leading-relaxed mb-10">
+              Our curators are verifying your transaction. You will be notified once your premium status is active.
             </p>
             <button
               onClick={onClose}
-              className="px-6 py-2 bg-primary text-white rounded-full font-semibold hover:bg-primary/90 transition-all"
+              className="clay-button-primary px-12 py-4 text-xs uppercase tracking-widest"
             >
-              ठीक आहे — Okay
+              Back to Community
             </button>
           </div>
         ) : (
-          <div className="p-6 space-y-8">
-            {/* QR Section */}
-            <div className="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
-              <div className="p-4 bg-white rounded-xl shadow-sm">
-                <QRCodeCanvas value={generateUPIUrl()} size={200} />
-              </div>
-              <div className="mt-4 text-center">
-                <p className="font-bold text-lg text-gray-800">₹{price}</p>
-                <p className="text-sm text-gray-500">स्कॅन करा आणि पैसे द्या <br /> Scan and Pay</p>
-              </div>
-            </div>
-
-            {/* Submission Form */}
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  व्यवहार आयडी — Transaction ID
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={txId}
-                  onChange={(e) => setTxId(e.target.value)}
-                  placeholder="उदा. 123456789012"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  पेमेंट स्क्रीनशॉट — Payment Screenshot
-                </label>
-                <div
-                  className={`relative group border-2 border-dashed rounded-xl p-4 transition-all cursor-pointer
-                    ${file ? 'border-green-400 bg-green-50' : 'border-gray-300 hover:border-primary bg-gray-50'}`}
-                  onClick={() => document.getElementById('file-upload')?.click()}
-                >
-                  <input
-                    id="file-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  />
-                  <div className="flex flex-col items-center justify-center py-2">
-                    <Upload className={`w-8 h-8 mb-2 ${file ? 'text-green-600' : 'text-gray-400 group-hover:text-primary transition-colors'}`} />
-                    <span className="text-sm font-medium text-gray-600">
-                      {file ? file.name : 'फोटो अपलोड करा — Upload Photo'}
-                    </span>
-                  </div>
+          <div className="p-10 pt-0 space-y-10">
+            {/* Split Layout for QR and Form */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              
+              {/* QR Section */}
+              <div className="flex flex-col items-center justify-center p-8 bg-[#F2F4F6] rounded-[40px] border border-black/5">
+                <div className="p-4 bg-white rounded-3xl shadow-ambient">
+                  <QRCodeCanvas value={generateUPIUrl()} size={140} />
+                </div>
+                <div className="mt-8 text-center">
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-foreground/30 mb-1">Amount Due</p>
+                  <p className="text-3xl font-display font-black silk-gradient bg-clip-text text-transparent">₹{price}</p>
+                  <p className="text-[10px] font-bold text-foreground/40 mt-3 uppercase tracking-widest">Scan with any UPI App</p>
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={loading || !txId || !file}
-                className={`w-full py-4 rounded-xl font-bold text-white transition-all shadow-lg
-                  ${loading || !txId || !file
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-primary hover:bg-primary/90 active:scale-[0.98]'}`}
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    प्रक्रिया सुरू आहे... Processing...
-                  </span>
-                ) : (
-                  'पुष्टीकरण करा — Confirm Submission'
-                )}
-              </button>
-            </form>
+              {/* Form Section */}
+              <form onSubmit={handleSubmit} className="space-y-8 flex flex-col justify-center">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">Transaction ID</label>
+                  <input
+                    type="text"
+                    required
+                    value={txId}
+                    onChange={(e) => setTxId(e.target.value)}
+                    placeholder="Enter 12-digit Ref No."
+                    className="w-full h-12 bg-transparent border-b-2 border-foreground/10 focus:border-primary transition-all focus:outline-none text-sm font-bold placeholder:font-medium placeholder:text-foreground/20"
+                  />
+                </div>
 
-            <div className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg text-blue-700 text-xs">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              <p>
-                तुमच्या पेमेंटची पडताळणी करण्यासाठी प्रशासकाला २४-४८ तास लागू शकतात. <br />
-                Verification may take 24-48 hours.
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">Payment Proof</label>
+                  <div
+                    className={`relative group border-2 border-dashed rounded-[24px] p-6 transition-all cursor-pointer flex flex-col items-center justify-center
+                      ${file ? 'border-primary/40 bg-primary/5' : 'border-black/10 hover:border-primary bg-transparent text-foreground/40'}`}
+                    onClick={() => document.getElementById('file-upload')?.click()}
+                  >
+                    <input
+                      id="file-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    />
+                    <Upload className={`w-6 h-6 mb-3 ${file ? 'text-primary' : ''}`} />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-center truncate w-full">
+                      {file ? file.name : 'Upload Screenshot'}
+                    </span>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <button
+              onClick={(e) => handleSubmit(e as any)}
+              disabled={loading || !txId || !file}
+              className={`w-full py-5 rounded-full font-black text-xs uppercase tracking-[0.3em] transition-all shadow-premium
+                ${loading || !txId || !file
+                  ? 'bg-foreground/10 text-foreground/30 cursor-not-allowed shadow-none'
+                  : 'clay-button-primary silk-gradient'}`}
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-3">
+                  <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Verifying...
+                </span>
+              ) : (
+                'Confirm Transaction'
+              )}
+            </button>
+
+            <div className="flex items-start gap-3 p-6 bg-[#F7F9FB] rounded-3xl border border-black/5 text-foreground/40">
+              <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-primary/40" />
+              <p className="text-[10px] font-bold uppercase tracking-widest leading-relaxed">
+                Curator verification typically takes 24 hours. Your privacy is our priority during processing.
               </p>
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };

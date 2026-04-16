@@ -29,53 +29,54 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-[100] h-20 border-b bg-background/95 backdrop-blur-md shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-[100] h-20 bg-white/60 backdrop-blur-xl border-b border-white/20 shadow-glass">
         <div className="w-full h-full flex items-center justify-between px-4 md:px-12 relative max-w-[1920px] mx-auto">
 
           {/* Logo */}
-          <Link to="/" className="z-20" onClick={() => setMobileOpen(false)}>
+          <Link to="/" className="z-20 transform hover:scale-105 transition-transform" onClick={() => setMobileOpen(false)}>
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="w-56 md:w-72 h-20 flex items-center justify-start"
+              className="w-48 md:w-64 h-20 flex items-center justify-start"
             >
               <img src="/logo.png" alt="Vivahvedh Logo" className="w-full h-full object-contain filter drop-shadow-sm mix-blend-multiply" />
             </motion.div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-8 font-bold text-muted-foreground text-sm uppercase tracking-widest z-10">
+          <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-10 font-sans font-semibold text-foreground/70 text-sm uppercase tracking-[0.15em] z-10 transition-all">
             {navLinks.map(link => (
               <Link
                 key={link.to}
                 to={link.to}
-                className={`hover:text-primary transition-colors whitespace-nowrap ${location.pathname === link.to ? 'text-primary' : ''}`}
+                className={`hover:text-primary relative group py-2 ${location.pathname === link.to ? 'text-primary' : ''}`}
               >
                 {link.label}
+                <span className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all duration-300 ${location.pathname === link.to ? 'w-full' : 'w-0 group-hover:w-full'}`} />
               </Link>
             ))}
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden lg:flex items-center gap-4 z-20">
+          <div className="hidden lg:flex items-center gap-6 z-20">
             {isLoggedIn ? (
               <>
-                <Link to="/dashboard" className="text-sm font-semibold bg-primary/10 text-primary px-5 py-2 rounded-full hover:bg-primary/20 transition-colors shadow-sm">
+                <Link to="/dashboard" className="clay-button-secondary text-sm px-6 py-2.5">
                   Dashboard
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="text-sm font-medium hover:text-red-500 transition-colors"
+                  className="text-sm font-bold text-foreground/40 hover:text-red-500 transition-colors"
                 >
                   Sign Out
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" className="text-sm font-medium hover:text-primary transition-colors">
+                <Link to="/login" className="text-sm font-bold text-foreground/60 hover:text-primary transition-colors">
                   Log In
                 </Link>
-                <Link to="/register" className="text-sm font-semibold bg-primary text-primary-foreground px-5 py-2 rounded-full shadow-md shadow-primary/30 hover:bg-primary/90 transition-all active:scale-95">
+                <Link to="/register" className="clay-button-primary text-sm px-7 py-3">
                   Join Free
                 </Link>
               </>

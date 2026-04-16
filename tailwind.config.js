@@ -16,6 +16,7 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          container: "hsl(var(--primary-container))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -42,10 +43,14 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
       },
-      borderRadius: {
-        lg: `var(--radius)`,
-        md: `calc(var(--radius) - 2px)`,
-        sm: "calc(var(--radius) - 4px)",
+      fontFamily: {
+        sans: ["Inter", "sans-serif"],
+        display: ["Plus Jakarta Sans", "sans-serif"],
+      },
+      boxShadow: {
+        'ambient': '0 24px 40px -8px rgba(25, 28, 30, 0.08)',
+        'premium': '0 32px 64px -12px rgba(184, 0, 53, 0.12)',
+        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.05)',
       },
     },
   },

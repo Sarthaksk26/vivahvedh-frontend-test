@@ -31,130 +31,145 @@ export default function Home() {
     <div className="flex-1 w-full flex flex-col items-center overflow-hidden">
 
       {/* ========== HERO SECTION ========== */}
-      <section className="relative w-full min-h-[100vh] flex items-center justify-center overflow-hidden -mt-24 pt-24">
-        {/* Full background image with overlay */}
-        <div className="absolute inset-0 z-0">
-          <img src="/wedding_hero.png" alt="Wedding" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+      <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden py-24">
+        {/* Refined background layers - No excessive blurs to prevent distortion */}
+        <div className="absolute inset-0 z-0 bg-[#F7F9FB] overflow-hidden">
+          <div className="absolute top-0 right-0 w-[65%] h-full bg-gradient-to-l from-primary/5 to-transparent" />
+          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-accent/20 rounded-full blur-3xl opacity-40" />
         </div>
 
-        {/* Floating decorative elements */}
-        <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden">
+        {/* Floating 3D-style elements */}
+        <div className="absolute inset-0 z-[1] pointer-events-none">
           <motion.div
-            animate={{ y: [-10, 10, -10], rotate: [0, 5, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute top-[15%] left-[8%] text-5xl opacity-30"
-          >🪷</motion.div>
-          <motion.div
-            animate={{ y: [10, -10, 10], rotate: [0, -5, 0] }}
-            transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-            className="absolute top-[25%] right-[12%] text-4xl opacity-25"
-          >🌺</motion.div>
-          <motion.div
-            animate={{ y: [-8, 8, -8] }}
-            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-            className="absolute bottom-[30%] left-[15%] text-3xl opacity-20"
-          >✨</motion.div>
-          <motion.div
-            animate={{ y: [5, -10, 5], x: [-5, 5, -5] }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-            className="absolute bottom-[25%] right-[8%] text-4xl opacity-25"
-          >💐</motion.div>
-        </div>
-
-        <div className="relative z-10 max-w-5xl mx-auto px-6 pb-24 text-center">
-          {/* Badge */}
-          <motion.div {...fadeUp(0)} className="mb-6">
-            <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 border border-white/20 rounded-full text-white/90 text-sm font-bold tracking-wide backdrop-blur-md">
-              <Sparkles size={14} className="text-amber-400" /> विश्वासार्ह वैवाहिक सेवा • Since 2010
-            </span>
+            animate={{ 
+              y: [-20, 20, -20],
+              rotate: [0, 10, 0],
+              scale: [1, 1.05, 1]
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute top-[15%] right-[10%] drop-shadow-2xl"
+          >
+            <div className="text-8xl filter blur-[1px] opacity-20">🪷</div>
           </motion.div>
-
-          {/* Main Headline */}
-          <motion.h1 {...fadeUp(0.1)} className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tight leading-[1.05] text-white">
-            शोध
-            <span className="block bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 bg-clip-text text-transparent">
-              नव्या नात्यांचा
-            </span>
-          </motion.h1>
-
-          <motion.p {...fadeUp(0.2)} className="mt-6 text-lg md:text-xl text-white/70 max-w-2xl mx-auto leading-relaxed">
-            Find your perfect life partner with Maharashtra's most trusted matrimonial platform.
-            <span className="block mt-2 text-white/50 text-base">
-              तुमच्या कुटुंबासाठी योग्य जोडीदार — विश्वासार्ह, सुरक्षित, आणि वैयक्तिक सेवा.
-            </span>
-          </motion.p>
-
-          <motion.div {...fadeUp(0.35)} className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to="/register"
-              className="group w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-primary to-rose-500 text-white rounded-2xl font-bold text-lg shadow-2xl shadow-primary/30 hover:shadow-3xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 border border-white/10"
-            >
-              नोंदणी करा — Register Free
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link
-              to="/search"
-              className="w-full sm:w-auto px-8 py-4 bg-white/10 border-2 border-white/25 backdrop-blur-sm text-white hover:bg-white/20 rounded-2xl font-bold text-lg transition-all duration-300"
-            >
-              जोडीदार शोधा — Browse
-            </Link>
-          </motion.div>
-
-          {/* Mini Stats */}
-          <motion.div {...fadeUp(0.5)} className="mt-16 flex flex-wrap items-center justify-center gap-4 md:gap-14 text-sm">
-            {[
-              { count: '2,500+', label: 'Active Profiles', color: 'bg-green-400' },
-              { count: '500+', label: 'यशस्वी विवाह', color: 'bg-amber-400' },
-              { count: '100%', label: 'Verified & Safe', color: 'bg-blue-400' },
-            ].map((stat, i) => (
-              <div key={i} className="flex items-center gap-2.5 text-white/60">
-                <div className={`w-2 h-2 ${stat.color} rounded-full animate-pulse`} />
-                <span><strong className="text-white font-bold">{stat.count}</strong> {stat.label}</span>
-              </div>
-            ))}
+          <motion.div
+            animate={{ 
+              y: [20, -20, 20],
+              rotate: [0, -15, 0]
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+            className="absolute bottom-[20%] left-[8%] drop-shadow-premium"
+          >
+            <div className="text-7xl opacity-15">✨</div>
           </motion.div>
         </div>
 
-        {/* Scroll indicator */}
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
-        >
-          <span className="text-xs text-white/40 tracking-widest uppercase">Scroll</span>
-          <div className="w-5 h-8 border-2 border-white/30 rounded-full flex justify-center pt-1.5">
-            <div className="w-1 h-2 bg-white/50 rounded-full" />
+        <div className="relative z-10 max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-7 text-left">
+            {/* Badge */}
+            <motion.div {...fadeUp(0)} className="mb-8">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/50 border border-primary/10 rounded-full text-primary text-xs font-bold uppercase tracking-[0.2em] backdrop-blur-sm shadow-sm">
+                <Sparkles size={14} className="animate-pulse" /> The Royal Curator of Matches
+              </span>
+            </motion.div>
+
+            {/* Main Headline */}
+            <motion.h1 {...fadeUp(0.1)} className="display-lg text-foreground mb-8 leading-[1.2]">
+              शोध <br />
+              <span className="silk-gradient bg-clip-text text-transparent italic px-4 py-2">
+                नव्या नात्यांचा
+              </span>
+            </motion.h1>
+
+            <motion.p {...fadeUp(0.2)} className="text-lg md:text-xl text-foreground/80 max-w-xl leading-relaxed mb-12">
+              Experience the grandest bridge between Maharashtrian heritage and modern luxury. 
+              Find your partner on a platform designed like an heirloom.
+            </motion.p>
+
+            <motion.div {...fadeUp(0.35)} className="flex flex-col sm:flex-row items-center gap-6">
+              <Link
+                to="/register"
+                className="clay-button-primary px-10 py-5 text-xl flex items-center gap-3"
+              >
+                Get Started
+                <ArrowRight size={20} />
+              </Link>
+              <Link
+                to="/search"
+                className="clay-button-secondary px-10 py-5 text-xl"
+              >
+                Browse Now
+              </Link>
+            </motion.div>
+
+            {/* Stats Summary */}
+            <motion.div {...fadeUp(0.5)} className="mt-20 flex gap-12 pt-12 border-t border-black/5">
+              {[
+                { count: '2.5k+', label: 'Verified Profiles' },
+                { count: '500+', label: 'Royal Stories' },
+              ].map((stat, i) => (
+                <div key={i}>
+                  <p className="text-3xl font-display font-black text-foreground">{stat.count}</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-foreground/60 mt-1">{stat.label}</p>
+                </div>
+              ))}
+            </motion.div>
           </div>
-        </motion.div>
+
+          <div className="lg:col-span-5 relative hidden lg:block">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              className="relative aspect-square"
+            >
+              {/* Decorative Frame */}
+              <div className="absolute inset-0 border-[20px] border-white/40 rounded-[40px] shadow-ambient" />
+              <img 
+                src="/wedding_hero.png" 
+                className="w-full h-full object-cover rounded-[32px] shadow-premium" 
+                alt="Royal Wedding" 
+              />
+              
+              {/* Floating Match Card */}
+              <motion.div
+                animate={{ y: [0, -15, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute -bottom-4 -left-4 glass-card p-6 w-56 flex items-center gap-4 animate-in fade-in zoom-in duration-1000 shadow-xl"
+              >
+                <div className="w-12 h-12 rounded-xl silk-gradient flex items-center justify-center text-white font-bold shadow-lg">
+                  98%
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-foreground">Perfect Match</p>
+                  <p className="text-[10px] uppercase text-foreground/70 font-black tracking-tighter">Found Today</p>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
       </section>
 
       {/* ========== TRADITIONAL DECORATIVE STRIP ========== */}
-      <section className="w-full relative overflow-hidden">
-        <img src="/traditional_elements.png" alt="Traditional Decorations" className="w-full h-28 md:h-36 object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/30 to-background" />
+      <section className="w-full relative overflow-hidden h-28 md:h-36">
+        <img src="/traditional_elements.png" alt="Traditional Decorations" className="w-full h-full object-cover opacity-80" />
+        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white to-transparent" />
       </section>
 
       {/* ========== HOW IT WORKS ========== */}
-      <section className="w-full py-24 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '30px 30px' }} />
-        <div className="max-w-6xl mx-auto px-6">
-          <motion.div {...fadeUp()} className="text-center mb-16">
-            <span className="text-xs font-bold uppercase tracking-[4px] text-primary/80">कसे काम करते</span>
-            <h2 className="text-4xl md:text-5xl font-extrabold mt-3 tracking-tight">How Vivahvedh Works</h2>
-            <p className="text-muted-foreground mt-4 max-w-lg mx-auto">सोपे, सुरक्षित, आणि वैयक्तिक — Simple and personal, just 4 steps.</p>
+      <section className="w-full py-32 relative overflow-hidden bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <motion.div {...fadeUp()} className="text-left mb-20 max-w-2xl">
+            <span className="text-xs font-bold uppercase tracking-[4px] text-primary/60">Step-by-Step Guide</span>
+            <h2 className="display-md text-foreground mt-4">Simple, Personal, <br />Secure.</h2>
+            <p className="text-foreground/70 mt-6 text-lg">Four intentional steps to finding a partner who shares your values and family traditions.</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-            {/* Connection line */}
-            <div className="hidden md:block absolute top-16 left-[12%] right-[12%] h-[2px] bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20 z-0" />
-
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
-              { step: '01', icon: '📝', title: 'नोंदणी करा', sub: 'Create Profile', desc: 'Register with basic details — it takes just 2 minutes.', color: 'from-rose-500/10 to-primary/5' },
-              { step: '02', icon: '✅', title: 'मान्यता मिळवा', sub: 'Get Verified', desc: 'Our team reviews and verifies your profile within 24 hours.', color: 'from-green-500/10 to-emerald-500/5' },
-              { step: '03', icon: '🔍', title: 'जोडीदार शोधा', sub: 'Find Matches', desc: 'Advanced filters — age, education, location, income & more.', color: 'from-blue-500/10 to-indigo-500/5' },
-              { step: '04', icon: '💑', title: 'भेटा & जोडले जा', sub: 'Meet & Connect', desc: 'Exchange contacts, and we arrange personal meetings.', color: 'from-amber-500/10 to-orange-500/5' },
+              { step: '01', icon: '📝', title: 'Register', desc: 'Create your detailed profile with family values and expectations.', color: 'bg-[#F2F4F6]' },
+              { step: '02', icon: '✅', title: 'Verify', desc: 'Every profile is reviewed to ensure a 100% genuine community.', color: 'bg-[#F2F4F6]' },
+              { step: '03', icon: '🔍', title: 'Discover', desc: 'Explore curated matches with advanced cultural and educational filters.', color: 'bg-primary/5' },
+              { step: '04', icon: '💑', title: 'Connect', desc: 'Personal introductions and meetings facilitated by our curators.', color: 'bg-primary/10' },
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -162,16 +177,14 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className={`relative bg-gradient-to-br ${item.color} border rounded-3xl p-8 text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-400 group z-10`}
+                className={`relative ${item.color} rounded-[32px] p-10 group hover:shadow-ambient transition-all duration-500`}
               >
-                {/* Step number circle */}
-                <div className="w-8 h-8 bg-primary text-white text-xs font-black rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/20">
+                <div className="absolute top-10 right-10 text-[60px] opacity-[0.05] font-display font-black group-hover:opacity-10 transition-opacity">
                   {item.step}
                 </div>
-                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">{item.icon}</div>
-                <h3 className="text-lg font-extrabold mb-1">{item.title}</h3>
-                <p className="text-sm font-semibold text-primary/80 mb-3">{item.sub}</p>
-                <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                <div className="text-5xl mb-8 group-hover:scale-110 transition-transform duration-500 origin-left">{item.icon}</div>
+                <h3 className="text-xl font-display font-black mb-4">{item.title}</h3>
+                <p className="text-sm text-foreground/70 leading-relaxed font-medium">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -180,49 +193,53 @@ export default function Home() {
 
       {/* ========== FEATURED PROFILES (PUBLIC PREVIEW) ========== */}
       {featuredProfiles.length > 0 && (
-        <section className="w-full py-24 relative bg-muted/20 border-y">
-          <div className="max-w-6xl mx-auto px-6">
-            <motion.div {...fadeUp()} className="text-center mb-12">
-              <span className="text-xs font-bold uppercase tracking-[4px] text-primary/80">नवीन स्थळे</span>
-              <h2 className="text-4xl font-extrabold mt-3 tracking-tight">Featured Profiles</h2>
-              <p className="text-muted-foreground mt-3">विवाहवेध वर नवीन नोंदणी केलेली काही स्थळे</p>
+        <section className="w-full py-32 relative bg-[#F7F9FB]">
+          <div className="max-w-7xl mx-auto px-6">
+            <motion.div {...fadeUp()} className="text-center mb-16">
+              <span className="text-xs font-bold uppercase tracking-[4px] text-primary/60">Curation Highlights</span>
+              <h2 className="display-md text-foreground mt-4">Discover Your Match.</h2>
+              <p className="text-foreground/60 mt-6 max-w-lg mx-auto">A glimpse into our diverse and growing community of verified individuals.</p>
             </motion.div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
               {featuredProfiles.map((p, i) => {
                 const imgUrl = p.images?.[0]?.url;
                 const initial = p.profile?.firstName?.[0] || 'V';
                 return (
                   <motion.div 
                     key={p.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
                     onClick={() => navigate(`/profile/${p.id}`)}
-                    className="group bg-card border rounded-2xl overflow-hidden shadow-sm hover:shadow-xl cursor-pointer transition-all duration-300"
+                    className="glass-card group cursor-pointer hover:-translate-y-2 transition-all duration-500 overflow-hidden"
                   >
-                    <div className="h-64 relative bg-muted/50 overflow-hidden">
+                    <div className="h-72 relative bg-[#eceef0] overflow-hidden">
                       {imgUrl ? (
-                         <img src={imgUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                         <img src={imgUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-primary/5">
-                          <span className="text-5xl font-bold text-primary/20">{initial}</span>
+                          <span className="text-6xl font-display font-black text-primary/10">{initial}</span>
                         </div>
                       )}
                       
-                      {/* Only Surname Display Note (Handled by backend masking for guests, but here we just show what we have) */}
-                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 pb-3">
-                         <h3 className="text-white font-bold text-lg leading-tight truncate">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
+                      
+                      <div className="absolute inset-x-0 bottom-0 p-6">
+                         <h3 className="text-white font-display font-bold text-xl leading-tight truncate">
                            {p.profile?.firstName} {p.profile?.lastName}
                          </h3>
-                         <p className="text-white/70 text-xs font-medium uppercase tracking-wide mt-0.5">{p.regId}</p>
+                         <div className="flex items-center gap-2 mt-2">
+                           <span className="w-1.5 h-1.5 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)]" />
+                           <p className="text-white/80 text-[10px] font-black uppercase tracking-widest">{p.regId}</p>
+                         </div>
                       </div>
                     </div>
-                    <div className="p-4 space-y-2">
-                       <ul className="text-sm text-muted-foreground space-y-1">
-                         <li className="font-semibold text-foreground/90">{p.profile?.maritalStatus} • {p.profile?.gender}</li>
-                         {p.education?.trade && <li>🎓 {p.education.trade}</li>}
+                    <div className="p-6 bg-white">
+                       <ul className="text-sm font-medium text-foreground/80 space-y-1">
+                         <li className="text-foreground font-bold">{p.profile?.maritalStatus} • {p.profile?.gender}</li>
+                         {p.education?.trade && <li className="text-xs text-foreground/60 italic">🎓 {p.education.trade}</li>}
                        </ul>
                     </div>
                   </motion.div>
@@ -230,9 +247,9 @@ export default function Home() {
               })}
             </div>
             
-            <div className="mt-12 text-center">
-               <Link to="/search" className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-white font-bold rounded-xl shadow hover:bg-primary/90 transition-all">
-                 अधिक स्थळे पहा — View More <ArrowRight size={18} />
+            <div className="mt-20 text-center">
+               <Link to="/search" className="clay-button-secondary px-10 py-4 text-sm uppercase tracking-widest">
+                 View All Profiles
                </Link>
             </div>
           </div>
@@ -260,10 +277,10 @@ export default function Home() {
                   "Vivahvedh helped us find each other. The personal touch and verified profiles made all the difference. We are forever grateful!"
                 </p>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-amber-400/20 rounded-full flex items-center justify-center text-amber-300 font-bold text-lg">R</div>
+                  <div className="w-12 h-12 bg-amber-400 rounded-full flex items-center justify-center text-primary font-bold text-lg shadow-lg">R</div>
                   <div>
                     <p className="text-white font-bold">Rahul & Priya</p>
-                    <p className="text-white/50 text-sm">Married in 2024 • Pune</p>
+                    <p className="text-white/70 text-sm">Married in 2024 • Pune</p>
                   </div>
                 </div>
               </motion.div>
@@ -273,80 +290,79 @@ export default function Home() {
       </section>
 
       {/* ========== WHY VIVAHVEDH ========== */}
-      <section className="w-full py-24 relative">
-        <div className="max-w-6xl mx-auto px-6">
-          <motion.div {...fadeUp()} className="text-center mb-16">
-            <span className="text-xs font-bold uppercase tracking-[4px] text-primary/80">आमची वैशिष्ट्ये</span>
-            <h2 className="text-4xl md:text-5xl font-extrabold mt-3 tracking-tight">Why Choose Vivahvedh?</h2>
-            <p className="text-muted-foreground mt-3">आमच्याकडे इतर कुणाकडे नसलेली खासियत आहे</p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <Shield size={28} />,
-                title: 'सुरक्षित प्रोफाइल',
-                sub: 'Verified & Safe',
-                desc: 'Every profile is manually verified. Your privacy and data security are our top priority. No fake profiles, guaranteed.',
-                gradient: 'from-green-500/10 to-emerald-500/5',
-                iconBg: 'bg-green-500/15 text-green-600',
-                border: 'border-green-200/50'
-              },
-              {
-                icon: <Heart size={28} />,
-                title: 'वैयक्तिक सेवा',
-                sub: 'Personal Matchmaking',
-                desc: 'Gold members get a dedicated relationship manager. We personally facilitate meetings, counselling, and family introductions.',
-                gradient: 'from-primary/10 to-rose-500/5',
-                iconBg: 'bg-primary/15 text-primary',
-                border: 'border-primary/20'
-              },
-              {
-                icon: <Star size={28} />,
-                title: 'महाराष्ट्रीय कुटुंबांसाठी',
-                sub: 'Built for Maharashtra',
-                desc: 'Designed specifically for Maharashtrian families. We understand your values, traditions, कुंडली matching, and community expectations.',
-                gradient: 'from-amber-500/10 to-orange-500/5',
-                iconBg: 'bg-amber-500/15 text-amber-600',
-                border: 'border-amber-200/50'
-              },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className={`bg-gradient-to-br ${item.gradient} border ${item.border} rounded-3xl p-10 hover:shadow-xl hover:-translate-y-2 transition-all duration-300`}
-              >
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 ${item.iconBg}`}>
-                  {item.icon}
-                </div>
-                <h3 className="text-xl font-extrabold mb-1">{item.title}</h3>
-                <p className="text-sm font-semibold text-primary/70 mb-4">{item.sub}</p>
-                <p className="text-muted-foreground leading-relaxed text-sm">{item.desc}</p>
-              </motion.div>
-            ))}
+      <section className="w-full py-32 relative">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            <div className="lg:col-span-4">
+              <span className="text-xs font-bold uppercase tracking-[4px] text-primary/40">Our Commitment</span>
+              <h2 className="display-md text-foreground mt-4 mb-8">What Makes Us <br />Regal.</h2>
+              <p className="text-foreground/50 text-lg mb-10">We prioritize family dignity over digital volume, ensuring every connection is meaningful and culturally aligned.</p>
+              <Link to="/about" className="clay-button-secondary px-8 py-3.5 inline-block">Learn Our Story</Link>
+            </div>
+            
+            <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+              {[
+                {
+                  icon: <Shield size={28} />,
+                  title: 'Pure Integrity',
+                  desc: 'Every profile is manually curated and verified. We maintain a zero-tolerance policy for misleading information.',
+                  color: 'bg-white'
+                },
+                {
+                  icon: <Heart size={28} />,
+                  title: 'Personal Curation',
+                  desc: 'Our relationship managers don\'t just match data; they facilitate introductions and family meetings with care.',
+                  color: 'bg-primary/5'
+                },
+                {
+                  icon: <Star size={28} />,
+                  title: 'Cultural Alignment',
+                  desc: 'Tailored specifically for Maharashtrian households who value tradition, education, and family legacy.',
+                  color: 'bg-accent/10'
+                },
+                {
+                   icon: <Quote size={28} />,
+                   title: 'Match Privacy',
+                   desc: 'Control who sees your PII. We mask email and mobile data until you decide to connect.',
+                   color: 'bg-[#F2F4F6]'
+                }
+              ].map((item, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className={`${item.color} rounded-[32px] p-8 shadow-ambient group hover:-translate-y-2 transition-all duration-500`}
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-white shadow-premium flex items-center justify-center mb-6 text-primary scale-90 group-hover:scale-100 transition-transform">
+                    {item.icon}
+                  </div>
+                  <h3 className="text-xl font-display font-black mb-3">{item.title}</h3>
+                  <p className="text-sm text-foreground/70 leading-relaxed font-medium">{item.desc}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* ========== PLANS TEASER ========== */}
-      <section className="w-full py-20 bg-gradient-to-b from-muted/30 to-background">
-        <div className="max-w-5xl mx-auto px-6 text-center">
+      <section className="w-full py-32 bg-[#F7F9FB]">
+        <div className="max-w-7xl mx-auto px-6 text-center">
           <motion.div {...fadeUp()}>
-            <span className="text-xs font-bold uppercase tracking-[4px] text-primary/80">आमच्या योजना</span>
-            <h2 className="text-4xl md:text-5xl font-extrabold mt-3 tracking-tight mb-4">Plans Starting from ₹0</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto mb-10">
-              मोफत नोंदणी करा, Silver ने कनेक्ट व्हा, Gold ने वैयक्तिक सेवा मिळवा.
+            <span className="text-xs font-bold uppercase tracking-[4px] text-primary/40">Premium Membership</span>
+            <h2 className="display-md text-foreground mt-4 mb-6">Invest in Your Future.</h2>
+            <p className="text-foreground/40 max-w-xl mx-auto mb-16 text-lg">
+              Choose a plan that fits your family's needs. From basic browsing to full personalized matchmaking.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             {[
-              { name: 'Free', price: '₹0', amount: 0, sub: 'Forever', color: 'text-green-600', bg: 'bg-green-50 border-green-200', features: ['Profile creation', 'Browse profiles', 'Receive proposals'] },
-              { name: 'Silver', price: '₹2,000', amount: 2000, sub: '6 Months', color: 'text-primary', bg: 'bg-primary/5 border-primary/20 ring-2 ring-primary/10 shadow-lg', features: ['Send proposals', 'View contacts', 'Full gallery', 'Advanced filters'] },
-              { name: 'Gold', price: '₹5,000', amount: 5000, sub: '1 Year', color: 'text-amber-700', bg: 'bg-amber-50 border-amber-300', features: ['All Silver features', 'Priority listing ⭐', 'Verified badge ✅', 'Personal manager 🤝'] },
+              { name: 'Basic', price: '₹0', amount: 0, sub: 'Forever', color: 'text-foreground/40', bg: 'bg-white', features: ['Profile creation', 'Browse profiles', 'Basic search'] },
+              { name: 'Silver', price: '₹2,000', amount: 2000, sub: '6 Months', color: 'text-primary', bg: 'bg-white shadow-ambient ring-1 ring-primary/5', features: ['Send proposals', 'View contacts', 'Full gallery', 'Advanced filters'] },
+              { name: 'Gold', price: '₹5,000', amount: 5000, sub: '1 Year', color: 'text-amber-700', bg: 'bg-primary/5 border border-primary/10', features: ['All Silver features', 'Priority listing ⭐', 'Verified badge ✅', 'Personal manager 🤝'] },
             ].map((plan, i) => (
               <motion.div
                 key={i}
@@ -354,74 +370,72 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className={`${plan.bg} border rounded-2xl p-8 text-center hover:shadow-xl transition-all`}
+                className={`${plan.bg} rounded-[40px] p-12 text-center transition-all duration-500 hover:scale-105`}
               >
-                <p className={`text-sm font-bold uppercase tracking-widest ${plan.color} mb-2`}>{plan.name}</p>
-                <p className={`text-4xl font-extrabold ${plan.color} mb-1`}>{plan.price}</p>
-                <p className="text-sm text-muted-foreground mb-5">{plan.sub}</p>
-                <ul className="space-y-2 text-sm text-left mb-8">
+                <p className={`text-xs font-black uppercase tracking-[3px] ${plan.color} mb-4`}>{plan.name}</p>
+                <p className={`text-5xl font-display font-black ${plan.color} mb-2`}>{plan.price}</p>
+                <p className="text-xs font-bold text-foreground/30 uppercase tracking-widest mb-10">{plan.sub}</p>
+                <ul className="space-y-4 text-sm text-left mb-12 border-t border-black/5 pt-8">
                   {plan.features.map((f, j) => (
-                    <li key={j} className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span> {f}
+                    <li key={j} className="flex items-center gap-3 font-medium text-foreground/80">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary/40" /> {f}
                     </li>
                   ))}
                 </ul>
-                {plan.name !== 'Free' && (
+                {plan.name !== 'Basic' && (
                   <button
                     onClick={() => {
                       setSelectedPlan({ type: plan.name as 'SILVER' | 'GOLD', price: plan.amount });
                       setIsPaymentModalOpen(true);
                     }}
-                    className={`w-full py-3 rounded-xl font-bold transition-all shadow-sm
-                      ${plan.name === 'Gold' ? 'bg-amber-600 text-white hover:bg-amber-700' : 'bg-primary text-white hover:bg-primary/90'}`}
+                    className={`w-full py-4 text-sm uppercase tracking-widest ${plan.name === 'Gold' ? 'clay-button-primary silk-gradient' : 'clay-button-secondary'}`}
                   >
-                    आता खरेदी करा — Buy Now
+                    Select Plan
                   </button>
                 )}
               </motion.div>
             ))}
           </div>
 
-          <Link to="/rules" className="inline-flex items-center gap-2 text-primary font-bold hover:underline text-lg group">
-            सर्व योजना पहा — View All Plans
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          <Link to="/rules" className="text-primary font-bold hover:underline tracking-widest text-xs uppercase group inline-flex items-center gap-2">
+            Compare All Features
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </section>
 
       {/* ========== CTA BANNER ========== */}
-      <section className="w-full py-20">
-        <div className="max-w-5xl mx-auto px-6">
+      <section className="w-full py-32 px-6">
+        <div className="max-w-7xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, scale: 0.97 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="relative bg-gradient-to-r from-primary via-rose-600 to-amber-600 rounded-[32px] p-12 md:p-16 text-center text-white overflow-hidden"
+            className="relative silk-gradient rounded-[60px] p-20 md:p-32 text-center text-white overflow-hidden shadow-premium"
           >
-            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
-            {/* Floating elements */}
-            <motion.div animate={{ y: [-5, 5, -5] }} transition={{ duration: 4, repeat: Infinity }} className="absolute top-8 left-12 text-3xl opacity-30">💍</motion.div>
-            <motion.div animate={{ y: [5, -5, 5] }} transition={{ duration: 5, repeat: Infinity }} className="absolute bottom-8 right-12 text-3xl opacity-30">🪷</motion.div>
-
+            {/* Texture overlay */}
+            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+            
             <div className="relative z-10">
-              <h2 className="text-3xl md:text-5xl font-extrabold mb-4 tracking-tight">
-                तुमचा जोडीदार वाट पाहत आहे!
+              <span className="text-xs font-bold uppercase tracking-[6px] text-white/60 mb-8 block font-display">Let's Begin</span>
+              <h2 className="display-lg text-white mb-10">
+                तुमचा जोडीदार वाट <br />पाहत आहे!
               </h2>
-              <p className="text-lg text-white/80 max-w-xl mx-auto mb-8">
-                Your soulmate is waiting. Join thousands of happy families who found love through Vivahvedh.
+              <p className="text-xl text-white/70 max-w-2xl mx-auto mb-16 leading-relaxed">
+                Join a community where tradition meets the future. Your perfect match is just a click away.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
                 <Link
                   to="/register"
-                  className="px-8 py-4 bg-white text-primary rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                  className="clay-button bg-white text-primary px-12 py-5 text-xl"
                 >
-                  आजच नोंदणी करा — It's Free
+                  Join Free
                 </Link>
                 <Link
                   to="/contact"
-                  className="px-8 py-4 bg-white/15 border-2 border-white/30 rounded-2xl font-bold text-lg hover:bg-white/25 transition-all backdrop-blur-sm"
+                  className="clay-button bg-white/20 backdrop-blur-md border border-white/20 text-white px-12 py-5 text-xl"
                 >
-                  📞 संपर्क करा — Call Us
+                  Contact Us
                 </Link>
               </div>
             </div>
