@@ -32,7 +32,14 @@ export default function Register() {
       alert(`🎉 नोंदणी यशस्वी!\n\nYour RegID: ${response.data.regId}\n\nPlease wait for admin approval to activate your account.`);
       navigate('/login');
     } catch (err: any) {
-      alert("Registration failed. " + (err.response?.data?.error || "Check your details."));
+      const errorMsg = err.response?.data?.error;
+      const displayMsg = typeof errorMsg === 'string'
+        ? errorMsg
+        : Array.isArray(errorMsg)
+          ? errorMsg.map((e: any) => `- ${e.message}`).join('\n')
+          : "Check your details and try again.";
+
+      alert(`❌ Registration failed:\n\n${displayMsg}`);
       console.error(err);
     }
   };

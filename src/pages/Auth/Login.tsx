@@ -34,7 +34,14 @@ export default function Login() {
         navigate('/dashboard');
       }
     } catch (err: any) {
-      alert(err.response?.data?.error || "Login failed. Please check your credentials.");
+      const errorMsg = err.response?.data?.error;
+      const displayMsg = typeof errorMsg === 'string' 
+        ? errorMsg 
+        : Array.isArray(errorMsg)
+          ? errorMsg.map((e: any) => e.message).join('\n')
+          : "Login failed. Please check your credentials.";
+      
+      alert(`❌ ${displayMsg}`);
       console.error(err);
     }
   };
