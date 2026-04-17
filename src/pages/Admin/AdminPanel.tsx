@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../../lib/apiClient';
 import { resolveImageUrl } from '../../lib/url';
-import { Mail, Shield, CreditCard, Users, Trash2, Check, X as CloseIcon, MoreVertical, UserPlus, Heart } from 'lucide-react';
+import { Mail, Shield, Users, Trash2, Check, X as CloseIcon, UserPlus, Heart } from 'lucide-react';
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'enquiries' | 'payments' | 'addProfile' | 'stories'>('pending');
+  const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'enquiries' | 'addProfile' | 'stories'>('pending');
   const [users, setUsers] = useState<any[]>([]);
   const [enquiries, setEnquiries] = useState<any[]>([]);
-  const [payments, setPayments] = useState<any[]>([]);
   const [stories, setStories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Enquiry Reply State
+  const [replyModal, setReplyModal] = useState<{ isOpen: boolean; enquiryId: string | null; email: string; message: string }>({ isOpen: false, enquiryId: null, email: '', message: '' });
+  const [replyText, setReplyText] = useState('');
+  const [replying, setReplying] = useState(false);
 
   // Offline user creation state
   const [offlineForm, setOfflineForm] = useState({
@@ -27,9 +31,6 @@ export default function AdminPanel() {
       if (activeTab === 'enquiries') {
         const response = await apiClient.get('/admin/enquiries');
         setEnquiries(response.data);
-      } else if (activeTab === 'payments') {
-        const response = await apiClient.get('/payments/admin/pending');
-        setPayments(response.data);
       } else if (activeTab === 'stories') {
         const response = await apiClient.get('/stories/admin/all');
         setStories(response.data);
@@ -50,9 +51,25 @@ export default function AdminPanel() {
     fetchData();
   }, [activeTab]);
 
-  const handlePaymentVerify = async (paymentId: string, status: 'APPROVED' | 'REJECTED') => {
+  const handleReplyEnquiry = async () => {
+    if (!replyModal.enquiryId || !replyText.trim()) return;
+    setReplying(true);
     try {
-      await apiClient.patch(`/payments/admin/verify/${paymentId}`, { status });
+      await apiClient.post('/admin/enquiries/reply', { enquiryId: replyModal.enquiryId, replyMessage: replyText });
+      alert("Reply sent successfully.");
+      setReplyModal({ isOpen: false, enquiryId: null, email: '', message: '' });
+      setReplyText('');
+      fetchData();
+    } catch (error: any) {
+      alert(error.response?.data?.error || "Failed to send reply.");
+    } finally {
+      setReplying(false);
+    }
+  };
+
+  const handleResolveEnquiry = async (enquiryId: string, isResolved: boolean) => {
+    try {
+      await apiClient.patch('/admin/enquiries/resolve', { enquiryId, isResolved });
       fetchData();
     } catch (error) {
       console.error(error);
@@ -137,8 +154,7 @@ export default function AdminPanel() {
                 {[
                   { id: 'pending', label: 'Approvals', icon: <Users size={18} />, badge: users.length },
                   { id: 'all', label: 'Community', icon: <Shield size={18} /> },
-                  { id: 'payments', label: 'Revenue', icon: <CreditCard size={18} />, badge: payments.length },
-                  { id: 'enquiries', label: 'Inbox', icon: <Mail size={18} /> },
+                  { id: 'enquiries', label: 'Inbox', icon: <Mail size={18} />, badge: enquiries.filter(e => !e.isResolved).length },
                   { id: 'addProfile', label: 'Add Profile', icon: <UserPlus size={18} /> },
                   { id: 'stories', label: 'Stories', icon: <Heart size={18} /> },
                 ].map((tab) => (
@@ -168,7 +184,7 @@ export default function AdminPanel() {
             <div className="bg-white rounded-[40px] shadow-ambient overflow-hidden border border-black/5">
               <div className="px-10 py-8 bg-[#F7F9FB]/50 border-b border-black/5 flex justify-between items-center">
                 <h2 className="text-xl font-display font-black text-foreground">
-                  {activeTab === 'pending' ? 'Curation Queue' : activeTab === 'all' ? 'All Citizens' : activeTab === 'payments' ? 'Verification Desk' : activeTab === 'addProfile' ? 'Onboard Offline Customer' : activeTab === 'stories' ? 'Stories Manager' : 'Communication Log'}
+                  {activeTab === 'pending' ? 'Curation Queue' : activeTab === 'all' ? 'All Citizens' : activeTab === 'addProfile' ? 'Onboard Offline Customer' : activeTab === 'stories' ? 'Stories Manager' : 'Communication Log'}
                 </h2>
               </div>
 
@@ -291,66 +307,71 @@ export default function AdminPanel() {
                      <div className="w-12 h-12 border-4 border-primary/10 border-t-primary rounded-full animate-spin mb-6" />
                      <p className="font-display font-black uppercase text-xs tracking-widest text-foreground">Syncing Repository</p>
                   </div>
-                ) : activeTab === 'payments' ? (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                      <thead className="bg-[#F2F4F6] text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">
-                        <tr>
-                          <th className="px-10 py-5">Initiator</th>
-                          <th className="px-8 py-5">Membership</th>
-                          <th className="px-8 py-5">Investment</th>
-                          <th className="px-8 py-5">Evidence</th>
-                          <th className="px-10 py-5 text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {payments.length === 0 ? (
-                          <tr><td colSpan={5} className="p-20 text-center text-foreground/20 font-medium">All ledgers are balanced.</td></tr>
-                        ) : (
-                          payments.map((pay: any) => (
-                            <tr key={pay.id} className="border-b border-black/[0.03] hover:bg-[#F7F9FB] transition-colors group">
-                              <td className="px-10 py-6">
-                                <div className="font-display font-black text-foreground">{pay.user.regId}</div>
-                                <div className="text-[10px] font-bold text-foreground/30 uppercase mt-1">{pay.user.mobile}</div>
-                              </td>
-                              <td className="px-8 py-6">
-                                <span className="px-3 py-1 bg-white border border-black/5 rounded-full text-[10px] font-black uppercase tracking-tighter shadow-sm">{pay.planType}</span>
-                              </td>
-                              <td className="px-8 py-6 font-display font-black text-primary">₹{pay.amount}</td>
-                              <td className="px-8 py-6">
-                                <a href={resolveImageUrl(`/uploads/${pay.screenshotUrl}`)} target="_blank" className="text-xs font-black uppercase tracking-widest text-primary/40 hover:text-primary transition-colors flex items-center gap-2">
-                                  Proof <MoreVertical size={12} />
-                                </a>
-                              </td>
-                              <td className="px-10 py-6 text-right space-x-3">
-                                <button onClick={() => handlePaymentVerify(pay.id, 'APPROVED')} className="w-8 h-8 rounded-full bg-green-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-green-500/20"><Check size={14} /></button>
-                                <button onClick={() => handlePaymentVerify(pay.id, 'REJECTED')} className="w-8 h-8 rounded-full bg-red-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-red-500/20"><CloseIcon size={14} /></button>
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
                 ) : activeTab === 'enquiries' ? (
                   <div className="divide-y divide-black/[0.03]">
                     {enquiries.length === 0 ? (
                       <div className="p-20 text-center text-foreground/20 font-medium">No voices from the community today.</div>
                     ) : (
                       enquiries.map((enq: any) => (
-                        <div key={enq.id} className="p-10 hover:bg-[#F7F9FB] transition-all group">
+                        <div key={enq.id} className={`p-10 transition-all group ${enq.isResolved ? 'bg-[#F2F4F6]/50 opacity-60' : 'hover:bg-[#F7F9FB]'}`}>
                           <div className="flex justify-between items-start mb-6">
                             <div>
-                              <h3 className="text-xl font-display font-black text-foreground mb-1">{enq.firstName} {enq.lastName}</h3>
+                              <div className="flex items-center gap-3 mb-1">
+                                <h3 className="text-xl font-display font-black text-foreground">{enq.firstName} {enq.lastName}</h3>
+                                {enq.isResolved && <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-black uppercase rounded-full">Resolved</span>}
+                              </div>
                               <p className="text-xs font-bold text-primary tracking-widest uppercase">{enq.email} • {enq.mobile}</p>
                             </div>
                             <span className="text-[10px] font-black uppercase tracking-widest text-foreground/20">{new Date(enq.createdAt).toLocaleDateString()}</span>
                           </div>
-                          <div className="p-8 bg-white rounded-3xl border border-black/5 shadow-premium text-foreground/60 leading-relaxed font-medium">
+                          <div className="p-8 bg-white rounded-3xl border border-black/5 shadow-premium text-foreground/60 leading-relaxed font-medium mb-4">
                             {enq.message}
+                          </div>
+                          <div className="flex gap-3">
+                            <button 
+                              onClick={() => setReplyModal({ isOpen: true, enquiryId: enq.id, email: enq.email, message: enq.message })}
+                              className="px-6 py-2 bg-primary/10 text-primary rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-primary/20 transition-colors"
+                            >
+                              Reply via Email
+                            </button>
+                            <button 
+                              onClick={() => handleResolveEnquiry(enq.id, !enq.isResolved)}
+                              className={`px-6 py-2 rounded-xl font-bold text-xs uppercase tracking-widest transition-colors ${enq.isResolved ? 'bg-black/5 text-foreground/50 hover:bg-black/10' : 'bg-green-500/10 text-green-600 hover:bg-green-500/20'}`}
+                            >
+                              {enq.isResolved ? 'Mark Unresolved' : 'Mark Resolved'}
+                            </button>
                           </div>
                         </div>
                       ))
+                    )}
+
+                    {/* Reply Modal */}
+                    {replyModal.isOpen && (
+                      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+                        <div className="bg-white rounded-3xl p-8 max-w-xl w-full shadow-2xl border border-black/10">
+                          <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-xl font-black text-foreground">Reply to Enquiry</h3>
+                            <button onClick={() => setReplyModal({ isOpen: false, enquiryId: null, email: '', message: '' })} className="p-2 text-foreground/40 hover:text-foreground bg-black/5 rounded-full"><CloseIcon size={16} /></button>
+                          </div>
+                          <p className="text-xs font-bold text-foreground/50 mb-2 uppercase tracking-widest">To: {replyModal.email}</p>
+                          <div className="p-4 bg-black/5 rounded-xl text-sm text-foreground/70 mb-6 max-h-32 overflow-y-auto italic border-l-4 border-primary/20">
+                            "{replyModal.message}"
+                          </div>
+                          <textarea
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            placeholder="Type your response here... (This will be emailed to the user)"
+                            className="w-full min-h-[150px] p-4 bg-white border border-black/10 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary/50 text-sm mb-6 resize-y"
+                          />
+                          <div className="flex justify-end gap-3">
+                            <button onClick={() => setReplyModal({ isOpen: false, enquiryId: null, email: '', message: '' })} className="px-6 py-3 font-bold text-xs uppercase tracking-widest text-foreground/50 hover:bg-black/5 rounded-xl transition-colors">Cancel</button>
+                            <button onClick={handleReplyEnquiry} disabled={replying || !replyText.trim()} className="px-8 py-3 bg-primary text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-primary/90 transition-all disabled:opacity-50 flex items-center gap-2">
+                              {replying ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Mail size={16} />}
+                              Send Reply
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     )}
                   </div>
                 ) : activeTab === 'stories' ? (
