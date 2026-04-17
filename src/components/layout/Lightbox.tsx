@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { resolveImageUrl } from '../../lib/url';
 
 interface CarouselLightboxProps {
   images: { url: string; id?: string }[];
@@ -71,7 +72,7 @@ export default function CarouselLightbox({ images, startIndex, onClose }: Carous
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          src={images[currentIndex].url}
+          src={resolveImageUrl(images[currentIndex].url)}
           onClick={(e) => e.stopPropagation()}
           className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl cursor-default"
           draggable={false}

@@ -10,6 +10,7 @@ import AdminPanel from './pages/Admin/AdminPanel';
 import Contact from './pages/Info/Contact';
 import Rules from './pages/Info/Rules';
 import About from './pages/Info/About';
+import SuccessStories from './pages/Info/SuccessStories';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/search" element={<Search />} />
           <Route path="/profile/:id" element={<PublicProfile />} />
+          <Route path="/success-stories" element={<SuccessStories />} />
 
           {/* Private Logged-In Routes */}
           <Route element={<ProtectedRoute />}>

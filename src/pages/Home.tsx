@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Heart, Shield, Star, ArrowRight, Sparkles, Quote } from 'lucide-react';
 import apiClient from '../lib/apiClient';
+import { resolveImageUrl } from '../lib/url';
 import { PaymentModal } from '../components/PaymentModal';
 
 const fadeUp = (delay = 0) => ({
@@ -14,6 +15,7 @@ const fadeUp = (delay = 0) => ({
 export default function Home() {
   const navigate = useNavigate();
   const [featuredProfiles, setFeaturedProfiles] = useState<any[]>([]);
+  const [successStories, setSuccessStories] = useState<any[]>([]);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<{ type: 'SILVER' | 'GOLD', price: number } | null>(null);
 
@@ -25,6 +27,10 @@ export default function Home() {
         setFeaturedProfiles(res.data.results.slice(0, 4));
       })
       .catch(err => console.error("Failed to load featured profiles", err));
+
+    apiClient.get('/stories')
+      .then(res => setSuccessStories(res.data.slice(0, 3)))
+      .catch(err => console.error("Failed to load stories", err));
   }, []);
 
   return (
@@ -346,6 +352,42 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ========== SUCCESS STORIES ========== */}
+      {successStories.length > 0 && (
+        <section className="w-full py-28 bg-white">
+          <div className="max-w-7xl mx-auto px-6">
+            <motion.div {...fadeUp()} className="text-center mb-16">
+              <span className="text-xs font-bold uppercase tracking-[4px] text-primary/40">Real Couples</span>
+              <h2 className="display-md text-foreground mt-4 mb-4">यशोगाथा — Success Stories</h2>
+              <p className="text-foreground/40 max-w-xl mx-auto text-lg">Celebrating unions forged through Vivahvedh.</p>
+            </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              {successStories.map((story: any, i: number) => (
+                <motion.div key={story.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12 }} className="bg-card rounded-[32px] overflow-hidden shadow-ambient border border-black/5 hover:-translate-y-2 transition-all duration-500">
+                  <div className="w-full h-52 bg-gradient-to-br from-primary/10 to-accent/10 relative overflow-hidden">
+                    {story.photoUrl ? (
+                      <img src={resolveImageUrl(story.photoUrl)} alt={`${story.groomName} & ${story.brideName}`} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center"><Heart size={40} className="text-primary/15" /></div>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/40 to-transparent" />
+                    <p className="absolute bottom-3 left-5 text-white font-display font-black text-base drop-shadow-lg">{story.groomName} <span className="text-white/60">&</span> {story.brideName}</p>
+                  </div>
+                  <div className="p-6">
+                    <p className="text-foreground/70 text-sm leading-relaxed line-clamp-3">"{story.message}"</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            <div className="text-center">
+              <Link to="/success-stories" className="text-primary font-bold hover:underline tracking-widest text-xs uppercase group inline-flex items-center gap-2">
+                View All Stories <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ========== PLANS TEASER ========== */}
       <section className="w-full py-32 bg-[#F7F9FB]">

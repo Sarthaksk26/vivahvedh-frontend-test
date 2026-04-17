@@ -140,7 +140,7 @@ export default function Search() {
                       {/* Image Section */}
                       <div className="w-full h-72 relative bg-[#eceef0] overflow-hidden">
                         {user.images && user.images.length > 0 ? (
-                          <img src={user.images[0].url} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Profile" />
+                          <img src={resolveImageUrl(user.images[0].url)} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Profile" />
                         ) : (
                           <div className="w-full h-full bg-primary/5 flex items-center justify-center">
                             <span className="text-6xl font-display font-black text-primary/10">{user.profile?.firstName?.[0] || '?'}</span>

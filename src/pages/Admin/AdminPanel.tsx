@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../../lib/apiClient';
-import { Mail, Shield, CreditCard, Users, Trash2, Check, X as CloseIcon, MoreVertical, UserPlus } from 'lucide-react';
+import { resolveImageUrl } from '../../lib/url';
+import { Mail, Shield, CreditCard, Users, Trash2, Check, X as CloseIcon, MoreVertical, UserPlus, Heart, Camera, Send } from 'lucide-react';
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'enquiries' | 'payments' | 'addProfile'>('pending');
+  const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'enquiries' | 'payments' | 'addProfile' | 'stories'>('pending');
   const [users, setUsers] = useState<any[]>([]);
   const [enquiries, setEnquiries] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
+  const [stories, setStories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Offline user creation state
@@ -19,7 +21,7 @@ export default function AdminPanel() {
   const [offlineError, setOfflineError] = useState('');
 
   const fetchData = async () => {
-    if (activeTab === 'addProfile') return; // No fetch needed for the form tab
+    if (activeTab === 'addProfile') return;
     setLoading(true);
     try {
       if (activeTab === 'enquiries') {
@@ -28,6 +30,9 @@ export default function AdminPanel() {
       } else if (activeTab === 'payments') {
         const response = await apiClient.get('/payments/admin/pending');
         setPayments(response.data);
+      } else if (activeTab === 'stories') {
+        const response = await apiClient.get('/stories/admin/all');
+        setStories(response.data);
       } else {
         const endpoint = activeTab === 'pending' ? '/admin/pending' : '/admin/all-users';
         const response = await apiClient.get(endpoint);
@@ -54,15 +59,17 @@ export default function AdminPanel() {
     }
   };
 
-  const handleAction = async (action: 'approve' | 'ban' | 'delete', userId: string) => {
+  const handleAction = async (action: 'approve' | 'ban' | 'unban' | 'delete', userId: string) => {
     if (action === 'delete' && !confirm("Permanently delete user?")) return;
     try {
       if (action === 'approve') await apiClient.post('/admin/approve', { targetUserId: userId });
-      if (action === 'ban') await apiClient.post('/admin/ban', { targetUserId: userId });
+      if (action === 'ban') await apiClient.post('/admin/ban', { targetUserId: userId, action: 'ban' });
+      if (action === 'unban') await apiClient.post('/admin/ban', { targetUserId: userId, action: 'unban' });
       if (action === 'delete') await apiClient.delete(`/admin/delete/${userId}`);
+      alert(`Action "${action}" completed successfully.`);
       fetchData();
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      alert(error.response?.data?.error || `Failed to ${action} user.`);
     }
   };
 
@@ -133,6 +140,7 @@ export default function AdminPanel() {
                   { id: 'payments', label: 'Revenue', icon: <CreditCard size={18} />, badge: payments.length },
                   { id: 'enquiries', label: 'Inbox', icon: <Mail size={18} /> },
                   { id: 'addProfile', label: 'Add Profile', icon: <UserPlus size={18} /> },
+                  { id: 'stories', label: 'Stories', icon: <Heart size={18} /> },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -160,7 +168,7 @@ export default function AdminPanel() {
             <div className="bg-white rounded-[40px] shadow-ambient overflow-hidden border border-black/5">
               <div className="px-10 py-8 bg-[#F7F9FB]/50 border-b border-black/5 flex justify-between items-center">
                 <h2 className="text-xl font-display font-black text-foreground">
-                  {activeTab === 'pending' ? 'Curation Queue' : activeTab === 'all' ? 'All Citizens' : activeTab === 'payments' ? 'Verification Desk' : activeTab === 'addProfile' ? 'Onboard Offline Customer' : 'Communication Log'}
+                  {activeTab === 'pending' ? 'Curation Queue' : activeTab === 'all' ? 'All Citizens' : activeTab === 'payments' ? 'Verification Desk' : activeTab === 'addProfile' ? 'Onboard Offline Customer' : activeTab === 'stories' ? 'Stories Manager' : 'Communication Log'}
                 </h2>
               </div>
 
@@ -310,7 +318,7 @@ export default function AdminPanel() {
                               </td>
                               <td className="px-8 py-6 font-display font-black text-primary">₹{pay.amount}</td>
                               <td className="px-8 py-6">
-                                <a href={`/uploads/${pay.screenshotUrl}`} target="_blank" className="text-xs font-black uppercase tracking-widest text-primary/40 hover:text-primary transition-colors flex items-center gap-2">
+                                <a href={resolveImageUrl(`/uploads/${pay.screenshotUrl}`)} target="_blank" className="text-xs font-black uppercase tracking-widest text-primary/40 hover:text-primary transition-colors flex items-center gap-2">
                                   Proof <MoreVertical size={12} />
                                 </a>
                               </td>
@@ -343,6 +351,67 @@ export default function AdminPanel() {
                           </div>
                         </div>
                       ))
+                    )}
+                  </div>
+                ) : activeTab === 'stories' ? (
+                  <div className="p-8 space-y-8">
+                    {/* Create Story Form */}
+                    <div className="bg-[#F7F9FB] rounded-2xl p-6 border border-black/5">
+                      <h3 className="font-black text-sm uppercase tracking-widest text-foreground/40 mb-4">Publish New Story</h3>
+                      <form onSubmit={async (e) => {
+                        e.preventDefault();
+                        const fd = new FormData(e.currentTarget);
+                        try {
+                          await apiClient.post('/stories/admin/create', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+                          alert('Story published!');
+                          (e.target as HTMLFormElement).reset();
+                          fetchData();
+                        } catch (err: any) { alert(err.response?.data?.error || 'Failed'); }
+                      }} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                        <input name="groomName" required placeholder="Groom Name" className="h-11 rounded-xl border border-black/10 bg-white px-4 text-sm" />
+                        <input name="brideName" required placeholder="Bride Name" className="h-11 rounded-xl border border-black/10 bg-white px-4 text-sm" />
+                        <input name="message" required placeholder="Short testimonial (min 10 chars)" className="h-11 rounded-xl border border-black/10 bg-white px-4 text-sm" />
+                        <div className="flex gap-2">
+                          <input name="photo" type="file" accept="image/*" className="h-11 text-xs file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-primary/10 file:text-primary file:font-bold file:text-xs" />
+                          <button type="submit" className="h-11 px-6 bg-primary text-white rounded-xl font-bold text-xs uppercase tracking-widest whitespace-nowrap hover:bg-primary/90 transition-colors">Publish</button>
+                        </div>
+                      </form>
+                    </div>
+
+                    {/* Stories List */}
+                    {stories.length === 0 ? (
+                      <div className="p-16 text-center text-foreground/20 font-medium">No stories yet.</div>
+                    ) : (
+                      <div className="divide-y divide-black/[0.03]">
+                        {stories.map((s: any) => (
+                          <div key={s.id} className="p-6 flex gap-6 items-center hover:bg-[#F7F9FB] transition-colors">
+                            <div className="w-20 h-20 rounded-2xl bg-primary/5 overflow-hidden flex-shrink-0">
+                              {s.photoUrl ? (
+                                <img src={resolveImageUrl(s.photoUrl)} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center"><Heart size={24} className="text-primary/20" /></div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-black text-foreground">{s.groomName} & {s.brideName}</h4>
+                              <p className="text-sm text-foreground/50 truncate">{s.message}</p>
+                              <div className="flex items-center gap-3 mt-1">
+                                <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${s.status === 'APPROVED' ? 'bg-green-50 text-green-700' : s.status === 'PENDING' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700'}`}>{s.status}</span>
+                                <span className="text-[10px] text-foreground/20">{new Date(s.createdAt).toLocaleDateString()}</span>
+                              </div>
+                            </div>
+                            <div className="flex gap-2 flex-shrink-0">
+                              {s.status === 'PENDING' && (
+                                <>
+                                  <button onClick={async () => { await apiClient.post('/stories/admin/review', { storyId: s.id, status: 'APPROVED' }); alert('Approved!'); fetchData(); }} className="w-8 h-8 rounded-full bg-green-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Approve"><Check size={14} /></button>
+                                  <button onClick={async () => { await apiClient.post('/stories/admin/review', { storyId: s.id, status: 'REJECTED' }); alert('Rejected.'); fetchData(); }} className="w-8 h-8 rounded-full bg-amber-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Reject"><CloseIcon size={14} /></button>
+                                </>
+                              )}
+                              <button onClick={async () => { if (!confirm('Delete this story?')) return; await apiClient.delete(`/stories/admin/${s.id}`); alert('Deleted.'); fetchData(); }} className="w-8 h-8 rounded-full bg-red-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Delete"><Trash2 size={14} /></button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
                 ) : (
@@ -387,12 +456,16 @@ export default function AdminPanel() {
                               </td>
                               <td className="px-10 py-6 text-right space-x-2">
                                 {activeTab === 'pending' && (
-                                  <button onClick={() => handleAction('approve', user.id)} className="w-8 h-8 rounded-full bg-green-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform"><Check size={14} /></button>
+                                  <button onClick={() => handleAction('approve', user.id)} className="w-8 h-8 rounded-full bg-green-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Approve"><Check size={14} /></button>
                                 )}
                                 {activeTab === 'all' && (
-                                  <button onClick={() => handleAction('ban', user.id)} className="w-8 h-8 rounded-full bg-amber-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform"><Shield size={14} /></button>
+                                  user.accountStatus === 'SUSPENDED' ? (
+                                    <button onClick={() => handleAction('unban', user.id)} className="w-8 h-8 rounded-full bg-green-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Reactivate"><Check size={14} /></button>
+                                  ) : (
+                                    <button onClick={() => handleAction('ban', user.id)} className="w-8 h-8 rounded-full bg-amber-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Suspend"><Shield size={14} /></button>
+                                  )
                                 )}
-                                <button onClick={() => handleAction('delete', user.id)} className="w-8 h-8 rounded-full bg-red-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform"><Trash2 size={14} /></button>
+                                <button onClick={() => handleAction('delete', user.id)} className="w-8 h-8 rounded-full bg-red-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Delete"><Trash2 size={14} /></button>
                               </td>
                             </tr>
                           ))

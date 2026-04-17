@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import apiClient from '../../lib/apiClient';
+import { resolveImageUrl } from '../../lib/url';
 
 export default function ConnectionsList() {
   const [incoming, setIncoming] = useState<any[]>([]);
@@ -60,7 +61,7 @@ export default function ConnectionsList() {
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-full bg-muted border overflow-hidden">
                     {req.sender.images?.[0]?.url ? (
-                      <img src={req.sender.images[0].url} className="w-full h-full object-cover" />
+                      <img src={resolveImageUrl(req.sender.images[0].url)} className="w-full h-full object-cover" />
                     ) : ( 
                       <div className="w-full h-full flex items-center justify-center font-bold text-muted-foreground">{req.sender.profile?.firstName?.[0] || 'V'}</div>
                     )}
@@ -108,7 +109,7 @@ export default function ConnectionsList() {
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-full bg-muted border overflow-hidden">
                     {req.receiver.images?.[0]?.url ? (
-                      <img src={req.receiver.images[0].url} className="w-full h-full object-cover" />
+                      <img src={resolveImageUrl(req.receiver.images[0].url)} className="w-full h-full object-cover" />
                     ) : ( 
                       <div className="w-full h-full flex items-center justify-center font-bold text-muted-foreground">{req.receiver.profile?.firstName?.[0] || 'V'}</div>
                     )}

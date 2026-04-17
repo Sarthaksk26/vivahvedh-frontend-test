@@ -4,6 +4,7 @@ import PhotoUpload from '../../components/Dashboard/PhotoUpload';
 import ProfileEditor from '../../components/Dashboard/ProfileEditor';
 import ConnectionsList from '../../components/Dashboard/ConnectionsList';
 import { Lock, Shield } from 'lucide-react';
+import { resolveImageUrl } from '../../lib/url';
 
 export default function Dashboard() {
   const [profile, setProfile] = useState<any>(null);
@@ -68,7 +69,7 @@ export default function Dashboard() {
           <div className="mb-4">
             <div className="w-20 h-20 bg-muted rounded-full flex overflow-hidden items-center justify-center mx-auto mb-3 border-4 border-background shadow-md">
               {profile.images && profile.images.length > 0 ? (
-                <img src={profile.images[0].url} alt="Profile" className="w-full h-full object-cover" />
+                <img src={resolveImageUrl(profile.images[0].url)} alt="Profile" className="w-full h-full object-cover" />
               ) : (
                 <span className="text-2xl font-bold text-muted-foreground">{profile.profile?.firstName?.[0] || 'V'}</span>
               )}

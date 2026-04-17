@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import apiClient from '../../lib/apiClient';
 import CarouselLightbox from '../../components/layout/Lightbox';
+import { resolveImageUrl } from '../../lib/url';
 
 export default function PublicProfile() {
   const { id } = useParams();
@@ -77,7 +78,7 @@ export default function PublicProfile() {
         <div className="md:w-1/3 bg-muted h-72 md:h-auto relative">
           {hasImages ? (
             <img
-              src={profile.images[0].url}
+              src={resolveImageUrl(profile.images[0].url)}
               onClick={() => { setCarouselIndex(0); setCarouselOpen(true); }}
               className="w-full h-full object-cover cursor-zoom-in hover:brightness-110 transition"
             />
