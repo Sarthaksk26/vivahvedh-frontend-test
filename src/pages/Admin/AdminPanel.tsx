@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../../lib/apiClient';
 import { resolveImageUrl } from '../../lib/url';
-import { Mail, Shield, CreditCard, Users, Trash2, Check, X as CloseIcon, MoreVertical, UserPlus, Heart, Camera, Send } from 'lucide-react';
+import { Mail, Shield, CreditCard, Users, Trash2, Check, X as CloseIcon, MoreVertical, UserPlus, Heart } from 'lucide-react';
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'enquiries' | 'payments' | 'addProfile' | 'stories'>('pending');

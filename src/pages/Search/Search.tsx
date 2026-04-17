@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import apiClient from '../../lib/apiClient';
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
+import { resolveImageUrl } from '../../lib/url';
 
 export default function Search() {
   const [results, setResults] = useState<any[]>([]);
