@@ -18,13 +18,16 @@ const getApiBaseUrl = () => {
 export const resolveImageUrl = (path?: string | null): string => {
   if (!path) return '';
   
-  // If it's already an absolute URL (http/https), return it
-  if (path.startsWith('http')) {
-    return path;
+  if (path.startsWith('http')) return path;
+
+  // If it's just a filename (no slashes), it's likely an old record or payment screenshot
+  // that needs the /uploads/ prefix.
+  let cleanPath = path;
+  if (!path.includes('/')) {
+    cleanPath = `/uploads/${path}`;
+  } else if (!path.startsWith('/')) {
+    cleanPath = `/${path}`;
   }
-  
-  // Ensure the path starts with a slash
-  const cleanPath = path.startsWith('/') ? path : `/${path}`;
   
   return `${getApiBaseUrl()}${cleanPath}`;
 };
