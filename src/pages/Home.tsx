@@ -262,39 +262,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* ========== HAPPY COUPLE BANNER ========== */}
-      <section className="w-full py-0 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="relative rounded-[32px] overflow-hidden min-h-[400px] md:min-h-[500px] flex items-center">
-            <img src="/happy_couple.png" alt="Happy Couple" className="absolute inset-0 w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
-            
-            <div className="relative z-10 p-10 md:p-16 max-w-xl">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-              >
-                <Quote size={36} className="text-amber-400/60 mb-4" />
-                <h2 className="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-4">
-                  "विवाहवेधने आमचं आयुष्य बदललं"
-                </h2>
-                <p className="text-white/70 text-lg leading-relaxed mb-6">
-                  "Vivahvedh helped us find each other. The personal touch and verified profiles made all the difference. We are forever grateful!"
-                </p>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-amber-400 rounded-full flex items-center justify-center text-primary font-bold text-lg shadow-lg">R</div>
-                  <div>
-                    <p className="text-white font-bold">Rahul & Priya</p>
-                    <p className="text-white/70 text-sm">Married in 2024 • Pune</p>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ========== WHY VIVAHVEDH ========== */}
       <section className="w-full py-32 relative">
         <div className="max-w-7xl mx-auto px-6">
