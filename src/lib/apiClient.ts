@@ -1,7 +1,12 @@
 import axios from 'axios';
 
 // The base URL of our new Express Backend
-const API_URL = import.meta.env.VITE_API_URL || 'https://vivahvedh-api.onrender.com/api';
+let API_URL = import.meta.env.VITE_API_URL;
+if (!API_URL) {
+  API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:5000/api' 
+    : 'https://vivahvedh-api.onrender.com/api';
+}
 
 const apiClient = axios.create({
   baseURL: API_URL,

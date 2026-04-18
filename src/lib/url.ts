@@ -7,7 +7,13 @@
 const getApiBaseUrl = () => {
   // Use the env variable or default to the Render URL
   // We strip '/api' because static files (/uploads) are usually served from the root
-  const apiUri = import.meta.env.VITE_API_URL || 'https://vivahvedh-api.onrender.com/api';
+  let apiUri = import.meta.env.VITE_API_URL;
+  if (!apiUri) {
+    // If not set, check if we are running locally to avoid production fallback
+    apiUri = window.location.hostname === 'localhost' 
+      ? 'http://localhost:5000/api' 
+      : 'https://vivahvedh-api.onrender.com/api';
+  }
   return apiUri.replace(/\/api\/?$/, '');
 };
 
