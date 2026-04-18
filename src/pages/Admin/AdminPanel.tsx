@@ -37,7 +37,7 @@ export default function AdminPanel() {
         const response = await apiClient.get('/stories/admin/all');
         setStories(response.data);
       } else if (activeTab === 'payments') {
-        const response = await apiClient.get('/payment/admin/pending');
+        const response = await apiClient.get('/payments/admin/pending');
         setPayments(response.data);
       } else {
         const endpoint = activeTab === 'pending' ? '/admin/pending' : '/admin/all-users';
@@ -85,7 +85,7 @@ export default function AdminPanel() {
 
   const handleVerifyPayment = async (paymentId: string, status: 'APPROVED' | 'REJECTED') => {
     try {
-      await apiClient.patch(`/payment/admin/verify/${paymentId}`, { status });
+      await apiClient.patch(`/payments/admin/verify/${paymentId}`, { status });
       toast.success(`Payment ${status.toLowerCase()} successfully.`);
       fetchData();
     } catch (error: any) {
