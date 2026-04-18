@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
+import { Toaster } from 'react-hot-toast';
 import MainLayout from './components/layout/MainLayout';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 
@@ -14,6 +15,7 @@ const Contact = lazy(() => import('./pages/Info/Contact'));
 const Rules = lazy(() => import('./pages/Info/Rules'));
 const About = lazy(() => import('./pages/Info/About'));
 const SuccessStories = lazy(() => import('./pages/Info/SuccessStories'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Loading Fallback UI
 const PageLoader = () => (
@@ -28,6 +30,21 @@ const PageLoader = () => (
 function App() {
   return (
     <BrowserRouter>
+      <Toaster 
+        position="top-center" 
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#fff',
+            color: '#333',
+            borderRadius: '16px',
+            fontSize: '14px',
+            fontWeight: '600',
+            border: '1px solid rgba(0,0,0,0.05)',
+            boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
+          },
+        }} 
+      />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route element={<MainLayout />}>
@@ -47,6 +64,9 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/admin" element={<AdminPanel />} />
             </Route>
+
+            {/* Catch-all 404 */}
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
       </Suspense>

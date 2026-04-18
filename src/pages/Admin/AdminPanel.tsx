@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../../lib/apiClient';
 import { resolveImageUrl } from '../../lib/url';
-import { Mail, Shield, Users, Trash2, Check, X as CloseIcon, UserPlus, Heart } from 'lucide-react';
+import { Mail, Shield, Users, Trash2, Check, X as CloseIcon, UserPlus, Heart, CreditCard } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'enquiries' | 'addProfile' | 'stories'>('pending');
+  const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'enquiries' | 'addProfile' | 'stories' | 'payments'>('pending');
   const [users, setUsers] = useState<any[]>([]);
   const [enquiries, setEnquiries] = useState<any[]>([]);
   const [stories, setStories] = useState<any[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Enquiry Reply State
@@ -34,13 +36,16 @@ export default function AdminPanel() {
       } else if (activeTab === 'stories') {
         const response = await apiClient.get('/stories/admin/all');
         setStories(response.data);
+      } else if (activeTab === 'payments') {
+        const response = await apiClient.get('/payment/admin/pending');
+        setPayments(response.data);
       } else {
         const endpoint = activeTab === 'pending' ? '/admin/pending' : '/admin/all-users';
         const response = await apiClient.get(endpoint);
         setUsers(response.data);
       }
     } catch (error: any) {
-      if (error.response?.status === 403) alert("ACCESS DENIED");
+      if (error.response?.status === 403) toast.error("ACCESS DENIED");
       console.error(error);
     } finally {
       setLoading(false);
@@ -56,12 +61,12 @@ export default function AdminPanel() {
     setReplying(true);
     try {
       await apiClient.post('/admin/enquiries/reply', { enquiryId: replyModal.enquiryId, replyMessage: replyText });
-      alert("Reply sent successfully.");
+      toast.success("Reply sent successfully.");
       setReplyModal({ isOpen: false, enquiryId: null, email: '', message: '' });
       setReplyText('');
       fetchData();
     } catch (error: any) {
-      alert(error.response?.data?.error || "Failed to send reply.");
+      toast.error(error.response?.data?.error || "Failed to send reply.");
     } finally {
       setReplying(false);
     }
@@ -70,9 +75,21 @@ export default function AdminPanel() {
   const handleResolveEnquiry = async (enquiryId: string, isResolved: boolean) => {
     try {
       await apiClient.patch('/admin/enquiries/resolve', { enquiryId, isResolved });
+      toast.success(isResolved ? "Enquiry marked as resolved" : "Enquiry marked as unresolved");
       fetchData();
     } catch (error) {
       console.error(error);
+      toast.error("Failed to update status");
+    }
+  };
+
+  const handleVerifyPayment = async (paymentId: string, status: 'APPROVED' | 'REJECTED') => {
+    try {
+      await apiClient.patch(`/payment/admin/verify/${paymentId}`, { status });
+      toast.success(`Payment ${status.toLowerCase()} successfully.`);
+      fetchData();
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || "Failed to verify payment.");
     }
   };
 
@@ -83,10 +100,10 @@ export default function AdminPanel() {
       if (action === 'ban') await apiClient.post('/admin/ban', { targetUserId: userId, action: 'ban' });
       if (action === 'unban') await apiClient.post('/admin/ban', { targetUserId: userId, action: 'unban' });
       if (action === 'delete') await apiClient.delete(`/admin/delete/${userId}`);
-      alert(`Action "${action}" completed successfully.`);
+      toast.success(`Action "${action}" completed successfully.`);
       fetchData();
     } catch (error: any) {
-      alert(error.response?.data?.error || `Failed to ${action} user.`);
+      toast.error(error.response?.data?.error || `Failed to ${action} user.`);
     }
   };
 
@@ -94,9 +111,11 @@ export default function AdminPanel() {
     const durationMonths = planType === 'SILVER' ? 6 : planType === 'GOLD' ? 12 : 0;
     try {
       await apiClient.post('/admin/set-plan', { targetUserId: userId, planType, durationMonths });
+      toast.success(`Plan updated to ${planType}`);
       fetchData();
     } catch (error) {
       console.error(error);
+      toast.error("Failed to update plan");
     }
   };
 
@@ -155,6 +174,7 @@ export default function AdminPanel() {
                   { id: 'pending', label: 'Approvals', icon: <Users size={18} />, badge: users.length },
                   { id: 'all', label: 'Community', icon: <Shield size={18} /> },
                   { id: 'enquiries', label: 'Inbox', icon: <Mail size={18} />, badge: enquiries.filter(e => !e.isResolved).length },
+                  { id: 'payments', label: 'Payments', icon: <CreditCard size={18} />, badge: payments.length },
                   { id: 'addProfile', label: 'Add Profile', icon: <UserPlus size={18} /> },
                   { id: 'stories', label: 'Stories', icon: <Heart size={18} /> },
                 ].map((tab) => (
@@ -184,7 +204,12 @@ export default function AdminPanel() {
             <div className="bg-white rounded-[40px] shadow-ambient overflow-hidden border border-black/5">
               <div className="px-10 py-8 bg-[#F7F9FB]/50 border-b border-black/5 flex justify-between items-center">
                 <h2 className="text-xl font-display font-black text-foreground">
-                  {activeTab === 'pending' ? 'Curation Queue' : activeTab === 'all' ? 'All Citizens' : activeTab === 'addProfile' ? 'Onboard Offline Customer' : activeTab === 'stories' ? 'Stories Manager' : 'Communication Log'}
+                  {activeTab === 'pending' ? 'Curation Queue' : 
+                   activeTab === 'all' ? 'All Citizens' : 
+                   activeTab === 'addProfile' ? 'Onboard Offline Customer' : 
+                   activeTab === 'stories' ? 'Stories Manager' : 
+                   activeTab === 'payments' ? 'Payment Approvals' : 
+                   'Communication Log'}
                 </h2>
               </div>
 
@@ -374,6 +399,58 @@ export default function AdminPanel() {
                       </div>
                     )}
                   </div>
+                ) : activeTab === 'payments' ? (
+                  <div className="divide-y divide-black/[0.03]">
+                    {payments.length === 0 ? (
+                      <div className="p-20 text-center text-foreground/20 font-medium">No pending payments for verification.</div>
+                    ) : (
+                      payments.map((pay: any) => (
+                        <div key={pay.id} className="p-10 flex flex-col md:flex-row gap-8 hover:bg-[#F7F9FB] transition-colors">
+                          <div className="w-full md:w-64 h-80 bg-black/5 rounded-3xl overflow-hidden border border-black/5 flex-shrink-0 group relative">
+                            <img src={resolveImageUrl(pay.screenshotUrl)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <a href={resolveImageUrl(pay.screenshotUrl)} target="_blank" rel="noreferrer" className="bg-white text-black px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-widest">View Full Size</a>
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0 flex flex-col justify-between">
+                            <div>
+                              <div className="flex justify-between items-start mb-4">
+                                <div>
+                                  <h3 className="text-2xl font-display font-black text-foreground">{pay.user?.regId}</h3>
+                                  <p className="text-xs font-bold text-primary tracking-widest uppercase">{pay.user?.email} • {pay.user?.mobile}</p>
+                                </div>
+                                <span className="px-4 py-2 bg-primary/10 text-primary rounded-2xl font-black text-sm">₹{pay.amount}</span>
+                              </div>
+                              <div className="grid grid-cols-2 gap-4 mb-6">
+                                <div className="p-4 bg-white rounded-2xl border border-black/5 shadow-premium">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Plan Requested</p>
+                                  <p className="text-sm font-bold text-foreground">{pay.planType}</p>
+                                </div>
+                                <div className="p-4 bg-white rounded-2xl border border-black/5 shadow-premium">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Transaction ID</p>
+                                  <p className="text-sm font-bold text-foreground font-mono">{pay.transactionId}</p>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex gap-4">
+                              <button 
+                                onClick={() => handleVerifyPayment(pay.id, 'APPROVED')}
+                                className="flex-1 h-14 bg-green-500 text-white rounded-2xl font-display font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-green-500/20 hover:bg-green-600 transition-all flex items-center justify-center gap-2"
+                              >
+                                <Check size={18} /> Approve Plan
+                              </button>
+                              <button 
+                                onClick={() => handleVerifyPayment(pay.id, 'REJECTED')}
+                                className="flex-1 h-14 bg-red-500/10 text-red-500 rounded-2xl font-display font-black text-xs uppercase tracking-[0.2em] hover:bg-red-500/20 transition-all flex items-center justify-center gap-2"
+                              >
+                                <CloseIcon size={18} /> Reject
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
                 ) : activeTab === 'stories' ? (
                   <div className="p-8 space-y-8">
                     {/* Create Story Form */}
@@ -384,10 +461,10 @@ export default function AdminPanel() {
                         const fd = new FormData(e.currentTarget);
                         try {
                           await apiClient.post('/stories/admin/create', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-                          alert('Story published!');
+                          toast.success('Story published successfully!');
                           (e.target as HTMLFormElement).reset();
                           fetchData();
-                        } catch (err: any) { alert(err.response?.data?.error || 'Failed'); }
+                        } catch (err: any) { toast.error(err.response?.data?.error || 'Failed to publish story'); }
                       }} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                         <input name="groomName" required placeholder="Groom Name" className="h-11 rounded-xl border border-black/10 bg-white px-4 text-sm" />
                         <input name="brideName" required placeholder="Bride Name" className="h-11 rounded-xl border border-black/10 bg-white px-4 text-sm" />
@@ -424,11 +501,11 @@ export default function AdminPanel() {
                             <div className="flex gap-2 flex-shrink-0">
                               {s.status === 'PENDING' && (
                                 <>
-                                  <button onClick={async () => { await apiClient.post('/stories/admin/review', { storyId: s.id, status: 'APPROVED' }); alert('Approved!'); fetchData(); }} className="w-8 h-8 rounded-full bg-green-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Approve"><Check size={14} /></button>
-                                  <button onClick={async () => { await apiClient.post('/stories/admin/review', { storyId: s.id, status: 'REJECTED' }); alert('Rejected.'); fetchData(); }} className="w-8 h-8 rounded-full bg-amber-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Reject"><CloseIcon size={14} /></button>
+                                  <button onClick={async () => { try { await apiClient.post('/stories/admin/review', { storyId: s.id, status: 'APPROVED' }); toast.success('Story Approved!'); fetchData(); } catch(e) { toast.error('Failed'); } }} className="w-8 h-8 rounded-full bg-green-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Approve"><Check size={14} /></button>
+                                  <button onClick={async () => { try { await apiClient.post('/stories/admin/review', { storyId: s.id, status: 'REJECTED' }); toast.success('Story Rejected.'); fetchData(); } catch(e) { toast.error('Failed'); } }} className="w-8 h-8 rounded-full bg-amber-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Reject"><CloseIcon size={14} /></button>
                                 </>
                               )}
-                              <button onClick={async () => { if (!confirm('Delete this story?')) return; await apiClient.delete(`/stories/admin/${s.id}`); alert('Deleted.'); fetchData(); }} className="w-8 h-8 rounded-full bg-red-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Delete"><Trash2 size={14} /></button>
+                              <button onClick={async () => { if (!confirm('Delete this story?')) return; try { await apiClient.delete(`/stories/admin/${s.id}`); toast.success('Story deleted permanently.'); fetchData(); } catch(e) { toast.error('Failed to delete'); } }} className="w-8 h-8 rounded-full bg-red-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Delete"><Trash2 size={14} /></button>
                             </div>
                           </div>
                         ))}

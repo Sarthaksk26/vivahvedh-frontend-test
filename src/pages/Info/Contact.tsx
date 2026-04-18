@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import apiClient from '../../lib/apiClient';
+import toast from 'react-hot-toast';
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
@@ -10,8 +11,9 @@ export default function Contact() {
     try {
       await apiClient.post('/public/contact', formData);
       setSent(true);
+      toast.success("Message sent successfully!");
     } catch (err) {
-      alert("Failed to send message.");
+      toast.error("Failed to send message. Please try again later.");
     }
   };
 

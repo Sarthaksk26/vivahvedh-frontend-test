@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import apiClient from '../../lib/apiClient';
 import CarouselLightbox from '../../components/layout/Lightbox';
 import { resolveImageUrl } from '../../lib/url';
+import toast from 'react-hot-toast';
 
 export default function PublicProfile() {
   const { id } = useParams();
@@ -21,9 +22,12 @@ export default function PublicProfile() {
     setIsSending(true);
     try {
       await apiClient.post('/connections/send', { receiverId: id });
-      alert('Match Proposal sent successfully! They will be notified via email.');
+      toast.success('Match Proposal sent successfully! They will be notified via email.', {
+        icon: '💌',
+        duration: 5000
+      });
     } catch (error: any) {
-      alert(error.response?.data?.error || 'Failed to send match proposal.');
+      toast.error(error.response?.data?.error || 'Failed to send match proposal.');
     } finally {
       setIsSending(false);
     }
@@ -36,8 +40,9 @@ export default function PublicProfile() {
     try {
       const { data } = await apiClient.post('/user/shortlist', { targetUserId: id });
       setIsShortlisted(data.shortlisted);
+      toast.success(data.shortlisted ? 'Profile added to your shortlist' : 'Profile removed from shortlist');
     } catch (error: any) {
-      alert(error.response?.data?.error || 'Failed to shortlist.');
+      toast.error(error.response?.data?.error || 'Failed to shortlist.');
     }
   };
 
@@ -48,7 +53,7 @@ export default function PublicProfile() {
         setProfile(response.data);
       } catch (error) {
         console.error(error);
-        alert("This profile does not exist or is currently restricted.");
+        toast.error("This profile does not exist or is currently restricted.");
         navigate('/search');
       } finally {
         setLoading(false);

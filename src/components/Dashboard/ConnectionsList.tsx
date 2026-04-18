@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import apiClient from '../../lib/apiClient';
 import { resolveImageUrl } from '../../lib/url';
+import toast from 'react-hot-toast';
 
 export default function ConnectionsList() {
   const [incoming, setIncoming] = useState<any[]>([]);
@@ -29,14 +30,14 @@ export default function ConnectionsList() {
     try {
       if (action === 'accept') {
         await apiClient.post('/connections/accept', { requestId });
-        alert('Match Accepted! You can now view their direct contact data.');
+        toast.success('Match Accepted! You can now view their direct contact data.');
       } else {
         await apiClient.post('/connections/reject', { requestId });
-        alert('Match Request Rejected.');
+        toast.success('Match Request Rejected.');
       }
       fetchConnections();
     } catch (error) {
-      alert(`Failed to ${action} request.`);
+      toast.error(`Failed to ${action} request.`);
     }
   };
 

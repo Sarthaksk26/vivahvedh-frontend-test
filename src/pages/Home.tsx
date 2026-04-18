@@ -362,27 +362,34 @@ export default function Home() {
               <h2 className="display-md text-foreground mt-4 mb-4">यशोगाथा — Success Stories</h2>
               <p className="text-foreground/40 max-w-xl mx-auto text-lg">Celebrating unions forged through Vivahvedh.</p>
             </motion.div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
               {successStories.map((story: any, i: number) => (
-                <motion.div key={story.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12 }} className="bg-card rounded-[32px] overflow-hidden shadow-ambient border border-black/5 hover:-translate-y-2 transition-all duration-500">
-                  <div className="w-full h-52 bg-gradient-to-br from-primary/10 to-accent/10 relative overflow-hidden">
+                <motion.div key={story.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12 }} className="bg-card rounded-[32px] overflow-hidden shadow-premium border border-primary/10 hover:-translate-y-3 transition-all duration-500 relative group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  <div className="absolute top-4 right-4 z-10 px-3 py-1 bg-white/80 backdrop-blur-md text-[10px] uppercase font-black tracking-widest text-primary rounded-full shadow-sm">
+                    Featured Highlight
+                  </div>
+                  <div className="w-full h-64 bg-gradient-to-br from-primary/10 to-accent/10 relative overflow-hidden">
                     {story.photoUrl ? (
-                      <img src={resolveImageUrl(story.photoUrl)} alt={`${story.groomName} & ${story.brideName}`} className="w-full h-full object-cover" />
+                      <img src={resolveImageUrl(story.photoUrl)} alt={`${story.groomName} & ${story.brideName}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center"><Heart size={40} className="text-primary/15" /></div>
                     )}
-                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/40 to-transparent" />
-                    <p className="absolute bottom-3 left-5 text-white font-display font-black text-base drop-shadow-lg">{story.groomName} <span className="text-white/60">&</span> {story.brideName}</p>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90" />
+                    <p className="absolute bottom-5 left-6 text-white font-display font-black text-xl drop-shadow-lg leading-tight">
+                      {story.groomName} <br/><span className="text-primary-foreground/70 text-sm font-medium italic">&</span> {story.brideName}
+                    </p>
                   </div>
-                  <div className="p-6">
-                    <p className="text-foreground/70 text-sm leading-relaxed line-clamp-3">"{story.message}"</p>
+                  <div className="p-8">
+                    <Quote size={24} className="text-primary/20 mb-3" />
+                    <p className="text-foreground/80 text-sm leading-relaxed line-clamp-4 italic font-medium">"{story.message}"</p>
                   </div>
                 </motion.div>
               ))}
             </div>
-            <div className="text-center">
-              <Link to="/success-stories" className="text-primary font-bold hover:underline tracking-widest text-xs uppercase group inline-flex items-center gap-2">
-                View All Stories <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            <div className="text-center mt-8">
+              <Link to="/success-stories" className="clay-button-secondary px-10 py-5 text-sm uppercase tracking-[0.2em] inline-flex items-center gap-3">
+                Read More Heartwarming Stories <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </div>

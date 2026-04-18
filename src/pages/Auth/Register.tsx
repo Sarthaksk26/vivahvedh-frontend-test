@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import apiClient from '../../lib/apiClient';
 import { UserPlus, Sparkles, CheckCircle } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const registerSchema = z.object({
   firstName: z.string().min(2, "First Name is required"),
@@ -29,17 +30,23 @@ export default function Register() {
   const onSubmit = async (data: RegisterForm) => {
     try {
       const response = await apiClient.post('/auth/register', data);
-      alert(`🎉 नोंदणी यशस्वी!\n\nYour RegID: ${response.data.regId}\n\nPlease wait for admin approval to activate your account.`);
+      toast.success(() => (
+        <span className="flex flex-col">
+          <b className="text-sm">🎉 नोंदणी यशस्वी!</b>
+          <span className="text-xs mt-1">Your RegID: <b>{response.data.regId}</b></span>
+          <span className="text-[10px] opacity-60 mt-0.5">Please wait for admin approval to activate your account.</span>
+        </span>
+      ), { duration: 10000 });
       navigate('/login');
     } catch (err: any) {
       const errorMsg = err.response?.data?.error;
       const displayMsg = typeof errorMsg === 'string'
         ? errorMsg
         : Array.isArray(errorMsg)
-          ? errorMsg.map((e: any) => `- ${e.message}`).join('\n')
+          ? errorMsg.map((e: any) => e.message).join(', ')
           : "Check your details and try again.";
 
-      alert(`❌ Registration failed:\n\n${displayMsg}`);
+      toast.error(displayMsg);
       console.error(err);
     }
   };

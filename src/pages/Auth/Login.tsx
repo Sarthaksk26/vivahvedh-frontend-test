@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import apiClient from '../../lib/apiClient';
 import { LogIn, Sparkles } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const loginSchema = z.object({
   identifier: z.string().min(3, "Username must be at least 3 characters"),
@@ -28,9 +29,13 @@ export default function Login() {
       // If admin-created account, force password change on first login
       if (user.requiresPasswordChange) {
         localStorage.setItem('vivah_force_password_change', 'true');
-        alert('⚠️ Your account was created by an admin. You MUST change your password now for security.');
+        toast('⚠️ Your account was created by an admin. You MUST change your password now for security.', {
+          icon: '🔒',
+          duration: 6000
+        });
         navigate('/dashboard');
       } else {
+        toast.success('Welcome back!');
         navigate('/dashboard');
       }
     } catch (err: any) {
@@ -38,10 +43,10 @@ export default function Login() {
       const displayMsg = typeof errorMsg === 'string' 
         ? errorMsg 
         : Array.isArray(errorMsg)
-          ? errorMsg.map((e: any) => e.message).join('\n')
+          ? errorMsg.map((e: any) => e.message).join(', ')
           : "Login failed. Please check your credentials.";
       
-      alert(`❌ ${displayMsg}`);
+      toast.error(displayMsg);
       console.error(err);
     }
   };

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import apiClient from '../../lib/apiClient';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface SectionProps {
   title: string;
@@ -145,10 +146,10 @@ export default function ProfileEditor({
 
     try {
       await apiClient.patch('/user/update', payload);
-      alert('Profile updated successfully!');
+      toast.success('Profile updated successfully!');
       onSaveSuccess();
     } catch (err: any) {
-      alert("Failed to save changes.");
+      toast.error(err.response?.data?.error || "Failed to save changes.");
       console.error(err);
     } finally {
       setSaving(false);

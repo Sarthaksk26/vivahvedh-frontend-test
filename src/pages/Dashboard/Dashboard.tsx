@@ -5,6 +5,7 @@ import ProfileEditor from '../../components/Dashboard/ProfileEditor';
 import ConnectionsList from '../../components/Dashboard/ConnectionsList';
 import { Lock, Shield } from 'lucide-react';
 import { resolveImageUrl } from '../../lib/url';
+import toast from 'react-hot-toast';
 
 export default function Dashboard() {
   const [profile, setProfile] = useState<any>(null);
@@ -33,15 +34,18 @@ export default function Dashboard() {
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPassword.length < 6) { alert('New password must be at least 6 characters.'); return; }
+    if (newPassword.length < 6) { 
+      toast.error('New password must be at least 6 characters.'); 
+      return; 
+    }
     setChangingPassword(true);
     try {
       await apiClient.post('/user/change-password', { currentPassword, newPassword });
-      alert('Password changed successfully!');
+      toast.success('Password changed successfully!');
       setCurrentPassword('');
       setNewPassword('');
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to change password.');
+      toast.error(err.response?.data?.error || 'Failed to change password.');
     } finally {
       setChangingPassword(false);
     }

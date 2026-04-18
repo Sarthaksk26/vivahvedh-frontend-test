@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import apiClient from '../../lib/apiClient';
 import { resolveImageUrl } from '../../lib/url';
 import { Heart, Send, Camera, Sparkles, X } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface Story {
   id: string;
@@ -41,7 +42,7 @@ export default function SuccessStories() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (form.message.length < 10) {
-      alert('Please write at least 10 characters for your story.');
+      toast.error('Please write at least 10 characters for your story.');
       return;
     }
     setSubmitting(true);
@@ -56,13 +57,15 @@ export default function SuccessStories() {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      alert('🎉 Your success story has been submitted! It will appear here once approved by our team.');
+      toast.success('🎉 Your success story has been submitted! It will appear here once approved by our team.', {
+        duration: 5000
+      });
       setForm({ groomName: '', brideName: '', message: '' });
       setPhoto(null);
       setShowForm(false);
     } catch (err: any) {
       const msg = err.response?.data?.error;
-      alert(typeof msg === 'string' ? msg : 'Failed to submit story. Please try again.');
+      toast.error(typeof msg === 'string' ? msg : 'Failed to submit story. Please try again.');
     } finally {
       setSubmitting(false);
     }

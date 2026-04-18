@@ -3,6 +3,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 import { motion } from 'framer-motion';
 import { X, Upload, CheckCircle, AlertCircle } from 'lucide-react';
 import apiClient from '../lib/apiClient';
+import toast from 'react-hot-toast';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -44,8 +45,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setSubmitted(true);
+      toast.success('Payment proof submitted successfully!');
     } catch (error: any) {
-      alert(error.response?.data?.error || 'Something went wrong');
+      toast.error(error.response?.data?.error || 'Something went wrong');
     } finally {
       setLoading(false);
     }
