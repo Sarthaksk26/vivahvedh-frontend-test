@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 import MainLayout from './components/layout/MainLayout';
 import ProtectedRoute from './components/layout/ProtectedRoute';
+import ScrollToTop from './components/ScrollToTop';
 
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Auth/Login'));
@@ -30,6 +31,7 @@ const PageLoader = () => (
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Toaster 
         position="top-center" 
         toastOptions={{
