@@ -12,7 +12,7 @@ const getApiBaseUrl = () => {
     // If not set, check if we are running locally to avoid production fallback
     apiUri = window.location.hostname === 'localhost' 
       ? 'http://localhost:5000/api' 
-      : 'https://vivahvedh-api-test.onrender.com/api';
+      : 'https://vivahvedh-api.onrender.com/api';
   }
   return apiUri.replace(/\/api\/?$/, '');
 };
