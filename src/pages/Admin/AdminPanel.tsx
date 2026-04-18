@@ -465,13 +465,19 @@ export default function AdminPanel() {
                           (e.target as HTMLFormElement).reset();
                           fetchData();
                         } catch (err: any) { toast.error(err.response?.data?.error || 'Failed to publish story'); }
-                      }} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                        <input name="groomName" required placeholder="Groom Name" className="h-11 rounded-xl border border-black/10 bg-white px-4 text-sm" />
-                        <input name="brideName" required placeholder="Bride Name" className="h-11 rounded-xl border border-black/10 bg-white px-4 text-sm" />
-                        <input name="message" required placeholder="Short testimonial (min 10 chars)" className="h-11 rounded-xl border border-black/10 bg-white px-4 text-sm" />
-                        <div className="flex gap-2">
-                          <input name="photo" type="file" accept="image/*" className="h-11 text-xs file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-primary/10 file:text-primary file:font-bold file:text-xs" />
-                          <button type="submit" className="h-11 px-6 bg-primary text-white rounded-xl font-bold text-xs uppercase tracking-widest whitespace-nowrap hover:bg-primary/90 transition-colors">Publish</button>
+                      }} className="flex flex-col md:flex-row gap-4 items-end">
+                        <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <input name="groomName" required placeholder="Groom Name" className="h-11 rounded-xl border border-black/10 bg-white px-4 text-sm w-full" />
+                          <input name="brideName" required placeholder="Bride Name" className="h-11 rounded-xl border border-black/10 bg-white px-4 text-sm w-full" />
+                          <input name="message" required placeholder="Testimonial..." className="h-11 rounded-xl border border-black/10 bg-white px-4 text-sm w-full" />
+                        </div>
+                        <div className="flex w-full md:w-auto gap-4 items-end">
+                          <div className="flex-1">
+                            <input name="photo" type="file" accept="image/*" className="w-full text-xs file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-primary/10 file:text-primary file:font-bold file:text-xs" />
+                          </div>
+                          <button type="submit" className="h-11 px-8 bg-primary text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-primary/90 transition-all flex-shrink-0 shadow-lg shadow-primary/20">
+                            Publish
+                          </button>
                         </div>
                       </form>
                     </div>
