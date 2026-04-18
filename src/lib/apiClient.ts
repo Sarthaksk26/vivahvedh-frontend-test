@@ -5,7 +5,7 @@ let API_URL = import.meta.env.VITE_API_URL;
 if (!API_URL) {
   API_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:5000/api' 
-    : 'https://vivahvedh-api.onrender.com/api';
+    : 'https://vivahvedh-api-test.onrender.com/api';
 }
 
 const apiClient = axios.create({
