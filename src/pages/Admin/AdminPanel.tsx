@@ -1,16 +1,23 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../../lib/apiClient';
 import { resolveImageUrl } from '../../lib/url';
-import { Mail, Shield, Users, Trash2, Check, X as CloseIcon, UserPlus, Heart, CreditCard } from 'lucide-react';
+import { Mail, Shield, Users, Trash2, Check, X as CloseIcon, UserPlus, Heart, CreditCard, Cake, Link2, Edit, AlertCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'enquiries' | 'addProfile' | 'stories' | 'payments'>('pending');
+  const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'enquiries' | 'addProfile' | 'stories' | 'payments' | 'birthdays' | 'connections'>('pending');
   const [users, setUsers] = useState<any[]>([]);
   const [enquiries, setEnquiries] = useState<any[]>([]);
   const [stories, setStories] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
+  const [birthdays, setBirthdays] = useState<any[]>([]);
+  const [connections, setConnections] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  // Filters
+  const [paymentFilter, setPaymentFilter] = useState('PENDING');
+  const [connectionFilter, setConnectionFilter] = useState('ALL');
 
   // Enquiry Reply State
   const [replyModal, setReplyModal] = useState<{ isOpen: boolean; enquiryId: string | null; email: string; message: string }>({ isOpen: false, enquiryId: null, email: '', message: '' });
@@ -26,6 +33,19 @@ export default function AdminPanel() {
   const [offlineSuccess, setOfflineSuccess] = useState<{ regId: string; name: string; email: string } | null>(null);
   const [offlineError, setOfflineError] = useState('');
 
+  // Modals
+  const [editModal, setEditModal] = useState<{ isOpen: boolean; user: any }>({ isOpen: false, user: null });
+  const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; title: string; message: string; onConfirm: () => void; loading?: boolean }>({ 
+    isOpen: false, title: '', message: '', onConfirm: () => {} 
+  });
+
+  const fetchStats = async () => {
+    try {
+      const response = await apiClient.get('/admin/stats');
+      setStats(response.data);
+    } catch (e) { console.error("Stats Fetch Error", e); }
+  };
+
   const fetchData = async () => {
     if (activeTab === 'addProfile') return;
     setLoading(true);
@@ -37,8 +57,14 @@ export default function AdminPanel() {
         const response = await apiClient.get('/stories/admin/all');
         setStories(response.data);
       } else if (activeTab === 'payments') {
-        const response = await apiClient.get('/payments/admin/pending');
+        const response = await apiClient.get(`/payments/admin/pending?status=${paymentFilter}`);
         setPayments(response.data);
+      } else if (activeTab === 'birthdays') {
+        const response = await apiClient.get('/admin/birthdays');
+        setBirthdays(response.data);
+      } else if (activeTab === 'connections') {
+        const response = await apiClient.get(`/admin/connections?status=${connectionFilter === 'ALL' ? '' : connectionFilter}`);
+        setConnections(response.data);
       } else {
         const endpoint = activeTab === 'pending' ? '/admin/pending' : '/admin/all-users';
         const response = await apiClient.get(endpoint);
@@ -53,8 +79,9 @@ export default function AdminPanel() {
   };
 
   useEffect(() => {
+    fetchStats();
     fetchData();
-  }, [activeTab]);
+  }, [activeTab, paymentFilter, connectionFilter]);
 
   const handleReplyEnquiry = async () => {
     if (!replyModal.enquiryId || !replyText.trim()) return;
@@ -94,17 +121,41 @@ export default function AdminPanel() {
   };
 
   const handleAction = async (action: 'approve' | 'ban' | 'unban' | 'delete', userId: string) => {
-    if (action === 'delete' && !confirm("Permanently delete user?")) return;
+    if (action === 'delete') {
+      setConfirmModal({
+        isOpen: true,
+        title: 'Permanent Deletion',
+        message: 'Are you absolutely sure? This will permanently remove all user data including profile, images, and history.',
+        onConfirm: async () => {
+          try {
+            await apiClient.delete(`/admin/delete/${userId}`);
+            toast.success("User deleted permanently.");
+            setConfirmModal(prev => ({ ...prev, isOpen: false }));
+            fetchData();
+            fetchStats();
+          } catch (e: any) { toast.error(e.response?.data?.error || "Delete failed"); }
+        }
+      });
+      return;
+    }
+
     try {
       if (action === 'approve') await apiClient.post('/admin/approve', { targetUserId: userId });
       if (action === 'ban') await apiClient.post('/admin/ban', { targetUserId: userId, action: 'ban' });
       if (action === 'unban') await apiClient.post('/admin/ban', { targetUserId: userId, action: 'unban' });
-      if (action === 'delete') await apiClient.delete(`/admin/delete/${userId}`);
       toast.success(`Action "${action}" completed successfully.`);
       fetchData();
+      fetchStats();
     } catch (error: any) {
       toast.error(error.response?.data?.error || `Failed to ${action} user.`);
     }
+  };
+
+  const handleSendWish = async (userId: string) => {
+    try {
+      await apiClient.post(`/admin/birthdays/send-wishes/${userId}`);
+      toast.success("Birthday wishes sent via email!");
+    } catch (e) { toast.error("Failed to send wishes"); }
   };
 
   const handleSetPlan = async (userId: string, planType: string) => {
@@ -164,6 +215,23 @@ export default function AdminPanel() {
           </div>
         </div>
 
+        {/* Stats Summary Block */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+          {[
+            { label: 'Total Users', value: stats?.totalUsers || 0, color: 'text-blue-600', bg: 'bg-blue-50' },
+            { label: 'Active', value: stats?.activeUsers || 0, color: 'text-green-600', bg: 'bg-green-50' },
+            { label: 'Pending', value: stats?.pendingApprovals || 0, color: 'text-amber-600', bg: 'bg-amber-50' },
+            { label: 'Payments', value: stats?.pendingPayments || 0, color: 'text-purple-600', bg: 'bg-purple-50' },
+            { label: 'Connections', value: stats?.totalConnections || 0, color: 'text-rose-600', bg: 'bg-rose-50' },
+            { label: 'New This Month', value: stats?.thisMonthRegs || 0, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+          ].map((s, i) => (
+            <div key={i} className={`${s.bg} p-6 rounded-[24px] border border-black/5 shadow-sm`}>
+              <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-2">{s.label}</p>
+              <p className={`text-2xl font-display font-black ${s.color}`}>{s.value}</p>
+            </div>
+          ))}
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-12">
           
           {/* Navigation Sidebar */}
@@ -171,10 +239,12 @@ export default function AdminPanel() {
             <div className="bg-white rounded-[32px] p-6 shadow-ambient sticky top-28 border border-black/5">
               <nav className="space-y-2">
                 {[
-                  { id: 'pending', label: 'Approvals', icon: <Users size={18} />, badge: users.length },
+                  { id: 'pending', label: 'Approvals', icon: <Users size={18} />, badge: stats?.pendingApprovals || 0 },
                   { id: 'all', label: 'Community', icon: <Shield size={18} /> },
                   { id: 'enquiries', label: 'Inbox', icon: <Mail size={18} />, badge: enquiries.filter(e => !e.isResolved).length },
-                  { id: 'payments', label: 'Payments', icon: <CreditCard size={18} />, badge: payments.length },
+                  { id: 'birthdays', label: 'Birthdays', icon: <Cake size={18} />, badge: birthdays.length },
+                  { id: 'connections', label: 'Connections', icon: <Link2 size={18} /> },
+                  { id: 'payments', label: 'Payments', icon: <CreditCard size={18} />, badge: stats?.pendingPayments || 0 },
                   { id: 'addProfile', label: 'Add Profile', icon: <UserPlus size={18} /> },
                   { id: 'stories', label: 'Stories', icon: <Heart size={18} /> },
                 ].map((tab) => (
@@ -400,56 +470,165 @@ export default function AdminPanel() {
                     )}
                   </div>
                 ) : activeTab === 'payments' ? (
-                  <div className="divide-y divide-black/[0.03]">
-                    {payments.length === 0 ? (
-                      <div className="p-20 text-center text-foreground/20 font-medium">No pending payments for verification.</div>
-                    ) : (
-                      payments.map((pay: any) => (
-                        <div key={pay.id} className="p-10 flex flex-col md:flex-row gap-8 hover:bg-[#F7F9FB] transition-colors">
-                          <div className="w-full md:w-64 h-80 bg-black/5 rounded-3xl overflow-hidden border border-black/5 flex-shrink-0 group relative">
-                            <img src={resolveImageUrl(pay.screenshotUrl)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <a href={resolveImageUrl(pay.screenshotUrl)} target="_blank" rel="noreferrer" className="bg-white text-black px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-widest">View Full Size</a>
-                            </div>
-                          </div>
-                          <div className="flex-1 min-w-0 flex flex-col justify-between">
-                            <div>
-                              <div className="flex justify-between items-start mb-4">
-                                <div>
-                                  <h3 className="text-2xl font-display font-black text-foreground">{pay.user?.regId}</h3>
-                                  <p className="text-xs font-bold text-primary tracking-widest uppercase">{pay.user?.email} • {pay.user?.mobile}</p>
-                                </div>
-                                <span className="px-4 py-2 bg-primary/10 text-primary rounded-2xl font-black text-sm">₹{pay.amount}</span>
-                              </div>
-                              <div className="grid grid-cols-2 gap-4 mb-6">
-                                <div className="p-4 bg-white rounded-2xl border border-black/5 shadow-premium">
-                                  <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Plan Requested</p>
-                                  <p className="text-sm font-bold text-foreground">{pay.planType}</p>
-                                </div>
-                                <div className="p-4 bg-white rounded-2xl border border-black/5 shadow-premium">
-                                  <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Transaction ID</p>
-                                  <p className="text-sm font-bold text-foreground font-mono">{pay.transactionId}</p>
-                                </div>
+                  <div>
+                    {/* Payment Status Filter */}
+                    <div className="px-10 py-6 border-b border-black/[0.03] flex gap-4 bg-white">
+                      {['PENDING', 'APPROVED', 'REJECTED'].map(f => (
+                        <button
+                          key={f}
+                          onClick={() => setPaymentFilter(f)}
+                          className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
+                            ${paymentFilter === f ? 'bg-primary text-white shadow-md' : 'bg-black/5 text-foreground/40 hover:bg-black/10'}`}
+                        >
+                          {f}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="divide-y divide-black/[0.03]">
+                      {payments.length === 0 ? (
+                        <div className="p-20 text-center text-foreground/20 font-medium">No payments found for this filter.</div>
+                      ) : (
+                        payments.map((pay: any) => (
+                          <div key={pay.id} className="p-10 flex flex-col md:flex-row gap-8 hover:bg-[#F7F9FB] transition-colors">
+                            <div className="w-full md:w-64 h-80 bg-black/5 rounded-3xl overflow-hidden border border-black/5 flex-shrink-0 group relative">
+                              <img src={resolveImageUrl(pay.screenshotUrl)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <a href={resolveImageUrl(pay.screenshotUrl)} target="_blank" rel="noreferrer" className="bg-white text-black px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-widest">View Full Size</a>
                               </div>
                             </div>
-                            <div className="flex gap-4">
-                              <button 
-                                onClick={() => handleVerifyPayment(pay.id, 'APPROVED')}
-                                className="flex-1 h-14 bg-green-500 text-white rounded-2xl font-display font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-green-500/20 hover:bg-green-600 transition-all flex items-center justify-center gap-2"
-                              >
-                                <Check size={18} /> Approve Plan
-                              </button>
-                              <button 
-                                onClick={() => handleVerifyPayment(pay.id, 'REJECTED')}
-                                className="flex-1 h-14 bg-red-500/10 text-red-500 rounded-2xl font-display font-black text-xs uppercase tracking-[0.2em] hover:bg-red-500/20 transition-all flex items-center justify-center gap-2"
-                              >
-                                <CloseIcon size={18} /> Reject
-                              </button>
+                            <div className="flex-1 min-w-0 flex flex-col justify-between">
+                              <div>
+                                <div className="flex justify-between items-start mb-4">
+                                  <div>
+                                    <h3 className="text-2xl font-display font-black text-foreground">{pay.user?.regId}</h3>
+                                    <p className="text-xs font-bold text-primary tracking-widest uppercase">{pay.user?.email} • {pay.user?.mobile}</p>
+                                  </div>
+                                  <span className={`px-4 py-2 rounded-2xl font-black text-sm ${pay.status === 'APPROVED' ? 'bg-green-100 text-green-700' : pay.status === 'REJECTED' ? 'bg-red-100 text-red-700' : 'bg-primary/10 text-primary'}`}>₹{pay.amount}</span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4 mb-6">
+                                  <div className="p-4 bg-white rounded-2xl border border-black/5 shadow-premium">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Plan Requested</p>
+                                    <p className="text-sm font-bold text-foreground">{pay.planType}</p>
+                                  </div>
+                                  <div className="p-4 bg-white rounded-2xl border border-black/5 shadow-premium">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Transaction ID</p>
+                                    <p className="text-sm font-bold text-foreground font-mono">{pay.transactionId}</p>
+                                  </div>
+                                </div>
+                              </div>
+                              {pay.status === 'PENDING' && (
+                                <div className="flex gap-4">
+                                  <button 
+                                    onClick={() => handleVerifyPayment(pay.id, 'APPROVED')}
+                                    className="flex-1 h-14 bg-green-500 text-white rounded-2xl font-display font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-green-500/20 hover:bg-green-600 transition-all flex items-center justify-center gap-2"
+                                  >
+                                    <Check size={18} /> Approve Plan
+                                  </button>
+                                  <button 
+                                    onClick={() => handleVerifyPayment(pay.id, 'REJECTED')}
+                                    className="flex-1 h-14 bg-red-500/10 text-red-500 rounded-2xl font-display font-black text-xs uppercase tracking-[0.2em] hover:bg-red-500/20 transition-all flex items-center justify-center gap-2"
+                                  >
+                                    <CloseIcon size={18} /> Reject
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </div>
-                        </div>
-                      ))
-                    )}
+                        ))
+                      )}
+                    </div>
+                  </div>
+                ) : activeTab === 'birthdays' ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead className="bg-[#F2F4F6] text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">
+                        <tr>
+                          <th className="px-10 py-5">Member</th>
+                          <th className="px-8 py-5">Birth Date</th>
+                          <th className="px-8 py-5">Days Left</th>
+                          <th className="px-10 py-5 text-right">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {birthdays.length === 0 ? (
+                          <tr><td colSpan={4} className="p-20 text-center text-foreground/20 font-medium">No upcoming birthdays in the next 30 days.</td></tr>
+                        ) : (
+                          birthdays.map((b: any) => (
+                            <tr key={b.id} className="border-b border-black/[0.03] hover:bg-[#F7F9FB] transition-colors">
+                              <td className="px-10 py-6">
+                                <div className="font-black text-foreground">{b.firstName} {b.lastName}</div>
+                                <div className="text-[10px] font-bold text-primary uppercase">{b.regId}</div>
+                              </td>
+                              <td className="px-8 py-6 text-sm font-medium text-foreground/60">{new Date(b.birthDate).toLocaleDateString()}</td>
+                              <td className="px-8 py-6">
+                                <span className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase ${b.daysUntil === 0 ? 'bg-rose-500 text-white animate-pulse' : 'bg-amber-100 text-amber-700'}`}>
+                                  {b.daysUntil === 0 ? 'TODAY!' : `In ${b.daysUntil} Days`}
+                                </span>
+                              </td>
+                              <td className="px-10 py-6 text-right">
+                                <button onClick={() => handleSendWish(b.id)} className="px-4 py-2 bg-primary text-white rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all flex items-center gap-2 ml-auto">
+                                  <Cake size={14} /> Send Wish
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : activeTab === 'connections' ? (
+                  <div>
+                    <div className="px-10 py-6 border-b border-black/[0.03] flex gap-4 bg-white">
+                      {['ALL', 'PENDING', 'ACCEPTED', 'REJECTED'].map(f => (
+                        <button
+                          key={f}
+                          onClick={() => setConnectionFilter(f)}
+                          className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
+                            ${connectionFilter === f ? 'bg-primary text-white shadow-md' : 'bg-black/5 text-foreground/40 hover:bg-black/10'}`}
+                        >
+                          {f}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left">
+                        <thead className="bg-[#F2F4F6] text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">
+                          <tr>
+                            <th className="px-10 py-5">Sender</th>
+                            <th className="px-8 py-5">Receiver</th>
+                            <th className="px-8 py-5">Status</th>
+                            <th className="px-10 py-5 text-right">Date</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {connections.length === 0 ? (
+                            <tr><td colSpan={4} className="p-20 text-center text-foreground/20 font-medium">No connection logs found.</td></tr>
+                          ) : (
+                            connections.map((c: any) => (
+                              <tr key={c.id} className="border-b border-black/[0.03] hover:bg-[#F7F9FB] transition-colors">
+                                <td className="px-10 py-6">
+                                  <div className="font-bold text-foreground">{c.sender?.profile?.firstName} {c.sender?.profile?.lastName}</div>
+                                  <div className="text-[10px] font-medium text-foreground/30 uppercase">{c.sender?.regId}</div>
+                                </td>
+                                <td className="px-8 py-6">
+                                  <div className="font-bold text-foreground">{c.receiver?.profile?.firstName} {c.receiver?.profile?.lastName}</div>
+                                  <div className="text-[10px] font-medium text-foreground/30 uppercase">{c.receiver?.regId}</div>
+                                </td>
+                                <td className="px-8 py-6">
+                                  <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest
+                                    ${c.status === 'ACCEPTED' ? 'bg-green-50 text-green-700' : c.status === 'REJECTED' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'}`}>
+                                    {c.status}
+                                  </span>
+                                </td>
+                                <td className="px-10 py-6 text-right text-[10px] font-black text-foreground/20 uppercase">
+                                  {new Date(c.createdAt).toLocaleDateString()}
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 ) : activeTab === 'stories' ? (
                   <div className="p-8 space-y-8">
@@ -563,11 +742,14 @@ export default function AdminPanel() {
                                   <button onClick={() => handleAction('approve', user.id)} className="w-8 h-8 rounded-full bg-green-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Approve"><Check size={14} /></button>
                                 )}
                                 {activeTab === 'all' && (
-                                  user.accountStatus === 'SUSPENDED' ? (
-                                    <button onClick={() => handleAction('unban', user.id)} className="w-8 h-8 rounded-full bg-green-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Reactivate"><Check size={14} /></button>
-                                  ) : (
-                                    <button onClick={() => handleAction('ban', user.id)} className="w-8 h-8 rounded-full bg-amber-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Suspend"><Shield size={14} /></button>
-                                  )
+                                  <>
+                                    <button onClick={() => setEditModal({ isOpen: true, user })} className="w-8 h-8 rounded-full bg-blue-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Edit Profile"><Edit size={14} /></button>
+                                    {user.accountStatus === 'SUSPENDED' ? (
+                                      <button onClick={() => handleAction('unban', user.id)} className="w-8 h-8 rounded-full bg-green-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Reactivate"><Check size={14} /></button>
+                                    ) : (
+                                      <button onClick={() => handleAction('ban', user.id)} className="w-8 h-8 rounded-full bg-amber-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Suspend"><Shield size={14} /></button>
+                                    )}
+                                  </>
                                 )}
                                 <button onClick={() => handleAction('delete', user.id)} className="w-8 h-8 rounded-full bg-red-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Delete"><Trash2 size={14} /></button>
                               </td>
@@ -583,6 +765,85 @@ export default function AdminPanel() {
           </main>
         </div>
       </div>
+
+      {/* Edit User Modal */}
+      {editModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 overflow-y-auto">
+          <div className="bg-white rounded-[40px] p-10 max-w-4xl w-full shadow-2xl border border-black/10 relative">
+            <button onClick={() => setEditModal({ isOpen: false, user: null })} className="absolute top-8 right-8 p-3 text-foreground/40 hover:text-foreground bg-black/5 rounded-full transition-colors"><CloseIcon size={20} /></button>
+            
+            <div className="mb-8">
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-2 block">Administrative Override</span>
+              <h3 className="text-3xl font-display font-black text-foreground">Edit Profile: {editModal.user.regId}</h3>
+            </div>
+
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const fd = new FormData(e.currentTarget);
+              const data: any = { profile: {}, physical: {}, education: {}, family: {}, astrology: {} };
+              fd.forEach((value, key) => {
+                if (key === 'email' || key === 'mobile') data[key] = value;
+                else if (['firstName', 'lastName', 'gender', 'maritalStatus'].includes(key)) data.profile[key] = value;
+                else if (['height', 'weight', 'bloodGroup', 'complexion', 'diet'].includes(key)) data.physical[key] = value;
+                else if (['education', 'occupation', 'income'].includes(key)) data.education[key] = value;
+                else if (['fatherName', 'motherName', 'familyType', 'city'].includes(key)) data.family[key] = value;
+                else data.astrology[key] = value;
+              });
+              try {
+                await apiClient.patch(`/admin/users/${editModal.user.id}`, data);
+                toast.success('User updated successfully!');
+                setEditModal({ isOpen: false, user: null });
+                fetchData();
+              } catch (err: any) { toast.error(err.response?.data?.error || 'Update failed'); }
+            }} className="grid grid-cols-1 md:grid-cols-2 gap-8 max-h-[60vh] overflow-y-auto pr-4 scrollbar-thin">
+              
+              {/* Account Section */}
+              <div className="col-span-full border-b border-black/5 pb-4"><h4 className="text-xs font-black uppercase tracking-widest text-primary">Account Credentials</h4></div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Email Address</label>
+                <input name="email" defaultValue={editModal.user.email} className={inputClass} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Mobile Number</label>
+                <input name="mobile" defaultValue={editModal.user.mobile} className={inputClass} />
+              </div>
+
+              {/* Profile Section */}
+              <div className="col-span-full border-b border-black/5 pb-4 pt-4"><h4 className="text-xs font-black uppercase tracking-widest text-primary">Personal Details</h4></div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">First Name</label>
+                <input name="firstName" defaultValue={editModal.user.profile?.firstName} className={inputClass} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Last Name</label>
+                <input name="lastName" defaultValue={editModal.user.profile?.lastName} className={inputClass} />
+              </div>
+
+              <div className="col-span-full flex gap-4 mt-8">
+                <button type="button" onClick={() => setEditModal({ isOpen: false, user: null })} className="flex-1 h-14 rounded-2xl font-black text-xs uppercase tracking-widest text-foreground/40 hover:bg-black/5 transition-all">Discard</button>
+                <button type="submit" className="flex-2 px-12 h-14 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all">Save All Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Confirmation Modal */}
+      {confirmModal.isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-[32px] p-8 max-w-md w-full shadow-2xl border border-black/10 text-center">
+            <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <AlertCircle size={32} />
+            </div>
+            <h3 className="text-2xl font-display font-black text-foreground mb-2">{confirmModal.title}</h3>
+            <p className="text-sm font-medium text-foreground/50 leading-relaxed mb-8">{confirmModal.message}</p>
+            <div className="flex gap-3">
+              <button onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))} className="flex-1 h-12 rounded-xl font-bold text-xs uppercase tracking-widest text-foreground/40 hover:bg-black/5 transition-all">Cancel</button>
+              <button onClick={confirmModal.onConfirm} className="flex-1 h-12 bg-red-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all">Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
