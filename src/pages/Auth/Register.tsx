@@ -14,6 +14,12 @@ const registerSchema = z.object({
   email: z.string().email("Valid email required"),
   gender: z.enum(['MALE', 'FEMALE', 'OTHER']),
   maritalStatus: z.enum(['UNMARRIED', 'DIVORCED', 'WIDOWED', 'SEPARATED']),
+  birthDate: z.string().refine((val) => {
+    const dob = new Date(val);
+    if (!val || isNaN(dob.getTime())) return false;
+    const age = (Date.now() - dob.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+    return age >= 18;
+  }, { message: 'You must be at least 18 years old.' }),
   profileCreatedBy: z.enum(['Self', 'Father', 'Mother', 'Sibling', 'Relative', 'Friend', 'Marriage Bureau']).optional(),
   password: z.string().min(6, "Password must be 6+ characters"),
 });
@@ -156,6 +162,20 @@ export default function Register() {
                   </select>
                   {errors.maritalStatus && <p className="text-red-500 text-xs font-medium">Required</p>}
                 </div>
+              </div>
+
+              {/* Date of Birth */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-bold text-foreground/80">
+                  Date of Birth * <span className="text-xs font-normal text-muted-foreground">(Must be 18+)</span>
+                </label>
+                <input
+                  {...register("birthDate")}
+                  type="date"
+                  max={new Date(Date.now() - 18 * 365.25 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                  className={inputClass}
+                />
+                {errors.birthDate && <p className="text-red-500 text-xs font-medium">{errors.birthDate.message}</p>}
               </div>
 
               {/* Profile Created By — New Field */}
