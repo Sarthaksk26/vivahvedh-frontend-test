@@ -804,7 +804,7 @@ export default function AdminPanel() {
               fd.forEach((value, key) => {
                 if (key === 'email' || key === 'mobile') {
                    data[key] = value;
-                } else if (['firstName', 'lastName', 'gender', 'maritalStatus'].includes(key)) {
+                } else if (['firstName', 'lastName', 'gender', 'maritalStatus', 'birthPlace'].includes(key)) {
                    data.profile[key] = value;
                 } else if (['height', 'weight', 'bloodGroup', 'complexion', 'diet'].includes(key)) {
                    if (key === 'weight' && value) {
@@ -813,17 +813,26 @@ export default function AdminPanel() {
                        data.physical[key] = value;
                    }
                 } else if (['education', 'occupation', 'income'].includes(key)) {
-                   data.education[key] = value;
+                   if (key === 'education') data.education['trade'] = value;
+                   if (key === 'occupation') data.education['jobBusiness'] = value;
+                   if (key === 'income') data.education['annualIncome'] = value;
                 } else if (['fatherName', 'motherName', 'familyType', 'city'].includes(key)) {
-                   data.family[key] = value;
-                } else if (['birthPlace', 'rashi', 'gotra', 'manglik'].includes(key)) {
-                   if (key === 'manglik') {
-                       data.astrology[key] = value === 'Yes';
-                   } else {
-                       data.astrology[key] = value;
-                   }
+                   if (key === 'familyType') data.family['familyBackground'] = value;
+                   else if (key === 'city') data.family['motherHometown'] = value;
+                   else data.family[key] = value;
+                } else if (['rashi', 'gotra', 'manglik'].includes(key)) {
+                   if (key === 'gotra') data.astrology['gothra'] = value;
+                   else if (key === 'manglik') data.astrology['mangal'] = value;
+                   else data.astrology[key] = value;
                 }
               });
+
+              // Clean up empty objects so we don't send empty updates
+              if (Object.keys(data.profile).length === 0) delete data.profile;
+              if (Object.keys(data.physical).length === 0) delete data.physical;
+              if (Object.keys(data.education).length === 0) delete data.education;
+              if (Object.keys(data.family).length === 0) delete data.family;
+              if (Object.keys(data.astrology).length === 0) delete data.astrology;
 
               try {
                 await apiClient.patch(`/admin/users/${editModal.user.id}`, data);
@@ -899,15 +908,15 @@ export default function AdminPanel() {
               <div className="col-span-full border-b border-black/5 pb-4 pt-4"><h4 className="text-xs font-black uppercase tracking-widest text-primary">Education & Career</h4></div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Education</label>
-                <input name="education" defaultValue={editModal.user.education?.education} className={inputClass} />
+                <input name="education" defaultValue={editModal.user.education?.trade} className={inputClass} />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Occupation</label>
-                <input name="occupation" defaultValue={editModal.user.education?.occupation} className={inputClass} />
+                <input name="occupation" defaultValue={editModal.user.education?.jobBusiness} className={inputClass} />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Income</label>
-                <input name="income" defaultValue={editModal.user.education?.income} className={inputClass} />
+                <input name="income" defaultValue={editModal.user.education?.annualIncome} className={inputClass} />
               </div>
 
               {/* Family Section */}
@@ -922,11 +931,11 @@ export default function AdminPanel() {
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Family Type</label>
-                <input name="familyType" defaultValue={editModal.user.family?.familyType} className={inputClass} />
+                <input name="familyType" defaultValue={editModal.user.family?.familyBackground} className={inputClass} />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">City</label>
-                <input name="city" defaultValue={editModal.user.family?.city} className={inputClass} />
+                <input name="city" defaultValue={editModal.user.family?.motherHometown} className={inputClass} />
               </div>
 
               {/* Astrology Section */}
@@ -941,7 +950,7 @@ export default function AdminPanel() {
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Birth Place</label>
-                <input name="birthPlace" defaultValue={editModal.user.astrology?.birthPlace} className={inputClass} />
+                <input name="birthPlace" defaultValue={editModal.user.profile?.birthPlace} className={inputClass} />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Rashi</label>
@@ -949,11 +958,11 @@ export default function AdminPanel() {
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Gotra</label>
-                <input name="gotra" defaultValue={editModal.user.astrology?.gotra} className={inputClass} />
+                <input name="gotra" defaultValue={editModal.user.astrology?.gothra} className={inputClass} />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Manglik</label>
-                <select name="manglik" defaultValue={editModal.user.astrology?.manglik ? 'Yes' : 'No'} className={inputClass}>
+                <select name="manglik" defaultValue={editModal.user.astrology?.mangal === 'Yes' ? 'Yes' : 'No'} className={inputClass}>
                   <option value="No">No</option>
                   <option value="Yes">Yes</option>
                 </select>
