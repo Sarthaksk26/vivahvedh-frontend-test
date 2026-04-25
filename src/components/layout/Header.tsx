@@ -8,14 +8,29 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
 
+  const [isAdmin, setIsAdmin] = useState(false);
+
   // Reactively check auth state
   useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem('vivah_auth_token'));
+    const token = localStorage.getItem('vivah_auth_token');
+    setIsLoggedIn(!!token);
+    
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setIsAdmin(payload.role === 'ADMIN');
+      } catch (e) {
+        setIsAdmin(false);
+      }
+    } else {
+      setIsAdmin(false);
+    }
   }, [location]);
 
   const handleLogout = () => {
     localStorage.removeItem('vivah_auth_token');
     setIsLoggedIn(false);
+    setIsAdmin(false);
     window.location.href = '/login';
   };
 
@@ -62,6 +77,11 @@ export default function Header() {
           <div className="hidden lg:flex items-center gap-6 z-20">
             {isLoggedIn ? (
               <>
+                {isAdmin && (
+                  <Link to="/admin" className="clay-button-secondary text-sm px-6 py-2.5 bg-red-50 text-red-600 hover:bg-red-100 border-red-200">
+                    Admin Panel
+                  </Link>
+                )}
                 <Link to="/dashboard" className="clay-button-secondary text-sm px-6 py-2.5">
                   Dashboard
                 </Link>
@@ -126,6 +146,15 @@ export default function Header() {
 
             {isLoggedIn ? (
               <div className="flex flex-col gap-2">
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setMobileOpen(false)}
+                    className="px-4 py-3 bg-red-50 text-red-600 rounded-lg font-bold text-center border border-red-100"
+                  >
+                    Admin Panel
+                  </Link>
+                )}
                 <Link
                   to="/dashboard"
                   onClick={() => setMobileOpen(false)}
