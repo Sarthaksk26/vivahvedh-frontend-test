@@ -8,6 +8,11 @@ if (!API_URL) {
     : 'https://vivahvedh-api.onrender.com/api';
 }
 
+// Ensure the URL always ends with /api
+if (API_URL && !API_URL.endsWith('/api')) {
+  API_URL = API_URL.endsWith('/') ? `${API_URL}api` : `${API_URL}/api`;
+}
+
 const apiClient = axios.create({
   baseURL: API_URL,
   headers: {
