@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import apiClient from '../../lib/apiClient';
 import { resolveImageUrl } from '../../lib/url';
 import { Mail, Shield, Users, Trash2, Check, X as CloseIcon, UserPlus, Heart, CreditCard, Cake, Link2, Edit, AlertCircle, Eye } from 'lucide-react';
@@ -18,6 +18,8 @@ export default function AdminPanel() {
   // Filters
   const [paymentFilter, setPaymentFilter] = useState('PENDING');
   const [connectionFilter, setConnectionFilter] = useState('ALL');
+  const [allUsersFilters, setAllUsersFilters] = useState({ q: '', gender: '', ageMin: '', ageMax: '', accountStatus: '' });
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Enquiry Reply State
   const [replyModal, setReplyModal] = useState<{ isOpen: boolean; enquiryId: string | null; email: string; message: string }>({ isOpen: false, enquiryId: null, email: '', message: '' });
@@ -65,9 +67,18 @@ export default function AdminPanel() {
       } else if (activeTab === 'connections') {
         const response = await apiClient.get(`/admin/connections?status=${connectionFilter === 'ALL' ? '' : connectionFilter}`);
         setConnections(response.data);
+      } else if (activeTab === 'pending') {
+        const response = await apiClient.get('/admin/pending');
+        setUsers(response.data);
       } else {
-        const endpoint = activeTab === 'pending' ? '/admin/pending' : '/admin/all-users';
-        const response = await apiClient.get(endpoint);
+        const params = new URLSearchParams();
+        if (allUsersFilters.q) params.append('q', allUsersFilters.q);
+        if (allUsersFilters.gender) params.append('gender', allUsersFilters.gender);
+        if (allUsersFilters.ageMin) params.append('ageMin', allUsersFilters.ageMin);
+        if (allUsersFilters.ageMax) params.append('ageMax', allUsersFilters.ageMax);
+        if (allUsersFilters.accountStatus) params.append('accountStatus', allUsersFilters.accountStatus);
+        
+        const response = await apiClient.get(`/admin/all-users?${params.toString()}`);
         setUsers(response.data);
       }
     } catch (error: any) {
@@ -80,8 +91,19 @@ export default function AdminPanel() {
 
   useEffect(() => {
     fetchStats();
-    fetchData();
+    if (activeTab !== 'all') {
+      fetchData();
+    }
   }, [activeTab, paymentFilter, connectionFilter]);
+
+  useEffect(() => {
+    if (activeTab !== 'all') return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      fetchData();
+    }, 500);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [allUsersFilters, activeTab]);
 
   const handleReplyEnquiry = async () => {
     if (!replyModal.enquiryId || !replyText.trim()) return;
@@ -698,6 +720,51 @@ export default function AdminPanel() {
                     )}
                   </div>
                 ) : (
+                  <div className="flex flex-col">
+                    {activeTab === 'all' && (
+                      <div className="p-6 bg-white border-b border-black/5 flex flex-wrap gap-4 items-center rounded-t-3xl">
+                        <input 
+                          placeholder="Search RegID or Name..." 
+                          value={allUsersFilters.q}
+                          onChange={(e) => setAllUsersFilters(p => ({ ...p, q: e.target.value }))}
+                          className="h-10 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 min-w-[200px]"
+                        />
+                        <select 
+                          value={allUsersFilters.gender}
+                          onChange={(e) => setAllUsersFilters(p => ({ ...p, gender: e.target.value }))}
+                          className="h-10 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
+                        >
+                          <option value="">Any Gender</option>
+                          <option value="MALE">Male</option>
+                          <option value="FEMALE">Female</option>
+                        </select>
+                        <div className="flex items-center gap-2">
+                          <input 
+                            placeholder="Min Age" type="number" 
+                            value={allUsersFilters.ageMin}
+                            onChange={(e) => setAllUsersFilters(p => ({ ...p, ageMin: e.target.value }))}
+                            className="h-10 w-24 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
+                          />
+                          <span className="text-foreground/30 text-xs">-</span>
+                          <input 
+                            placeholder="Max Age" type="number" 
+                            value={allUsersFilters.ageMax}
+                            onChange={(e) => setAllUsersFilters(p => ({ ...p, ageMax: e.target.value }))}
+                            className="h-10 w-24 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
+                          />
+                        </div>
+                        <select 
+                          value={allUsersFilters.accountStatus}
+                          onChange={(e) => setAllUsersFilters(p => ({ ...p, accountStatus: e.target.value }))}
+                          className="h-10 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
+                        >
+                          <option value="">All Statuses</option>
+                          <option value="ACTIVE">Active</option>
+                          <option value="INACTIVE">Inactive (Pending)</option>
+                          <option value="SUSPENDED">Suspended</option>
+                        </select>
+                      </div>
+                    )}
                   <div className="overflow-x-auto">
                     <table className="w-full text-left">
                       <thead className="bg-[#F2F4F6] text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">
@@ -760,6 +827,7 @@ export default function AdminPanel() {
                       </tbody>
                     </table>
                   </div>
+                </div>
                 )}
               </div>
             </div>
@@ -781,7 +849,7 @@ export default function AdminPanel() {
             <form onSubmit={async (e) => {
               e.preventDefault();
               const fd = new FormData(e.currentTarget);
-              const data: any = { profile: {}, physical: {}, education: {}, family: {}, astrology: {} };
+              const data: any = { profile: {}, physical: {}, education: {}, family: {}, astrology: {}, addresses: {} };
               
               const birthDate = fd.get('birthDate') as string;
               const birthTime = fd.get('birthTime') as string;
@@ -816,14 +884,18 @@ export default function AdminPanel() {
                    if (key === 'education') data.education['trade'] = value;
                    if (key === 'occupation') data.education['jobBusiness'] = value;
                    if (key === 'income') data.education['annualIncome'] = value;
-                } else if (['fatherName', 'motherName', 'familyType', 'city'].includes(key)) {
+                } else if (['fatherName', 'motherName', 'familyType', 'motherHometown'].includes(key)) {
                    if (key === 'familyType') data.family['familyBackground'] = value;
-                   else if (key === 'city') data.family['motherHometown'] = value;
+                   else if (key === 'motherHometown') data.family['motherHometown'] = value;
                    else data.family[key] = value;
                 } else if (['rashi', 'gotra', 'manglik'].includes(key)) {
                    if (key === 'gotra') data.astrology['gothra'] = value;
                    else if (key === 'manglik') data.astrology['mangal'] = value;
                    else data.astrology[key] = value;
+                } else if (['address_city', 'address_district', 'address_state'].includes(key)) {
+                   if (key === 'address_city') data.addresses['city'] = value;
+                   if (key === 'address_district') data.addresses['district'] = value;
+                   if (key === 'address_state') data.addresses['state'] = value;
                 }
               });
 
@@ -833,6 +905,7 @@ export default function AdminPanel() {
               if (Object.keys(data.education).length === 0) delete data.education;
               if (Object.keys(data.family).length === 0) delete data.family;
               if (Object.keys(data.astrology).length === 0) delete data.astrology;
+              if (Object.keys(data.addresses).length === 0) delete data.addresses;
 
               try {
                 await apiClient.patch(`/admin/users/${editModal.user.id}`, data);
@@ -934,8 +1007,23 @@ export default function AdminPanel() {
                 <input name="familyType" defaultValue={editModal.user.family?.familyBackground} className={inputClass} />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">City</label>
-                <input name="city" defaultValue={editModal.user.family?.motherHometown} className={inputClass} />
+                <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Hometown</label>
+                <input name="motherHometown" defaultValue={editModal.user.family?.motherHometown} className={inputClass} />
+              </div>
+
+              {/* Address Section */}
+              <div className="col-span-full border-b border-black/5 pb-4 pt-4"><h4 className="text-xs font-black uppercase tracking-widest text-primary">Current Address</h4></div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">City / Village</label>
+                <input name="address_city" defaultValue={editModal.user.addresses?.[0]?.city} className={inputClass} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">District</label>
+                <input name="address_district" defaultValue={editModal.user.addresses?.[0]?.district} className={inputClass} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">State</label>
+                <input name="address_state" defaultValue={editModal.user.addresses?.[0]?.state} className={inputClass} />
               </div>
 
               {/* Astrology Section */}

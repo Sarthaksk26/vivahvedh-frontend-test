@@ -7,7 +7,10 @@ import { resolveImageUrl } from '../../lib/url';
 export default function Search() {
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState({ gender: '', maritalStatus: '', q: '' });
+  const [filters, setFilters] = useState({ 
+    gender: '', maritalStatus: '', q: '',
+    ageMin: '', ageMax: '', height: '', trade: '', occupation: '', location: '', diet: ''
+  });
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchMatches = async (currentFilters: typeof filters) => {
@@ -17,6 +20,13 @@ export default function Search() {
       if (currentFilters.gender) params.append('gender', currentFilters.gender);
       if (currentFilters.maritalStatus) params.append('maritalStatus', currentFilters.maritalStatus);
       if (currentFilters.q) params.append('q', currentFilters.q);
+      if (currentFilters.ageMin) params.append('ageMin', currentFilters.ageMin);
+      if (currentFilters.ageMax) params.append('ageMax', currentFilters.ageMax);
+      if (currentFilters.height) params.append('height', currentFilters.height);
+      if (currentFilters.trade) params.append('trade', currentFilters.trade);
+      if (currentFilters.occupation) params.append('occupation', currentFilters.occupation);
+      if (currentFilters.location) params.append('location', currentFilters.location);
+      if (currentFilters.diet) params.append('diet', currentFilters.diet);
 
       const response = await apiClient.get(`/search?${params.toString()}`);
       setResults(response.data.results);
@@ -87,6 +97,46 @@ export default function Search() {
                   <option value="UNMARRIED">Unmarried</option>
                   <option value="DIVORCED">Divorced</option>
                   <option value="WIDOWED">Widowed</option>
+                  <option value="SEPARATED">Separated</option>
+                </select>
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Age Range</label>
+                <div className="flex gap-2">
+                  <input type="number" name="ageMin" placeholder="Min" value={filters.ageMin} onChange={handleFilterChange} className="w-1/2 h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none" />
+                  <input type="number" name="ageMax" placeholder="Max" value={filters.ageMax} onChange={handleFilterChange} className="w-1/2 h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none" />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Height</label>
+                <input type="text" name="height" placeholder="e.g. 5'8&quot; or 170cm" value={filters.height} onChange={handleFilterChange} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none placeholder:text-foreground/20" />
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Location (City/State)</label>
+                <input type="text" name="location" placeholder="Pune, Maharashtra..." value={filters.location} onChange={handleFilterChange} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none placeholder:text-foreground/20" />
+              </div>
+              
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Education / Trade</label>
+                <input type="text" name="trade" placeholder="e.g. B.Tech, MBA" value={filters.trade} onChange={handleFilterChange} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none placeholder:text-foreground/20" />
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Occupation</label>
+                <input type="text" name="occupation" placeholder="Software Engineer..." value={filters.occupation} onChange={handleFilterChange} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none placeholder:text-foreground/20" />
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Diet</label>
+                <select name="diet" onChange={handleFilterChange} value={filters.diet} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none appearance-none cursor-pointer">
+                  <option value="">Any Diet</option>
+                  <option value="Vegetarian">Vegetarian</option>
+                  <option value="Non-Vegetarian">Non-Vegetarian</option>
+                  <option value="Vegan">Vegan</option>
+                  <option value="Jain">Jain</option>
                 </select>
               </div>
 

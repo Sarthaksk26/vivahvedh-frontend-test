@@ -80,6 +80,10 @@ export default function ProfileEditor({
     mangal: currentData.astrology?.mangal || '',
     // Preferences
     expectations: currentData.preferences?.expectations || '',
+    // Address
+    city: currentData.addresses?.[0]?.city || '',
+    district: currentData.addresses?.[0]?.district || '',
+    state: currentData.addresses?.[0]?.state || '',
   });
   const [saving, setSaving] = useState(false);
 
@@ -141,6 +145,11 @@ export default function ProfileEditor({
       },
       preferences: {
         expectations: formData.expectations || null
+      },
+      addresses: {
+        city: formData.city || null,
+        district: formData.district || null,
+        state: formData.state || null
       }
     };
 
@@ -296,6 +305,23 @@ export default function ProfileEditor({
           <div className="space-y-1 md:col-span-2">
             <label className="text-sm font-semibold text-muted-foreground">Family Wealth / Property</label>
             <textarea name="familyWealth" value={formData.familyWealth} onChange={handleChange} className={textareaClass} placeholder="Agriculture land, plots, flats, etc." />
+          </div>
+        </div>
+      </CollapsibleSection>
+
+      <CollapsibleSection title="Current Address" icon="📍">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <label className="text-sm font-semibold text-muted-foreground">City / Village</label>
+            <input type="text" name="city" value={formData.city} onChange={handleChange} className={inputClass} placeholder="e.g. Pune, Kothrud" />
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-semibold text-muted-foreground">District</label>
+            <input type="text" name="district" value={formData.district} onChange={handleChange} className={inputClass} placeholder="e.g. Pune" />
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-semibold text-muted-foreground">State</label>
+            <input type="text" name="state" value={formData.state} onChange={handleChange} className={inputClass} placeholder="e.g. Maharashtra" />
           </div>
         </div>
       </CollapsibleSection>
