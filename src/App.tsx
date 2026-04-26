@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import MainLayout from './components/layout/MainLayout';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Auth/Login'));
@@ -30,49 +31,51 @@ const PageLoader = () => (
 
 function App() {
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <Toaster 
-        position="top-center" 
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: '#fff',
-            color: '#333',
-            borderRadius: '16px',
-            fontSize: '14px',
-            fontWeight: '600',
-            border: '1px solid rgba(0,0,0,0.05)',
-            boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
-          },
-        }} 
-      />
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route element={<MainLayout />}>
-            {/* Public Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/rules" element={<Rules />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/profile/:id" element={<PublicProfile />} />
-            <Route path="/success-stories" element={<SuccessStories />} />
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Toaster 
+          position="top-center" 
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#fff',
+              color: '#333',
+              borderRadius: '16px',
+              fontSize: '14px',
+              fontWeight: '600',
+              border: '1px solid rgba(0,0,0,0.05)',
+              boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
+            },
+          }} 
+        />
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route element={<MainLayout />}>
+              {/* Public Routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/rules" element={<Rules />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/profile/:id" element={<PublicProfile />} />
+              <Route path="/success-stories" element={<SuccessStories />} />
 
-            {/* Private Logged-In Routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/admin" element={<AdminPanel />} />
+              {/* Private Logged-In Routes */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/admin" element={<AdminPanel />} />
+              </Route>
+
+              {/* Catch-all 404 */}
+              <Route path="*" element={<NotFound />} />
             </Route>
-
-            {/* Catch-all 404 */}
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

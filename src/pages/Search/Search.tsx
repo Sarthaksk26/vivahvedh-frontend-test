@@ -13,8 +13,11 @@ export default function Search() {
   });
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const [restriction, setRestriction] = useState<{ code: string; message: string } | null>(null);
+
   const fetchMatches = async (currentFilters: typeof filters) => {
     setLoading(true);
+    setRestriction(null);
     try {
       const params = new URLSearchParams();
       if (currentFilters.gender) params.append('gender', currentFilters.gender);
@@ -30,12 +33,19 @@ export default function Search() {
 
       const response = await apiClient.get(`/search?${params.toString()}`);
       setResults(response.data.results);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.response?.status === 403) {
+        setRestriction({ 
+          code: error.response.data.code, 
+          message: error.response.data.error 
+        });
+      }
       console.error(error);
     } finally {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -168,6 +178,18 @@ export default function Search() {
                 <div key={i} className="h-[450px] bg-white rounded-[32px] animate-pulse border border-black/5 shadow-sm"></div>
               ))}
             </div>
+          ) : restriction ? (
+            <div className="min-h-[400px] flex flex-col items-center justify-center p-12 bg-white rounded-[40px] border border-primary/20 shadow-premium text-center">
+              <div className="w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center text-3xl mb-6 grayscale-0 animate-pulse">🔒</div>
+              <h3 className="text-2xl font-display font-black text-foreground mb-4">Discovery Locked</h3>
+              <p className="text-foreground/60 max-w-sm font-medium leading-relaxed mb-6">{restriction.message}</p>
+              <button 
+                onClick={() => window.location.href = '/dashboard'}
+                className="clay-button-primary px-8 py-3 text-[10px] uppercase tracking-widest"
+              >
+                Go to Dashboard
+              </button>
+            </div>
           ) : results.length === 0 ? (
             <div className="min-h-[400px] flex flex-col items-center justify-center p-12 bg-white rounded-[40px] border border-black/5 shadow-ambient text-center">
               <div className="w-20 h-20 bg-[#F2F4F6] rounded-full flex items-center justify-center text-3xl mb-6 grayscale opacity-50">🔍</div>
@@ -175,6 +197,7 @@ export default function Search() {
               <p className="text-foreground/40 max-w-sm font-medium leading-relaxed">We couldn't find any profiles matching your specific filters. Try expanding your search criteria.</p>
             </div>
           ) : (
+
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
               {results.map((user, index) => {
                 const isGold = user.planType === 'GOLD';

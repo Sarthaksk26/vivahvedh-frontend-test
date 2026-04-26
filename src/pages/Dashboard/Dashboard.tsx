@@ -10,7 +10,8 @@ import toast from 'react-hot-toast';
 export default function Dashboard() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('profile');
+  const isForced = localStorage.getItem('vivah_force_password_change') === 'true';
+  const [activeTab, setActiveTab] = useState(isForced ? 'password' : 'profile');
 
   // Password change state
   const [currentPassword, setCurrentPassword] = useState('');
@@ -42,6 +43,7 @@ export default function Dashboard() {
     try {
       await apiClient.post('/user/change-password', { currentPassword, newPassword });
       toast.success('Password changed successfully!');
+      localStorage.removeItem('vivah_force_password_change');
       setCurrentPassword('');
       setNewPassword('');
     } catch (err: any) {
@@ -103,13 +105,16 @@ export default function Dashboard() {
             ].map(tab => (
               <button
                 key={tab.key}
+                disabled={isForced && tab.key !== 'password'}
                 onClick={() => setActiveTab(tab.key)}
                 className={`px-4 py-2 text-left rounded-md transition-colors text-sm ${
                   activeTab === tab.key
                     ? tab.highlight
                       ? 'bg-rose-100 text-rose-700 font-bold border border-rose-200'
                       : 'bg-primary/10 text-primary font-bold'
-                    : 'hover:bg-muted font-medium text-muted-foreground'
+                    : isForced && tab.key !== 'password'
+                      ? 'opacity-30 cursor-not-allowed font-medium text-muted-foreground'
+                      : 'hover:bg-muted font-medium text-muted-foreground'
                 }`}
               >
                 {tab.label}
@@ -131,6 +136,31 @@ export default function Dashboard() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col gap-6 min-w-0">
+        {profile.accountStatus === 'INACTIVE' && (
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 p-6 rounded-2xl shadow-sm">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 flex-shrink-0 animate-pulse">
+                <Shield size={24} />
+              </div>
+              <div>
+                <h3 className="font-display font-black text-amber-900 text-lg">Verification in Progress</h3>
+                <p className="text-amber-800/70 text-sm mt-1 leading-relaxed">
+                  Welcome to Vivahvedh! Your profile is currently being reviewed by our administrative team. 
+                  During this time, you can <strong>complete your profile details</strong> and <strong>upload photos</strong>, 
+                  but searching and sending match proposals will be enabled once your account is verified (usually within 24 hours).
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isForced && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-700 p-4 rounded-xl flex items-center gap-3 font-bold text-sm shadow-sm animate-pulse">
+            <Shield size={18} />
+            ⚠️ You must change your password before accessing your account.
+          </div>
+        )}
+
 
         {activeTab === 'profile' && (
           <div className="space-y-6">

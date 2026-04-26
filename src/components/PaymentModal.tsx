@@ -22,11 +22,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
     if (isOpen) setSubmitted(false);
   }, [isOpen]);
 
+  const UPI_VPA = import.meta.env.VITE_UPI_VPA as string | undefined;
+
   const generateUPIUrl = () => {
-    const vpa = "YOUR_VPA@okaxis"; 
+    const vpa = UPI_VPA;
     const name = "Vivahvedh Matrimony";
     const txNote = `Plan_${planType}`;
-    return `upi://pay?pa=${vpa}&pn=${encodeURIComponent(name)}&am=${price}&cu=INR&tn=${encodeURIComponent(txNote)}`;
+    return vpa 
+      ? `upi://pay?pa=${vpa}&pn=${encodeURIComponent(name)}&am=${price}&cu=INR&tn=${encodeURIComponent(txNote)}`
+      : null;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -104,12 +108,27 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
               {/* QR Section */}
               <div className="flex flex-col items-center justify-center p-8 bg-[#F2F4F6] rounded-[40px] border border-black/5">
                 <div className="p-4 bg-white rounded-3xl shadow-ambient">
-                  <QRCodeCanvas value={generateUPIUrl()} size={140} />
+                  {generateUPIUrl() ? (
+                    <QRCodeCanvas value={generateUPIUrl()!} size={140} />
+                  ) : (
+                    <div className="w-[140px] h-[140px] flex flex-col items-center justify-center text-center p-3 bg-amber-50 rounded-2xl border border-amber-200">
+                      <p className="text-amber-700 text-xs font-bold leading-relaxed">
+                        QR Unavailable
+                      </p>
+                      <p className="text-amber-600 text-[10px] mt-1">
+                        Pay manually to UPI ID below
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <div className="mt-8 text-center">
                   <p className="text-xs font-black uppercase tracking-[0.2em] text-foreground/30 mb-1">Amount Due</p>
                   <p className="text-3xl font-display font-black silk-gradient bg-clip-text text-transparent">₹{price}</p>
-                  <p className="text-[10px] font-bold text-foreground/40 mt-3 uppercase tracking-widest">Scan with any UPI App</p>
+                  {UPI_VPA ? (
+                    <p className="text-[10px] font-bold text-foreground/40 mt-3 uppercase tracking-widest">Scan with any UPI App</p>
+                  ) : (
+                    <p className="text-[10px] font-bold text-primary mt-3 font-mono">{/* fallback shown above */}</p>
+                  )}
                 </div>
               </div>
 

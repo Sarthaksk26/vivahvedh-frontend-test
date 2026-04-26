@@ -126,6 +126,22 @@ export default function ConnectionsList() {
                   <Link to={`/profile/${req.receiver.id}`} className="px-4 py-2 border rounded-md text-sm font-medium hover:bg-muted transition">
                     View Profile
                   </Link>
+                  {req.status === 'PENDING' && (
+                    <button 
+                      onClick={async () => {
+                        try {
+                          await apiClient.post('/connections/withdraw', { requestId: req.id });
+                          toast.success('Proposal withdrawn.');
+                          fetchConnections();
+                        } catch (err: any) {
+                          toast.error(err.response?.data?.error || 'Failed to withdraw.');
+                        }
+                      }}
+                      className="px-4 py-2 border border-amber-200 text-amber-600 rounded-md text-sm font-bold hover:bg-amber-50 transition"
+                    >
+                      Withdraw
+                    </button>
+                  )}
                   {req.status === 'ACCEPTED' && (
                     <div className="px-4 py-2 bg-green-100 text-green-800 rounded-md text-sm font-bold">Contact: {req.receiver.mobile}</div>
                   )}

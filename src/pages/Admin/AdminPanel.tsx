@@ -530,7 +530,7 @@ export default function AdminPanel() {
                                 <div className="grid grid-cols-2 gap-4 mb-6">
                                   <div className="p-4 bg-white rounded-2xl border border-black/5 shadow-premium">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Plan Requested</p>
-                                    <p className="text-sm font-bold text-foreground">{pay.planType}</p>
+                                    <p className="text-sm font-bold text-foreground">{pay.planType} <span className="text-primary text-xs">(₹{pay.amount} claimed)</span></p>
                                   </div>
                                   <div className="p-4 bg-white rounded-2xl border border-black/5 shadow-premium">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Transaction ID</p>
@@ -712,7 +712,23 @@ export default function AdminPanel() {
                                   <button onClick={async () => { try { await apiClient.post('/stories/admin/review', { storyId: s.id, status: 'REJECTED' }); toast.success('Story Rejected.'); fetchData(); } catch(e) { toast.error('Failed'); } }} className="w-8 h-8 rounded-full bg-amber-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Reject"><CloseIcon size={14} /></button>
                                 </>
                               )}
-                              <button onClick={async () => { if (!confirm('Delete this story?')) return; try { await apiClient.delete(`/stories/admin/${s.id}`); toast.success('Story deleted permanently.'); fetchData(); } catch(e) { toast.error('Failed to delete'); } }} className="w-8 h-8 rounded-full bg-red-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Delete"><Trash2 size={14} /></button>
+                              <button onClick={() => {
+                                setConfirmModal({
+                                  isOpen: true,
+                                  title: 'Delete Story',
+                                  message: "This will permanently remove this couple's success story. This action cannot be undone.",
+                                  onConfirm: async () => {
+                                    try {
+                                      await apiClient.delete(`/stories/admin/${s.id}`);
+                                      toast.success('Story deleted permanently.');
+                                      setConfirmModal(prev => ({ ...prev, isOpen: false }));
+                                      fetchData();
+                                    } catch (e) {
+                                      toast.error('Failed to delete story.');
+                                    }
+                                  }
+                                });
+                              }} className="w-8 h-8 rounded-full bg-red-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Delete"><Trash2 size={14} /></button>
                             </div>
                           </div>
                         ))}
