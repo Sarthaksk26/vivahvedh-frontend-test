@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import apiClient from '../../lib/apiClient';
 import CarouselLightbox from '../layout/Lightbox';
+import { resolveImageUrl } from '../../lib/url';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, Upload, ImagePlus, Star, ZoomIn, X, CheckCircle, AlertCircle } from 'lucide-react';
 
@@ -291,7 +292,7 @@ export default function PhotoUpload({
                 >
                   {/* Image */}
                   <img
-                    src={img.url}
+                    src={resolveImageUrl(img.url)}
                     onClick={() => { setCarouselIndex(idx); setCarouselOpen(true); }}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.05] cursor-zoom-in"
                     alt={`Gallery ${idx + 1}`}

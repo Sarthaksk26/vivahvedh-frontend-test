@@ -12,6 +12,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const isForced = localStorage.getItem('vivah_force_password_change') === 'true';
   const [activeTab, setActiveTab] = useState(isForced ? 'password' : 'profile');
+  const [isEditing, setIsEditing] = useState(false);
+  const [shortlist, setShortlist] = useState<any[]>([]);
 
   // Password change state
   const [currentPassword, setCurrentPassword] = useState('');
@@ -29,9 +31,22 @@ export default function Dashboard() {
     }
   }, []);
 
+  const fetchShortlist = useCallback(async () => {
+    try {
+      const res = await apiClient.get('/user/shortlist');
+      setShortlist(res.data);
+    } catch (err) {
+      console.error('Failed to fetch shortlist', err);
+    }
+  }, []);
+
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
+
+  useEffect(() => {
+    if (activeTab === 'shortlist') fetchShortlist();
+  }, [activeTab, fetchShortlist]);
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +66,11 @@ export default function Dashboard() {
     } finally {
       setChangingPassword(false);
     }
+  };
+
+  const switchTab = (tab: string) => {
+    setActiveTab(tab);
+    setIsEditing(false); // Reset editing mode when switching tabs
   };
 
   const planColors: Record<string, string> = {
@@ -98,15 +118,15 @@ export default function Dashboard() {
           <nav className="flex flex-col gap-1 mt-2">
             {[
               { key: 'profile', label: 'My Profile' },
-              { key: 'edit', label: 'Edit Details' },
               { key: 'photos', label: 'Photo Gallery' },
               { key: 'connections', label: 'My Connections', highlight: true },
+              { key: 'shortlist', label: 'My Shortlist' },
               { key: 'password', label: 'Change Password' },
             ].map(tab => (
               <button
                 key={tab.key}
                 disabled={isForced && tab.key !== 'password'}
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => switchTab(tab.key)}
                 className={`px-4 py-2 text-left rounded-md transition-colors text-sm ${
                   activeTab === tab.key
                     ? tab.highlight
@@ -164,47 +184,70 @@ export default function Dashboard() {
 
         {activeTab === 'profile' && (
           <div className="space-y-6">
-            <div className="bg-card border shadow-sm rounded-2xl p-6 md:p-8">
-              <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Profile Overview</h1>
-                <span className={`px-3 py-1 rounded-full text-xs font-bold ${profile.accountStatus === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
-                  {profile.accountStatus}
-                </span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
-                <div><p className="text-sm font-semibold text-muted-foreground mb-1">Email</p><p className="font-medium">{profile.email || "Not Provided"}</p></div>
-                <div><p className="text-sm font-semibold text-muted-foreground mb-1">Mobile</p><p className="font-medium">{profile.mobile}</p></div>
-                <div><p className="text-sm font-semibold text-muted-foreground mb-1">Gender</p><p className="font-medium">{profile.profile?.gender}</p></div>
-                <div><p className="text-sm font-semibold text-muted-foreground mb-1">Marital Status</p><p className="font-medium">{profile.profile?.maritalStatus}</p></div>
-                <div className="col-span-full">
-                  <p className="text-sm font-semibold text-muted-foreground mb-1">About Me</p>
-                  <p className="font-medium text-foreground/80 leading-relaxed bg-muted/30 p-4 rounded-lg">{profile.profile?.aboutMe || "No description provided yet."}</p>
+            {!isEditing ? (
+              <>
+                <div className="bg-card border shadow-sm rounded-2xl p-6 md:p-8">
+                  <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-2xl font-bold">Profile Overview</h1>
+                    <div className="flex items-center gap-3">
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${profile.accountStatus === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                        {profile.accountStatus}
+                      </span>
+                      <button 
+                        onClick={() => setIsEditing(true)}
+                        className="px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primary/90 transition shadow-sm active:scale-95"
+                      >
+                        ✏️ Edit Profile
+                      </button>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
+                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Email</p><p className="font-medium">{profile.email || "Not Provided"}</p></div>
+                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Mobile</p><p className="font-medium">{profile.mobile}</p></div>
+                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Gender</p><p className="font-medium">{profile.profile?.gender}</p></div>
+                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Marital Status</p><p className="font-medium">{profile.profile?.maritalStatus}</p></div>
+                    <div className="col-span-full">
+                      <p className="text-sm font-semibold text-muted-foreground mb-1">About Me</p>
+                      <p className="font-medium text-foreground/80 leading-relaxed bg-muted/30 p-4 rounded-lg">{profile.profile?.aboutMe || "No description provided yet."}</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="bg-card border shadow-sm rounded-2xl p-6 md:p-8">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold">Extended Details</h2>
-                <button onClick={() => setActiveTab('edit')} className="text-sm font-bold text-primary hover:underline">Edit</button>
+                <div className="bg-card border shadow-sm rounded-2xl p-6 md:p-8">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-bold">Extended Details</h2>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
+                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Height</p><p className="font-medium">{profile.physical?.height ? `${profile.physical.height} in` : "-"}</p></div>
+                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Profession</p><p className="font-medium">{profile.education?.jobBusiness || "-"}</p></div>
+                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Income</p><p className="font-medium">{profile.education?.annualIncome || "-"}</p></div>
+                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Father's Occupation</p><p className="font-medium">{profile.family?.fatherOccupation || "-"}</p></div>
+                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Gothra</p><p className="font-medium">{profile.astrology?.gothra || "-"}</p></div>
+                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Rashi</p><p className="font-medium">{profile.astrology?.rashi || "-"}</p></div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="bg-card border shadow-sm rounded-2xl p-6 md:p-8">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold">Edit Your Profile</h2>
+                  <button 
+                    onClick={() => setIsEditing(false)}
+                    className="px-4 py-2 border text-sm font-bold rounded-lg hover:bg-muted transition"
+                  >
+                    ← Cancel
+                  </button>
+                </div>
+                <p className="text-muted-foreground mb-6">Complete your profile to increase visibility and match quality.</p>
+                <ProfileEditor 
+                  currentData={profile} 
+                  onSaveSuccess={() => { 
+                    fetchProfile(); 
+                    setIsEditing(false); // Return to view mode after save
+                  }} 
+                />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
-                <div><p className="text-sm font-semibold text-muted-foreground mb-1">Height</p><p className="font-medium">{profile.physical?.height ? `${profile.physical.height} cm` : "-"}</p></div>
-                <div><p className="text-sm font-semibold text-muted-foreground mb-1">Profession</p><p className="font-medium">{profile.education?.jobBusiness || "-"}</p></div>
-                <div><p className="text-sm font-semibold text-muted-foreground mb-1">Income</p><p className="font-medium">{profile.education?.annualIncome || "-"}</p></div>
-                <div><p className="text-sm font-semibold text-muted-foreground mb-1">Father's Occupation</p><p className="font-medium">{profile.family?.fatherOccupation || "-"}</p></div>
-                <div><p className="text-sm font-semibold text-muted-foreground mb-1">Gothra</p><p className="font-medium">{profile.astrology?.gothra || "-"}</p></div>
-                <div><p className="text-sm font-semibold text-muted-foreground mb-1">Rashi</p><p className="font-medium">{profile.astrology?.rashi || "-"}</p></div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'edit' && (
-          <div className="bg-card border shadow-sm rounded-2xl p-6 md:p-8">
-            <h2 className="text-xl font-bold mb-2">Edit Your Profile</h2>
-            <p className="text-muted-foreground mb-6">Complete your profile to increase visibility and match quality.</p>
-            <ProfileEditor currentData={profile} onSaveSuccess={() => { fetchProfile(); setActiveTab('profile'); }} />
+            )}
           </div>
         )}
 
@@ -218,6 +261,61 @@ export default function Dashboard() {
           <section>
             <ConnectionsList />
           </section>
+        )}
+
+        {activeTab === 'shortlist' && (
+          <div className="bg-card border shadow-sm rounded-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b bg-amber-50 flex justify-between items-center">
+              <h2 className="font-bold text-lg text-amber-900">My Shortlisted Profiles</h2>
+              <span className="px-3 py-1 bg-amber-200 text-amber-800 rounded-full text-xs font-bold">{shortlist.length}</span>
+            </div>
+            {shortlist.length === 0 ? (
+              <div className="p-12 text-center text-muted-foreground">
+                <p className="text-4xl mb-4">⭐</p>
+                <p className="font-semibold">No profiles shortlisted yet.</p>
+                <p className="text-sm mt-1">Browse profiles and click the shortlist button to save them here.</p>
+              </div>
+            ) : (
+              <div className="divide-y">
+                {shortlist.map((item: any) => (
+                  <div key={item.id} className="p-6 flex items-center gap-4 hover:bg-muted/30 transition">
+                    <div className="w-16 h-16 rounded-full bg-muted border overflow-hidden flex-shrink-0">
+                      {item.target.images?.[0]?.url ? (
+                        <img src={resolveImageUrl(item.target.images[0].url)} className="w-full h-full object-cover" alt="" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center font-bold text-muted-foreground">
+                          {item.target.profile?.firstName?.[0] || 'V'}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold">{item.target.profile?.firstName} {item.target.profile?.lastName}</h3>
+                      <p className="text-sm text-primary font-medium">{item.target.regId}</p>
+                      <p className="text-xs text-muted-foreground">{item.target.profile?.gender} • {item.target.profile?.maritalStatus}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <a 
+                        href={`/profile/${item.target.id}`}
+                        className="px-4 py-2 border rounded-md text-sm font-medium hover:bg-muted transition"
+                      >
+                        View Profile
+                      </a>
+                      <button
+                        onClick={async () => {
+                          await apiClient.post('/user/shortlist', { targetUserId: item.target.id });
+                          fetchShortlist();
+                          toast.success('Removed from shortlist');
+                        }}
+                        className="px-4 py-2 border border-amber-200 text-amber-600 rounded-md text-sm font-bold hover:bg-amber-50 transition"
+                      >
+                        ★ Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         )}
 
         {activeTab === 'password' && (

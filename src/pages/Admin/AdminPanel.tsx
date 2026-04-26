@@ -1,17 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
 import apiClient from '../../lib/apiClient';
 import { resolveImageUrl } from '../../lib/url';
-import { Mail, Shield, Users, Trash2, Check, X as CloseIcon, UserPlus, Heart, CreditCard, Cake, Link2, Edit, AlertCircle, Eye } from 'lucide-react';
+import { Mail, Shield, Users, Trash2, Check, X as CloseIcon, UserPlus, Heart, CreditCard, Cake, Link2, Edit, AlertCircle, Eye, TrendingUp } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'enquiries' | 'addProfile' | 'stories' | 'payments' | 'birthdays' | 'connections'>('pending');
+  const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'enquiries' | 'addProfile' | 'stories' | 'payments' | 'birthdays' | 'connections' | 'profit'>('pending');
   const [users, setUsers] = useState<any[]>([]);
   const [enquiries, setEnquiries] = useState<any[]>([]);
   const [stories, setStories] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
   const [birthdays, setBirthdays] = useState<any[]>([]);
   const [connections, setConnections] = useState<any[]>([]);
+  const [profitData, setProfitData] = useState<any>(null);
+  const [notifications, setNotifications] = useState<any>(null);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -67,6 +69,9 @@ export default function AdminPanel() {
       } else if (activeTab === 'connections') {
         const response = await apiClient.get(`/admin/connections?status=${connectionFilter === 'ALL' ? '' : connectionFilter}`);
         setConnections(response.data);
+      } else if (activeTab === 'profit') {
+        const response = await apiClient.get('/admin/profit');
+        setProfitData(response.data);
       } else if (activeTab === 'pending') {
         const response = await apiClient.get('/admin/pending');
         setUsers(response.data);
@@ -88,6 +93,19 @@ export default function AdminPanel() {
       setLoading(false);
     }
   };
+
+  // Fetch notifications on mount and every 60 seconds
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await apiClient.get('/admin/notifications');
+        setNotifications(res.data);
+      } catch (e) { console.error(e); }
+    };
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     fetchStats();
@@ -254,6 +272,34 @@ export default function AdminPanel() {
           ))}
         </div>
 
+        {/* Notification Action Panel */}
+        {notifications && notifications.totalUnread > 0 && (
+          <div className="mb-8 bg-white rounded-[32px] p-6 shadow-ambient border border-black/5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-display font-black text-sm uppercase tracking-widest text-foreground/40">
+                Action Required
+              </h3>
+              <span className="px-3 py-1 bg-red-500 text-white text-xs font-black rounded-full animate-pulse">
+                {notifications.totalUnread} Pending
+              </span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {Object.entries(notifications.notifications)
+                .filter(([, v]: [string, any]) => v.urgent)
+                .map(([key, v]: [string, any]) => (
+                  <button
+                    key={key}
+                    onClick={() => setActiveTab(v.tab as any)}
+                    className="p-4 bg-red-50 border border-red-100 rounded-2xl text-left hover:bg-red-100 transition-colors group"
+                  >
+                    <p className="text-2xl font-display font-black text-red-600">{v.count}</p>
+                    <p className="text-[10px] font-bold text-red-400 uppercase tracking-wider mt-1 leading-tight">{v.label}</p>
+                  </button>
+                ))}
+            </div>
+          </div>
+        )}
+
         <div className="flex flex-col lg:flex-row gap-12">
           
           {/* Navigation Sidebar */}
@@ -261,14 +307,15 @@ export default function AdminPanel() {
             <div className="bg-white rounded-[32px] p-6 shadow-ambient sticky top-28 border border-black/5">
               <nav className="space-y-2">
                 {[
-                  { id: 'pending', label: 'Approvals', icon: <Users size={18} />, badge: stats?.pendingApprovals || 0 },
+                  { id: 'pending', label: 'Approvals', icon: <Users size={18} />, badge: notifications?.notifications?.pendingApprovals?.count || stats?.pendingApprovals || 0 },
                   { id: 'all', label: 'Community', icon: <Shield size={18} /> },
-                  { id: 'enquiries', label: 'Inbox', icon: <Mail size={18} />, badge: enquiries.filter(e => !e.isResolved).length },
-                  { id: 'birthdays', label: 'Birthdays', icon: <Cake size={18} />, badge: birthdays.length },
+                  { id: 'enquiries', label: 'Inbox', icon: <Mail size={18} />, badge: notifications?.notifications?.unresolvedEnquiries?.count || 0 },
+                  { id: 'birthdays', label: 'Birthdays', icon: <Cake size={18} />, badge: notifications?.notifications?.upcomingBirthdays?.count || 0 },
                   { id: 'connections', label: 'Connections', icon: <Link2 size={18} /> },
-                  { id: 'payments', label: 'Payments', icon: <CreditCard size={18} />, badge: stats?.pendingPayments || 0 },
+                  { id: 'payments', label: 'Payments', icon: <CreditCard size={18} />, badge: notifications?.notifications?.pendingPayments?.count || stats?.pendingPayments || 0 },
                   { id: 'addProfile', label: 'Add Profile', icon: <UserPlus size={18} /> },
-                  { id: 'stories', label: 'Stories', icon: <Heart size={18} /> },
+                  { id: 'stories', label: 'Stories', icon: <Heart size={18} />, badge: notifications?.notifications?.pendingStories?.count || 0 },
+                  { id: 'profit', label: 'Profit Tracker', icon: <TrendingUp size={18} /> },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -735,51 +782,220 @@ export default function AdminPanel() {
                       </div>
                     )}
                   </div>
+                ) : activeTab === 'profit' ? (
+                  <div className="p-10 space-y-8">
+                    {!profitData ? (
+                      <div className="text-center text-muted-foreground">Loading profit data...</div>
+                    ) : (
+                      <>
+                        {/* Revenue Summary Cards */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                          {[
+                            { label: 'Total Revenue', value: `₹${profitData.totalRevenue.toLocaleString('en-IN')}`, color: 'text-green-600', bg: 'bg-green-50' },
+                            { label: 'Gold Revenue', value: `₹${profitData.goldRevenue.toLocaleString('en-IN')}`, color: 'text-amber-600', bg: 'bg-amber-50' },
+                            { label: 'Silver Revenue', value: `₹${profitData.silverRevenue.toLocaleString('en-IN')}`, color: 'text-slate-600', bg: 'bg-slate-50' },
+                            { label: 'Total Transactions', value: profitData.totalTransactions, color: 'text-blue-600', bg: 'bg-blue-50' },
+                          ].map((s, i) => (
+                            <div key={i} className={`${s.bg} p-6 rounded-[24px] border border-black/5`}>
+                              <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-2">{s.label}</p>
+                              <p className={`text-2xl font-display font-black ${s.color}`}>{s.value}</p>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Online vs Offline Users */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="bg-[#F7F9FB] rounded-[24px] p-6 border border-black/5">
+                            <h3 className="font-black text-sm uppercase tracking-widest text-foreground/40 mb-4">User Registration Type</h3>
+                            <div className="flex gap-6">
+                              <div>
+                                <p className="text-3xl font-display font-black text-blue-600">{profitData.onlineUsers}</p>
+                                <p className="text-xs font-bold text-foreground/40 uppercase tracking-wider mt-1">Online (Self-Registered)</p>
+                              </div>
+                              <div>
+                                <p className="text-3xl font-display font-black text-purple-600">{profitData.offlineUsers}</p>
+                                <p className="text-xs font-bold text-foreground/40 uppercase tracking-wider mt-1">Offline (Admin-Created)</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="bg-[#F7F9FB] rounded-[24px] p-6 border border-black/5">
+                            <h3 className="font-black text-sm uppercase tracking-widest text-foreground/40 mb-4">Plan Distribution</h3>
+                            <div className="flex gap-6">
+                              {profitData.planDistribution.map((p: any) => (
+                                <div key={p.plan}>
+                                  <p className={`text-3xl font-display font-black ${p.plan === 'GOLD' ? 'text-amber-600' : p.plan === 'SILVER' ? 'text-slate-600' : 'text-gray-400'}`}>
+                                    {p.count}
+                                  </p>
+                                  <p className="text-xs font-bold text-foreground/40 uppercase tracking-wider mt-1">{p.plan}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Monthly Revenue */}
+                        <div className="bg-[#F7F9FB] rounded-[24px] p-6 border border-black/5">
+                          <h3 className="font-black text-sm uppercase tracking-widest text-foreground/40 mb-4">Monthly Revenue (Last 12 Months)</h3>
+                          <div className="overflow-x-auto">
+                            <div className="flex gap-3 min-w-max">
+                              {Object.entries(profitData.monthlyRevenue)
+                                .sort(([a], [b]) => a.localeCompare(b))
+                                .slice(-12)
+                                .map(([month, amount]: [string, any]) => {
+                                  const maxAmount = Math.max(...Object.values(profitData.monthlyRevenue) as number[]);
+                                  const heightPercent = maxAmount > 0 ? (amount / maxAmount) * 100 : 0;
+                                  return (
+                                    <div key={month} className="flex flex-col items-center gap-2">
+                                      <p className="text-xs font-bold text-primary">₹{(amount/1000).toFixed(0)}k</p>
+                                      <div className="w-12 bg-white rounded-lg overflow-hidden border border-black/5" style={{ height: '80px' }}>
+                                        <div 
+                                          className="w-full bg-primary/70 rounded-lg transition-all"
+                                          style={{ height: `${heightPercent}%`, marginTop: `${100 - heightPercent}%` }}
+                                        />
+                                      </div>
+                                      <p className="text-[10px] font-bold text-foreground/30">{month.slice(5)}/{month.slice(2,4)}</p>
+                                    </div>
+                                  );
+                                })}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Recent Transactions Table */}
+                        <div className="bg-white rounded-[24px] border border-black/5 overflow-hidden">
+                          <div className="px-6 py-4 border-b bg-[#F7F9FB]">
+                            <h3 className="font-black text-sm uppercase tracking-widest text-foreground/40">Recent Approved Transactions</h3>
+                          </div>
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                              <thead className="text-[10px] font-black uppercase tracking-widest text-foreground/30 border-b">
+                                <tr>
+                                  <th className="px-6 py-4">Member</th>
+                                  <th className="px-4 py-4">Type</th>
+                                  <th className="px-4 py-4">Plan</th>
+                                  <th className="px-4 py-4">Amount</th>
+                                  <th className="px-6 py-4">Date</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {profitData.recentPayments.map((p: any) => (
+                                  <tr key={p.id} className="border-b border-black/[0.03] hover:bg-[#F7F9FB] transition">
+                                    <td className="px-6 py-4">
+                                      <div className="font-bold text-sm">{p.name || 'Unknown'}</div>
+                                      <div className="text-[10px] text-primary font-bold">{p.regId}</div>
+                                    </td>
+                                    <td className="px-4 py-4">
+                                      <span className={`text-[9px] font-black uppercase px-2 py-1 rounded-full ${p.isOffline ? 'bg-purple-50 text-purple-700' : 'bg-blue-50 text-blue-700'}`}>
+                                        {p.isOffline ? 'Offline' : 'Online'}
+                                      </span>
+                                    </td>
+                                    <td className="px-4 py-4">
+                                      <span className={`text-[9px] font-black uppercase px-2 py-1 rounded-full ${p.planType === 'GOLD' ? 'bg-amber-50 text-amber-700' : 'bg-slate-50 text-slate-700'}`}>
+                                        {p.planType}
+                                      </span>
+                                    </td>
+                                    <td className="px-4 py-4 font-black text-green-700">₹{p.amount.toLocaleString('en-IN')}</td>
+                                    <td className="px-6 py-4 text-[10px] text-foreground/30">{new Date(p.createdAt).toLocaleDateString('en-IN')}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 ) : (
                   <div className="flex flex-col">
                     {activeTab === 'all' && (
-                      <div className="p-6 bg-white border-b border-black/5 flex flex-wrap gap-4 items-center rounded-t-3xl">
-                        <input 
-                          placeholder="Search RegID or Name..." 
-                          value={allUsersFilters.q}
-                          onChange={(e) => setAllUsersFilters(p => ({ ...p, q: e.target.value }))}
-                          className="h-10 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 min-w-[200px]"
-                        />
-                        <select 
-                          value={allUsersFilters.gender}
-                          onChange={(e) => setAllUsersFilters(p => ({ ...p, gender: e.target.value }))}
-                          className="h-10 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
-                        >
-                          <option value="">Any Gender</option>
-                          <option value="MALE">Male</option>
-                          <option value="FEMALE">Female</option>
-                        </select>
-                        <div className="flex items-center gap-2">
-                          <input 
-                            placeholder="Min Age" type="number" 
-                            value={allUsersFilters.ageMin}
-                            onChange={(e) => setAllUsersFilters(p => ({ ...p, ageMin: e.target.value }))}
-                            className="h-10 w-24 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
-                          />
-                          <span className="text-foreground/30 text-xs">-</span>
-                          <input 
-                            placeholder="Max Age" type="number" 
-                            value={allUsersFilters.ageMax}
-                            onChange={(e) => setAllUsersFilters(p => ({ ...p, ageMax: e.target.value }))}
-                            className="h-10 w-24 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
-                          />
+                      <>
+                        {/* Location Filter Bar */}
+                        <div className="px-10 py-6 border-b border-black/[0.03] bg-[#F7F9FB] flex flex-wrap gap-4 items-end">
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">City / Town</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. Pune, Nashik..."
+                              className="h-10 rounded-xl border border-black/10 bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-48"
+                              onChange={async (e) => {
+                                const city = e.target.value;
+                                if (city.length < 2) { fetchData(); return; }
+                                try {
+                                  const res = await apiClient.get(`/admin/users/by-location?city=${city}`);
+                                  setUsers(res.data);
+                                } catch { }
+                              }}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Gender</label>
+                            <select
+                              className="h-10 rounded-xl border border-black/10 bg-white px-4 text-sm focus:outline-none w-36"
+                              onChange={async (e) => {
+                                try {
+                                  const res = await apiClient.get(`/admin/users/by-location?gender=${e.target.value}`);
+                                  setUsers(res.data);
+                                } catch { }
+                              }}
+                            >
+                              <option value="">All</option>
+                              <option value="MALE">Male</option>
+                              <option value="FEMALE">Female</option>
+                            </select>
+                          </div>
+                          <button
+                            onClick={() => fetchData()}
+                            className="h-10 px-6 bg-black/5 rounded-xl text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:bg-black/10 transition"
+                          >
+                            Reset
+                          </button>
                         </div>
-                        <select 
-                          value={allUsersFilters.accountStatus}
-                          onChange={(e) => setAllUsersFilters(p => ({ ...p, accountStatus: e.target.value }))}
-                          className="h-10 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
-                        >
-                          <option value="">All Statuses</option>
-                          <option value="ACTIVE">Active</option>
-                          <option value="INACTIVE">Inactive (Pending)</option>
-                          <option value="SUSPENDED">Suspended</option>
-                        </select>
-                      </div>
+
+                        {/* Existing search filters */}
+                        <div className="p-6 bg-white border-b border-black/5 flex flex-wrap gap-4 items-center">
+                          <input 
+                            placeholder="Search RegID or Name..." 
+                            value={allUsersFilters.q}
+                            onChange={(e) => setAllUsersFilters(p => ({ ...p, q: e.target.value }))}
+                            className="h-10 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 min-w-[200px]"
+                          />
+                          <select 
+                            value={allUsersFilters.gender}
+                            onChange={(e) => setAllUsersFilters(p => ({ ...p, gender: e.target.value }))}
+                            className="h-10 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
+                          >
+                            <option value="">Any Gender</option>
+                            <option value="MALE">Male</option>
+                            <option value="FEMALE">Female</option>
+                          </select>
+                          <div className="flex items-center gap-2">
+                            <input 
+                              placeholder="Min Age" type="number" 
+                              value={allUsersFilters.ageMin}
+                              onChange={(e) => setAllUsersFilters(p => ({ ...p, ageMin: e.target.value }))}
+                              className="h-10 w-24 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            />
+                            <span className="text-foreground/30 text-xs">-</span>
+                            <input 
+                              placeholder="Max Age" type="number" 
+                              value={allUsersFilters.ageMax}
+                              onChange={(e) => setAllUsersFilters(p => ({ ...p, ageMax: e.target.value }))}
+                              className="h-10 w-24 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            />
+                          </div>
+                          <select 
+                            value={allUsersFilters.accountStatus}
+                            onChange={(e) => setAllUsersFilters(p => ({ ...p, accountStatus: e.target.value }))}
+                            className="h-10 rounded-xl border border-black/10 bg-[#F7F9FB] px-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
+                          >
+                            <option value="">All Statuses</option>
+                            <option value="ACTIVE">Active</option>
+                            <option value="INACTIVE">Inactive (Pending)</option>
+                            <option value="SUSPENDED">Suspended</option>
+                          </select>
+                        </div>
+                      </>
                     )}
                   <div className="overflow-x-auto">
                     <table className="w-full text-left">

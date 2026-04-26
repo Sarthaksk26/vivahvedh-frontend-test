@@ -33,7 +33,12 @@ export default function Login() {
           icon: '🔒',
           duration: 6000
         });
-        navigate('/dashboard');
+      }
+
+      // Route based on role
+      if (user.role === 'ADMIN') {
+        toast.success('Welcome back, Admin!');
+        navigate('/admin');
       } else {
         toast.success('Welcome back!');
         navigate('/dashboard');
