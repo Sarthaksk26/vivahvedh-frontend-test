@@ -240,7 +240,7 @@ export default function PublicProfile() {
                 idx === 0 ? 'border-primary' : 'border-transparent'
               }`}
             >
-              <img src={img.url} className="w-full h-full object-cover" alt={`Photo ${idx + 1}`} />
+              <img src={resolveImageUrl(img.url)} className="w-full h-full object-cover" alt={`Photo ${idx + 1}`} />
             </button>
           ))}
         </div>

@@ -26,6 +26,16 @@ export default function Dashboard() {
     try {
       const res = await apiClient.get('/user/profile');
       setProfile(res.data);
+      
+      // Update local storage status if it changed (e.g. from PENDING to ACTIVE)
+      const storedUser = authStorage.getUser();
+      if (storedUser && storedUser.accountStatus !== res.data.accountStatus) {
+        authStorage.setUser({ ...storedUser, accountStatus: res.data.accountStatus });
+        // Optional: toast if status changed to ACTIVE
+        if (res.data.accountStatus === 'ACTIVE' && storedUser.accountStatus !== 'ACTIVE') {
+          toast.success('Your account has been approved! You can now send match proposals.');
+        }
+      }
     } catch (error) {
       console.error("Failed to load profile:", error);
     } finally {
@@ -122,7 +132,7 @@ export default function Dashboard() {
 
           {/* Plan Badge */}
           <div className={`text-center text-xs font-bold px-3 py-1.5 rounded-full mb-4 ${planColors[profile.planType] || planColors.FREE}`}>
-            {profile.planType === 'GOLD' ? '👑' : profile.planType === 'SILVER' ? '⭐' : '🆓'} {profile.planType} Plan
+            {profile.planType === 'GOLD' ? '👑' : profile.planType === 'SILVER' ? '⭐' : '🆓'} {profile.planType === 'FREE' ? 'Basic' : profile.planType} Plan
             {profile.planExpiresAt && (
               <span className="block text-[10px] font-medium mt-0.5 opacity-70">
                 Expires: {new Date(profile.planExpiresAt).toLocaleDateString()}
@@ -136,14 +146,14 @@ export default function Dashboard() {
               { key: 'profile', label: 'My Profile' },
               { key: 'photos', label: 'Photo Gallery' },
               { key: 'connections', label: 'My Connections', highlight: true },
-              { key: 'shortlist', label: 'My Shortlist' },
+              { key: 'shortlist', label: `My Shortlist ${shortlist.length > 0 ? `(${shortlist.length})` : ''}` },
               { key: 'password', label: 'Change Password' },
             ].map(tab => (
               <button
                 key={tab.key}
                 disabled={isForced && tab.key !== 'password'}
                 onClick={() => switchTab(tab.key)}
-                className={`px-4 py-2 text-left rounded-md transition-colors text-sm ${
+                className={`px-4 py-2 text-left rounded-md transition-colors text-sm flex items-center justify-between ${
                   activeTab === tab.key
                     ? tab.highlight
                       ? 'bg-rose-100 text-rose-700 font-bold border border-rose-200'
