@@ -1,7 +1,8 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { authStorage } from '../../lib/authStorage';
 
 export default function ProtectedRoute() {
-  const token = localStorage.getItem('vivah_auth_token');
+  const token = authStorage.getToken();
   const location = useLocation();
   
   if (!token) {
@@ -9,7 +10,7 @@ export default function ProtectedRoute() {
   }
 
   // Redirect forced password change
-  if (localStorage.getItem('vivah_force_password_change') === 'true' && 
+  if (authStorage.getForcePasswordChange() && 
       location.pathname !== '/dashboard') {
     return <Navigate to="/dashboard" replace />;
   }

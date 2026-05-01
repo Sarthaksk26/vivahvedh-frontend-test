@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import apiClient from '../../lib/apiClient';
+import { authStorage } from '../../lib/authStorage';
 import { LogIn, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -24,15 +25,17 @@ export default function Login() {
     try {
       const response = await apiClient.post('/auth/login', data);
       const { token, user } = response.data;
-      localStorage.setItem('vivah_auth_token', token);
+      authStorage.setToken(token);
 
       // If admin-created account, force password change on first login
       if (user.requiresPasswordChange) {
-        localStorage.setItem('vivah_force_password_change', 'true');
+        authStorage.setForcePasswordChange(true);
         toast('⚠️ Your account was created by an admin. You MUST change your password now for security.', {
           icon: '🔒',
           duration: 6000
         });
+      } else {
+        authStorage.setForcePasswordChange(false);
       }
 
       // Route based on role

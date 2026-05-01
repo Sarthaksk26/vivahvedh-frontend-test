@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { authStorage } from '../../lib/authStorage';
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -12,7 +13,7 @@ export default function Header() {
 
   // Reactively check auth state
   useEffect(() => {
-    const token = localStorage.getItem('vivah_auth_token');
+    const token = authStorage.getToken();
     setIsLoggedIn(!!token);
     
     if (token) {
@@ -28,7 +29,8 @@ export default function Header() {
   }, [location]);
 
   const handleLogout = () => {
-    localStorage.removeItem('vivah_auth_token');
+    authStorage.clearToken();
+    authStorage.setForcePasswordChange(false);
     setIsLoggedIn(false);
     setIsAdmin(false);
     window.location.href = '/login';

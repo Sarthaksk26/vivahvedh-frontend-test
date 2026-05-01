@@ -6,11 +6,12 @@ import ConnectionsList from '../../components/Dashboard/ConnectionsList';
 import { Lock, Shield } from 'lucide-react';
 import { resolveImageUrl } from '../../lib/url';
 import toast from 'react-hot-toast';
+import { authStorage } from '../../lib/authStorage';
 
 export default function Dashboard() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const isForced = localStorage.getItem('vivah_force_password_change') === 'true';
+  const isForced = authStorage.getForcePasswordChange();
   const [activeTab, setActiveTab] = useState(isForced ? 'password' : 'profile');
   const [isEditing, setIsEditing] = useState(false);
   const [shortlist, setShortlist] = useState<any[]>([]);
@@ -18,6 +19,7 @@ export default function Dashboard() {
   // Password change state
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [changingPassword, setChangingPassword] = useState(false);
 
   const fetchProfile = useCallback(async () => {
@@ -50,17 +52,31 @@ export default function Dashboard() {
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (newPassword.length < 6) { 
       toast.error('New password must be at least 6 characters.'); 
       return; 
     }
+    
+    if (newPassword !== confirmPassword) {
+      toast.error('New passwords do not match. Please check and try again.');
+      return;
+    }
+
+    if (newPassword === currentPassword) {
+      toast.error('New password must be different from your current password.');
+      return;
+    }
+
     setChangingPassword(true);
     try {
       await apiClient.post('/user/change-password', { currentPassword, newPassword });
-      toast.success('Password changed successfully!');
-      localStorage.removeItem('vivah_force_password_change');
+      toast.success('Password updated successfully! A confirmation email has been sent.');
       setCurrentPassword('');
       setNewPassword('');
+      setConfirmPassword('');
+      // Clear force password change flag if set
+      authStorage.setForcePasswordChange(false);
     } catch (err: any) {
       toast.error(err.response?.data?.error || 'Failed to change password.');
     } finally {
@@ -324,17 +340,85 @@ export default function Dashboard() {
               <Lock size={20} className="text-primary" />
               <h2 className="text-xl font-bold">Change Password</h2>
             </div>
+            
+            {/* Password Change Form */}
             <form onSubmit={handlePasswordChange} className="space-y-4">
+              {/* Current Password */}
               <div className="space-y-1">
                 <label className="text-sm font-semibold text-muted-foreground">Current Password</label>
-                <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} required className="w-full h-10 px-3 border rounded-md" placeholder="Enter current password" />
+                <input 
+                  type="password" 
+                  value={currentPassword} 
+                  onChange={e => setCurrentPassword(e.target.value)} 
+                  required 
+                  className="w-full h-10 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30" 
+                  placeholder="Enter your current password" 
+                />
               </div>
+              
+              {/* New Password with strength indicator */}
               <div className="space-y-1">
                 <label className="text-sm font-semibold text-muted-foreground">New Password</label>
-                <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required minLength={6} className="w-full h-10 px-3 border rounded-md" placeholder="Minimum 6 characters" />
+                <input 
+                  type="password" 
+                  value={newPassword} 
+                  onChange={e => setNewPassword(e.target.value)} 
+                  required 
+                  minLength={6} 
+                  className="w-full h-10 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30" 
+                  placeholder="Minimum 6 characters" 
+                />
+                {/* Password strength bar */}
+                {newPassword.length > 0 && (
+                  <div className="space-y-1">
+                    <div className="flex gap-1 h-1.5">
+                      {[1,2,3,4].map(level => {
+                        const strength = newPassword.length >= 12 ? 4 : newPassword.length >= 8 ? 3 : newPassword.length >= 6 ? 2 : 1;
+                        return (
+                          <div key={level} className={`flex-1 rounded-full transition-colors ${
+                            level <= strength 
+                              ? strength >= 3 ? 'bg-green-500' : strength === 2 ? 'bg-amber-500' : 'bg-red-400'
+                              : 'bg-gray-200'
+                          }`} />
+                        );
+                      })}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {newPassword.length < 6 ? 'Too short — minimum 6 characters' : 
+                       newPassword.length < 8 ? 'Weak — try adding numbers or symbols' : 
+                       newPassword.length < 12 ? 'Good strength' : 'Strong password ✓'}
+                    </p>
+                  </div>
+                )}
               </div>
-              <button type="submit" disabled={changingPassword} className="w-full py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all disabled:opacity-50">
-                {changingPassword ? 'Changing...' : 'Update Password'}
+              
+              {/* Confirm New Password */}
+              <div className="space-y-1">
+                <label className="text-sm font-semibold text-muted-foreground">Confirm New Password</label>
+                <input 
+                  type="password" 
+                  value={confirmPassword} 
+                  onChange={e => setConfirmPassword(e.target.value)} 
+                  required 
+                  className={`w-full h-10 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 ${
+                    confirmPassword && confirmPassword !== newPassword ? 'border-red-400' : ''
+                  }`}
+                  placeholder="Re-enter new password" 
+                />
+                {confirmPassword && confirmPassword !== newPassword && (
+                  <p className="text-xs text-red-500 font-medium">Passwords do not match</p>
+                )}
+                {confirmPassword && confirmPassword === newPassword && newPassword.length >= 6 && (
+                  <p className="text-xs text-green-600 font-medium">✓ Passwords match</p>
+                )}
+              </div>
+              
+              <button 
+                type="submit" 
+                disabled={changingPassword || (!!confirmPassword && confirmPassword !== newPassword)}
+                className="w-full py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {changingPassword ? 'Updating Password...' : 'Update Password'}
               </button>
             </form>
           </div>

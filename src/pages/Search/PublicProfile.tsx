@@ -4,6 +4,7 @@ import apiClient from '../../lib/apiClient';
 import CarouselLightbox from '../../components/layout/Lightbox';
 import { resolveImageUrl } from '../../lib/url';
 import toast from 'react-hot-toast';
+import { authStorage } from '../../lib/authStorage';
 
 export default function PublicProfile() {
   const { id } = useParams();
@@ -18,7 +19,7 @@ export default function PublicProfile() {
   const [connectionRequestId, setConnectionRequestId] = useState<string | null>(null);
 
   const handleSendInterest = async () => {
-    if (!localStorage.getItem('vivah_auth_token')) {
+    if (!authStorage.isAuthenticated()) {
       return navigate('/login');
     }
     setIsSending(true);
@@ -44,7 +45,7 @@ export default function PublicProfile() {
   };
 
   const handleShortlist = async () => {
-    if (!localStorage.getItem('vivah_auth_token')) {
+    if (!authStorage.isAuthenticated()) {
       return navigate('/login');
     }
     try {
@@ -62,7 +63,7 @@ export default function PublicProfile() {
         const response = await apiClient.get(`/search/public/${id}`);
         setProfile(response.data);
 
-        const token = localStorage.getItem('vivah_auth_token');
+        const token = authStorage.getToken();
         if (token && id) {
           try {
             const connRes = await apiClient.get('/connections/my-connections');

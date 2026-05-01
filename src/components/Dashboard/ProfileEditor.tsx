@@ -158,8 +158,23 @@ export default function ProfileEditor({
       toast.success('Profile updated successfully!');
       onSaveSuccess();
     } catch (err: any) {
-      toast.error(err.response?.data?.error || "Failed to save changes.");
-      console.error(err);
+      const errorData = err.response?.data;
+      
+      if (errorData?.details && Array.isArray(errorData.details)) {
+        // Show each field error specifically
+        const fieldErrors = errorData.details
+          .map((d: any) => `${d.field}: ${d.message}`)
+          .join('\n');
+        toast.error(
+          `Please fix these fields:\n${fieldErrors}`,
+          { duration: 8000, style: { whiteSpace: 'pre-line' } }
+        );
+      } else if (errorData?.error) {
+        toast.error(errorData.error, { duration: 6000 });
+      } else {
+        toast.error("Failed to save changes. Please try again.", { duration: 4000 });
+      }
+      console.error('Profile save error:', err.response?.data || err);
     } finally {
       setSaving(false);
     }
@@ -303,8 +318,25 @@ export default function ProfileEditor({
             <input type="number" name="marriedSisters" value={formData.marriedSisters} onChange={handleChange} className={inputClass} min="0" />
           </div>
           <div className="space-y-1 md:col-span-2">
-            <label className="text-sm font-semibold text-muted-foreground">Family Wealth / Property</label>
-            <textarea name="familyWealth" value={formData.familyWealth} onChange={handleChange} className={textareaClass} placeholder="Agriculture land, plots, flats, etc." />
+            <label className="text-sm font-semibold text-muted-foreground">
+              Family Wealth / Property
+              <span className="text-xs text-muted-foreground/60 ml-2">
+                ({formData.familyWealth.length}/1000)
+              </span>
+            </label>
+            <textarea 
+              name="familyWealth" 
+              value={formData.familyWealth} 
+              onChange={handleChange} 
+              maxLength={1000}
+              className={`${textareaClass} ${formData.familyWealth.length > 900 ? 'border-amber-400' : ''}`}
+              placeholder="Agriculture land, plots, flats, etc." 
+            />
+            {formData.familyWealth.length > 900 && (
+              <p className="text-xs text-amber-600 font-medium">
+                {1000 - formData.familyWealth.length} characters remaining
+              </p>
+            )}
           </div>
         </div>
       </CollapsibleSection>
@@ -379,8 +411,20 @@ export default function ProfileEditor({
 
       <CollapsibleSection title="Partner Preferences" icon="💑">
         <div className="space-y-1">
-          <label className="text-sm font-semibold text-muted-foreground">Expectations (अपेक्षा)</label>
-          <textarea name="expectations" value={formData.expectations} onChange={handleChange} className={textareaClass} placeholder="Describe your expectations about your life partner — education, values, family background, location preferences, etc." />
+          <label className="text-sm font-semibold text-muted-foreground">
+            Expectations (अपेक्षा)
+            <span className="text-xs text-muted-foreground/60 ml-2">
+              ({formData.expectations.length}/2000)
+            </span>
+          </label>
+          <textarea 
+            name="expectations" 
+            value={formData.expectations} 
+            onChange={handleChange} 
+            maxLength={2000}
+            className={textareaClass}
+            placeholder="Describe your expectations about your life partner — education, values, family background, location preferences, etc." 
+          />
         </div>
       </CollapsibleSection>
 

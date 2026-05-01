@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { authStorage } from './authStorage';
 
 // The base URL of our new Express Backend
 let API_URL = import.meta.env.VITE_API_URL;
@@ -22,7 +23,7 @@ const apiClient = axios.create({
 
 // Interceptor to automatically attach the Auth Token
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('vivah_auth_token');
+  const token = authStorage.getToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

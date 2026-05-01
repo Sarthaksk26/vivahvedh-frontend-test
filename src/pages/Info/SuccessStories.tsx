@@ -4,6 +4,7 @@ import apiClient from '../../lib/apiClient';
 import { resolveImageUrl } from '../../lib/url';
 import { Heart, Send, Camera, Sparkles, X } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { authStorage } from '../../lib/authStorage';
 
 interface Story {
   id: string;
@@ -22,7 +23,7 @@ export default function SuccessStories() {
   const [form, setForm] = useState({ groomName: '', brideName: '', message: '' });
   const [photo, setPhoto] = useState<File | null>(null);
 
-  const isLoggedIn = !!localStorage.getItem('vivah_auth_token');
+  const isLoggedIn = authStorage.isAuthenticated();
 
   useEffect(() => {
     fetchStories();

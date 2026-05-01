@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { lazy, Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 import MainLayout from './components/layout/MainLayout';
@@ -29,52 +31,65 @@ const PageLoader = () => (
   </div>
 );
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
 function App() {
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <ScrollToTop />
-        <Toaster 
-          position="top-center" 
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#fff',
-              color: '#333',
-              borderRadius: '16px',
-              fontSize: '14px',
-              fontWeight: '600',
-              border: '1px solid rgba(0,0,0,0.05)',
-              boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
-            },
-          }} 
-        />
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route element={<MainLayout />}>
-              {/* Public Routes */}
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/rules" element={<Rules />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/profile/:id" element={<PublicProfile />} />
-              <Route path="/success-stories" element={<SuccessStories />} />
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <ScrollToTop />
+          <Toaster 
+            position="top-center" 
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: '#fff',
+                color: '#333',
+                borderRadius: '16px',
+                fontSize: '14px',
+                fontWeight: '600',
+                border: '1px solid rgba(0,0,0,0.05)',
+                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
+              },
+            }} 
+          />
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route element={<MainLayout />}>
+                {/* Public Routes */}
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/rules" element={<Rules />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/profile/:id" element={<PublicProfile />} />
+                <Route path="/success-stories" element={<SuccessStories />} />
 
-              {/* Private Logged-In Routes */}
-              <Route element={<ProtectedRoute />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/admin" element={<AdminPanel />} />
+                {/* Private Logged-In Routes */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/admin" element={<AdminPanel />} />
+                </Route>
+
+                {/* Catch-all 404 */}
+                <Route path="*" element={<NotFound />} />
               </Route>
-
-              {/* Catch-all 404 */}
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </ErrorBoundary>
   );
 }

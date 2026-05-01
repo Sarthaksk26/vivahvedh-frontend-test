@@ -3,19 +3,21 @@ import apiClient from '../../lib/apiClient';
 import { resolveImageUrl } from '../../lib/url';
 import { Mail, Shield, Users, Trash2, Check, X as CloseIcon, UserPlus, Heart, CreditCard, Cake, Link2, Edit, AlertCircle, Eye, TrendingUp } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import type { AdminTab, AdminUser, Enquiry, PaymentRecord, AdminNotifications } from './adminTypes';
 
 export default function AdminPanel() {
-  const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'enquiries' | 'addProfile' | 'stories' | 'payments' | 'birthdays' | 'connections' | 'profit'>('pending');
-  const [users, setUsers] = useState<any[]>([]);
-  const [enquiries, setEnquiries] = useState<any[]>([]);
-  const [stories, setStories] = useState<any[]>([]);
-  const [payments, setPayments] = useState<any[]>([]);
-  const [birthdays, setBirthdays] = useState<any[]>([]);
-  const [connections, setConnections] = useState<any[]>([]);
-  const [profitData, setProfitData] = useState<any>(null);
-  const [notifications, setNotifications] = useState<any>(null);
-  const [stats, setStats] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState<AdminTab>('pending');
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
+  const [stories, setStories] = useState<Array<Record<string, unknown>>>([]);
+  const [payments, setPayments] = useState<PaymentRecord[]>([]);
+  const [birthdays, setBirthdays] = useState<Array<Record<string, unknown>>>([]);
+  const [connections, setConnections] = useState<Array<Record<string, unknown>>>([]);
+  const [profitData, setProfitData] = useState<Record<string, any> | null>(null);
+  const [notifications, setNotifications] = useState<AdminNotifications | null>(null);
+  const [stats, setStats] = useState<Record<string, number> | null>(null);
   const [loading, setLoading] = useState(true);
+  const [wishesSent, setWishesSent] = useState<Set<string>>(new Set());
 
   // Filters
   const [paymentFilter, setPaymentFilter] = useState('PENDING');
@@ -179,8 +181,27 @@ export default function AdminPanel() {
       return;
     }
 
+    if (action === 'approve') {
+      setConfirmModal({
+        isOpen: true,
+        title: 'Approve Profile',
+        message: `Approve this member's profile? They will receive an email and gain full access to the platform.`,
+        onConfirm: async () => {
+          try {
+            await apiClient.post('/admin/approve', { targetUserId: userId });
+            toast.success('User approved successfully. Approval email sent.');
+            setConfirmModal(prev => ({ ...prev, isOpen: false }));
+            fetchData();
+            fetchStats();
+          } catch (e: any) {
+            toast.error(e.response?.data?.error || 'Approval failed');
+          }
+        }
+      });
+      return;
+    }
+
     try {
-      if (action === 'approve') await apiClient.post('/admin/approve', { targetUserId: userId });
       if (action === 'ban') await apiClient.post('/admin/ban', { targetUserId: userId, action: 'ban' });
       if (action === 'unban') await apiClient.post('/admin/ban', { targetUserId: userId, action: 'unban' });
       toast.success(`Action "${action}" completed successfully.`);
@@ -195,6 +216,7 @@ export default function AdminPanel() {
     try {
       await apiClient.post(`/admin/birthdays/send-wishes/${userId}`);
       toast.success("Birthday wishes sent via email!");
+      setWishesSent(prev => new Set([...prev, userId]));
     } catch (e) { toast.error("Failed to send wishes"); }
   };
 
@@ -249,9 +271,26 @@ export default function AdminPanel() {
             <h1 className="display-md text-foreground">Royal Curation Dash.</h1>
             <p className="text-foreground/40 mt-4 font-medium leading-relaxed">Oversee the platform's integrity, manage premium members, and respond to community enquiries.</p>
           </div>
-          <div className="px-6 py-3 bg-white shadow-ambient rounded-2xl flex items-center gap-3 border border-black/5">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-xs font-black uppercase tracking-widest text-foreground/40 font-display">Systems Active</span>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={async () => {
+                try {
+                  const email = prompt('Enter email address to test:');
+                  if (!email) return;
+                  await apiClient.post('/admin/test-email', { email });
+                  toast.success('Test email sent! Check inbox.');
+                } catch (err: any) {
+                  toast.error('Email test failed: ' + (err.response?.data?.details || err.message));
+                }
+              }}
+              className="px-4 py-2 text-xs font-bold border border-black/10 rounded-xl hover:bg-muted transition text-foreground/40"
+            >
+              📧 Test Email
+            </button>
+            <div className="px-6 py-3 bg-white shadow-ambient rounded-2xl flex items-center gap-3 border border-black/5">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-xs font-black uppercase tracking-widest text-foreground/40 font-display">Systems Active</span>
+            </div>
           </div>
         </div>
 
@@ -635,8 +674,17 @@ export default function AdminPanel() {
                                 </span>
                               </td>
                               <td className="px-10 py-6 text-right">
-                                <button onClick={() => handleSendWish(b.id)} className="px-4 py-2 bg-primary text-white rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all flex items-center gap-2 ml-auto">
-                                  <Cake size={14} /> Send Wish
+                                <button 
+                                  onClick={() => handleSendWish(b.id)} 
+                                  disabled={wishesSent.has(b.id)}
+                                  className={`px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 ml-auto transition-all
+                                    ${wishesSent.has(b.id) 
+                                      ? 'bg-green-100 text-green-700 cursor-default' 
+                                      : 'bg-primary text-white shadow-lg shadow-primary/20 hover:scale-105'
+                                    }`}
+                                >
+                                  <Cake size={14} /> 
+                                  {wishesSent.has(b.id) ? '✓ Wish Sent' : 'Send Wish'}
                                 </button>
                               </td>
                             </tr>
@@ -676,11 +724,19 @@ export default function AdminPanel() {
                             connections.map((c: any) => (
                               <tr key={c.id} className="border-b border-black/[0.03] hover:bg-[#F7F9FB] transition-colors">
                                 <td className="px-10 py-6">
-                                  <div className="font-bold text-foreground">{c.sender?.profile?.firstName} {c.sender?.profile?.lastName}</div>
+                                  <div className="font-bold text-foreground">
+                                    {c.sender?.profile 
+                                      ? `${c.sender.profile.firstName} ${c.sender.profile.lastName}` 
+                                      : c.sender?.regId || 'Unknown'}
+                                  </div>
                                   <div className="text-[10px] font-medium text-foreground/30 uppercase">{c.sender?.regId}</div>
                                 </td>
                                 <td className="px-8 py-6">
-                                  <div className="font-bold text-foreground">{c.receiver?.profile?.firstName} {c.receiver?.profile?.lastName}</div>
+                                  <div className="font-bold text-foreground">
+                                    {c.receiver?.profile 
+                                      ? `${c.receiver.profile.firstName} ${c.receiver.profile.lastName}` 
+                                      : c.receiver?.regId || 'Unknown'}
+                                  </div>
                                   <div className="text-[10px] font-medium text-foreground/30 uppercase">{c.receiver?.regId}</div>
                                 </td>
                                 <td className="px-8 py-6">
@@ -1038,7 +1094,10 @@ export default function AdminPanel() {
                               </td>
                               <td className="px-10 py-6 text-right space-x-2">
                                 {activeTab === 'pending' && (
-                                  <button onClick={() => handleAction('approve', user.id)} className="w-8 h-8 rounded-full bg-green-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Approve"><Check size={14} /></button>
+                                  <>
+                                    <button onClick={() => window.open(`/profile/${user.id}`, '_blank')} className="w-8 h-8 rounded-full bg-indigo-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Preview Profile"><Eye size={14} /></button>
+                                    <button onClick={() => handleAction('approve', user.id)} className="w-8 h-8 rounded-full bg-green-500 text-white inline-flex items-center justify-center hover:scale-110 transition-transform" title="Approve"><Check size={14} /></button>
+                                  </>
                                 )}
                                 {activeTab === 'all' && (
                                   <>

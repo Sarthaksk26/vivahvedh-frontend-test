@@ -302,11 +302,18 @@ export default function PhotoUpload({
                   {/* Hover overlay with gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-                  {/* Primary Badge */}
+                  {/* Primary badge - already shown at top left */}
                   {img.isPrimary && (
                     <div className="absolute top-2 left-2 z-10">
                       <span className="bg-primary text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-lg">
-                        <Star size={10} fill="currentColor" /> Primary
+                        <Star size={10} fill="currentColor" /> Profile Photo
+                      </span>
+                    </div>
+                  )}
+                  {!img.isPrimary && (
+                    <div className="absolute top-2 left-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="bg-black/50 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full">
+                        Click ★ to set as profile
                       </span>
                     </div>
                   )}
@@ -318,21 +325,48 @@ export default function PhotoUpload({
                     </span>
                   </div>
 
-                  {/* Bottom action bar */}
+                  {/* Bottom action bar - appears on hover */}
                   <div className="absolute bottom-0 left-0 right-0 p-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-10">
+                    
+                    {/* Set as primary button - only show if not already primary */}
+                    {!img.isPrimary ? (
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          try {
+                            await apiClient.patch(`/user/set-profile-photo/${img.id}`);
+                            showToast('success', 'Profile photo updated!');
+                            onUploadSuccess(); // Refresh the gallery
+                          } catch {
+                            showToast('error', 'Failed to update profile photo');
+                          }
+                        }}
+                        className="bg-primary/80 backdrop-blur-md text-white p-2 rounded-lg hover:bg-primary transition-colors flex items-center gap-1"
+                        title="Set as profile photo"
+                      >
+                        <Star size={14} fill="currentColor" />
+                      </button>
+                    ) : (
+                      <div className="bg-primary text-white p-2 rounded-lg" title="Current profile photo">
+                        <Star size={14} fill="currentColor" />
+                      </div>
+                    )}
+
+                    {/* View button */}
                     <button
                       onClick={(e) => { e.stopPropagation(); setCarouselIndex(idx); setCarouselOpen(true); }}
                       className="bg-white/20 backdrop-blur-md text-white p-2 rounded-lg hover:bg-white/30 transition-colors"
-                      title="View"
+                      title="View full size"
                     >
                       <ZoomIn size={16} />
                     </button>
 
+                    {/* Delete button */}
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDeletePhoto(img.id); }}
                       disabled={deletingId === img.id}
                       className="bg-red-500/80 backdrop-blur-md text-white p-2 rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
-                      title="Delete"
+                      title="Delete photo"
                     >
                       {deletingId === img.id ? (
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

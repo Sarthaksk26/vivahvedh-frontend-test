@@ -74,7 +74,7 @@ export default function Home() {
             {/* Badge */}
             <motion.div {...fadeUp(0)} className="mb-8">
               <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/50 border border-primary/10 rounded-full text-primary text-xs font-bold uppercase tracking-[0.2em] backdrop-blur-sm shadow-sm">
-                <Sparkles size={14} className="animate-pulse" /> The Royal Curator of Matches
+                <Sparkles size={14} className="animate-pulse" /> Maharashtra&apos;s Trusted Matrimony
               </span>
             </motion.div>
 
@@ -87,7 +87,7 @@ export default function Home() {
             </motion.h1>
 
             <motion.p {...fadeUp(0.2)} className="text-lg md:text-xl text-foreground/80 max-w-xl leading-relaxed mb-12">
-              Experience the grandest bridge between Maharashtrian heritage and modern luxury. 
+              Find your perfect life partner from verified Maharashtrian profiles. 
               Find your partner on a platform designed like an heirloom.
             </motion.p>
 
@@ -370,7 +370,7 @@ export default function Home() {
             <span className="text-xs font-bold uppercase tracking-[4px] text-primary/40">Premium Membership</span>
             <h2 className="display-md text-foreground mt-4 mb-6">Invest in Your Future.</h2>
             <p className="text-foreground/40 max-w-xl mx-auto mb-16 text-lg">
-              Choose a plan that fits your family's needs. From basic browsing to full personalized matchmaking.
+              Simple, transparent pricing. Start free and upgrade when you're ready.
             </p>
           </motion.div>
 

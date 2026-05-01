@@ -1,59 +1,52 @@
 import { useState, useEffect, useRef } from 'react';
 import apiClient from '../../lib/apiClient';
 import { motion } from 'framer-motion';
-import { Star } from 'lucide-react';
+import { Star, Loader2 } from 'lucide-react';
 import { resolveImageUrl } from '../../lib/url';
+import { useQuery } from '@tanstack/react-query';
+import OptimizedImage from '../../components/ui/OptimizedImage';
 
 export default function Search() {
-  const [results, setResults] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({ 
     gender: '', maritalStatus: '', q: '',
     ageMin: '', ageMax: '', height: '', trade: '', occupation: '', location: '', diet: ''
   });
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [debouncedFilters, setDebouncedFilters] = useState(filters);
+  const [cursor, setCursor] = useState<string | null>(null);
 
-  const [restriction, setRestriction] = useState<{ code: string; message: string } | null>(null);
+  // Debounce filter changes
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedFilters(filters);
+      setCursor(null); // Reset pagination on filter change
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [filters]);
 
-  const fetchMatches = async (currentFilters: typeof filters) => {
-    setLoading(true);
-    setRestriction(null);
-    try {
+  const { data, isLoading: queryLoading, isError, error: queryError } = useQuery({
+    queryKey: ['search', debouncedFilters, cursor],
+    queryKeyHashFn: (queryKey) => JSON.stringify(queryKey),
+    queryFn: async () => {
       const params = new URLSearchParams();
-      if (currentFilters.gender) params.append('gender', currentFilters.gender);
-      if (currentFilters.maritalStatus) params.append('maritalStatus', currentFilters.maritalStatus);
-      if (currentFilters.q) params.append('q', currentFilters.q);
-      if (currentFilters.ageMin) params.append('ageMin', currentFilters.ageMin);
-      if (currentFilters.ageMax) params.append('ageMax', currentFilters.ageMax);
-      if (currentFilters.height) params.append('height', currentFilters.height);
-      if (currentFilters.trade) params.append('trade', currentFilters.trade);
-      if (currentFilters.occupation) params.append('occupation', currentFilters.occupation);
-      if (currentFilters.location) params.append('location', currentFilters.location);
-      if (currentFilters.diet) params.append('diet', currentFilters.diet);
+      Object.entries(debouncedFilters).forEach(([key, value]) => {
+        if (value) params.append(key, value);
+      });
+      if (cursor) params.append('cursor', cursor);
+      params.append('limit', '21'); // Fetch one extra to check if there's more
 
       const response = await apiClient.get(`/search?${params.toString()}`);
-      setResults(response.data.results);
-    } catch (error: any) {
-      if (error.response?.status === 403) {
-        setRestriction({ 
-          code: error.response.data.code, 
-          message: error.response.data.error 
-        });
-      }
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      return response.data;
+    },
+  });
 
-
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      fetchMatches(filters);
-    }, 400);
-    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [filters]);
+  const results = data?.results || [];
+  const nextCursor = data?.pagination?.nextCursor;
+  const totalResults = data?.pagination?.totalResults || 0;
+  
+  // Handle specific error for locked discovery
+  const restriction = isError && (queryError as any).response?.status === 403 
+    ? { message: (queryError as any).response.data.error || 'Discovery Locked' } 
+    : null;
 
   const handleFilterChange = (e: any) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -66,7 +59,7 @@ export default function Search() {
         {/* Left Sidebar Filters */}
         <aside className="w-full lg:w-1/3 xl:w-1/4">
           <div className="bg-white rounded-[32px] p-8 shadow-ambient h-fit sticky top-28 border border-black/5">
-            <h2 className="text-xl font-display font-extrabold mb-8 tracking-tight">Refine Discovery</h2>
+            <h2 className="text-xl font-display font-extrabold mb-8 tracking-tight">Filters</h2>
             
             <div className="space-y-8">
               <div className="space-y-3">
@@ -151,10 +144,10 @@ export default function Search() {
               </div>
 
               <button 
-                onClick={() => fetchMatches(filters)} 
+                onClick={() => setDebouncedFilters({...filters})} 
                 className="clay-button-primary w-full py-4 text-xs uppercase tracking-[0.2em]"
               >
-                Apply Curation
+                Apply Filters
               </button>
             </div>
           </div>
@@ -164,15 +157,18 @@ export default function Search() {
         <div className="flex-1">
           <div className="flex flex-col md:flex-row justify-between items-baseline mb-12 gap-4">
             <div>
-              <h1 className="display-md text-foreground">Discovery Engine</h1>
-              <p className="text-foreground/40 mt-2 font-medium tracking-wide">Find your perfect soulmate in our verified community</p>
+              <h1 className="display-md text-foreground">Search Profiles</h1>
+              <p className="text-foreground/40 mt-2 font-medium tracking-wide">Browse and find your perfect match from verified profiles</p>
             </div>
-            <span className="text-xs font-black uppercase tracking-[3px] text-primary/40 bg-white px-4 py-2 rounded-full border border-black/5">
-              {results.length} Profiles
-            </span>
+            <div className="flex items-center gap-4">
+              {queryLoading && <Loader2 className="animate-spin text-primary" size={20} />}
+              <span className="text-xs font-black uppercase tracking-[3px] text-primary/40 bg-white px-4 py-2 rounded-full border border-black/5">
+                {totalResults} Profiles
+              </span>
+            </div>
           </div>
 
-          {loading ? (
+          {queryLoading && results.length === 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
               {[1, 2, 3, 4, 5, 6].map(i => (
                 <div key={i} className="h-[450px] bg-white rounded-[32px] animate-pulse border border-black/5 shadow-sm"></div>
@@ -194,32 +190,27 @@ export default function Search() {
             <div className="min-h-[400px] flex flex-col items-center justify-center p-12 bg-white rounded-[40px] border border-black/5 shadow-ambient text-center">
               <div className="w-20 h-20 bg-[#F2F4F6] rounded-full flex items-center justify-center text-3xl mb-6 grayscale opacity-50">🔍</div>
               <h3 className="text-2xl font-display font-black text-foreground mb-4">No Matches Found</h3>
-              <p className="text-foreground/40 max-w-sm font-medium leading-relaxed">We couldn't find any profiles matching your specific filters. Try expanding your search criteria.</p>
             </div>
           ) : (
-
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-              {results.map((user, index) => {
-                const isGold = user.planType === 'GOLD';
-                return (
-                  <motion.div
-                    key={user.id}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    onClick={() => window.location.href = `/profile/${user.id}`}
-                    className={`group cursor-pointer transition-all duration-500 rounded-[32px] overflow-hidden flex flex-col shadow-ambient border border-black/5 bg-white ${isGold ? 'iridescent-border p-[2px]' : ''}`}
-                  >
-                    <div className="flex flex-col h-full bg-white rounded-[30px] overflow-hidden">
-                      {/* Image Section */}
-                      <div className="w-full h-72 relative bg-[#eceef0] overflow-hidden">
-                        {user.images && user.images.length > 0 ? (
-                          <img src={resolveImageUrl(user.images[0].url)} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Profile" />
-                        ) : (
-                          <div className="w-full h-full bg-primary/5 flex items-center justify-center">
-                            <span className="text-6xl font-display font-black text-primary/10">{user.profile?.firstName?.[0] || '?'}</span>
-                          </div>
-                        )}
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {results.map((user, index) => {
+                  const isGold = user.planType === 'GOLD';
+                  return (
+                    <motion.div
+                      key={user.id}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      onClick={() => window.location.href = `/profile/${user.id}`}
+                      className={`group cursor-pointer transition-all duration-500 rounded-[32px] overflow-hidden flex flex-col shadow-ambient border border-black/5 bg-white ${isGold ? 'iridescent-border p-[2px]' : ''}`}
+                    >
+                      <div className="flex flex-col h-full bg-white rounded-[30px] overflow-hidden">
+                        <OptimizedImage 
+                          src={user.images?.[0]?.url || ''} 
+                          alt={`${user.profile?.firstName} ${user.profile?.lastName}`}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
                         
                         {/* Status Tags */}
                         <div className="absolute top-6 left-6 flex flex-col gap-2">
@@ -267,15 +258,29 @@ export default function Search() {
 
                         <div className="mt-8">
                           <button className="clay-button-secondary w-full py-4 text-[10px] uppercase font-black tracking-[3px]">
-                            Curate Profile
+                            View Profile
                           </button>
                         </div>
                       </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+              
+              {/* Pagination Controls */}
+              {nextCursor && (
+                <div className="mt-12 flex justify-center">
+                  <button 
+                    onClick={() => setCursor(nextCursor)}
+                    className="clay-button-secondary px-12 py-4 text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2"
+                    disabled={queryLoading}
+                  >
+                    {queryLoading ? <Loader2 className="animate-spin" size={16} /> : null}
+                    Load More Profiles
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
