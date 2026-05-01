@@ -56,7 +56,7 @@ export default function Search() {
       <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row gap-12">
         
         {/* Left Sidebar Filters */}
-        <aside className="w-full lg:w-1/3 xl:w-1/4">
+        <aside className="w-full lg:w-[320px] lg:flex-shrink-0">
           <div className="bg-white rounded-[32px] p-8 shadow-ambient h-fit sticky top-28 border border-black/5">
             <h2 className="text-xl font-display font-extrabold mb-8 tracking-tight">Filters</h2>
             
@@ -153,7 +153,7 @@ export default function Search() {
         </aside>
 
         {/* Right Content Area */}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <div className="flex flex-col md:flex-row justify-between items-baseline mb-12 gap-4">
             <div>
               <h1 className="display-md text-foreground">Search Profiles</h1>
@@ -170,7 +170,7 @@ export default function Search() {
           {queryLoading && results.length === 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
               {[1, 2, 3, 4, 5, 6].map(i => (
-                <div key={i} className="h-[450px] bg-white rounded-[32px] animate-pulse border border-black/5 shadow-sm"></div>
+                <div key={i} className="aspect-[3/4] bg-white rounded-[32px] animate-pulse border border-black/5 shadow-sm"></div>
               ))}
             </div>
           ) : restriction ? (
@@ -204,12 +204,13 @@ export default function Search() {
                       onClick={() => window.location.href = `/profile/${user.id}`}
                       className={`group cursor-pointer transition-all duration-500 rounded-[32px] overflow-hidden flex flex-col shadow-ambient border border-black/5 bg-white ${isGold ? 'iridescent-border p-[2px]' : ''}`}
                     >
-                      <div className="flex flex-col h-full bg-white rounded-[30px] overflow-hidden">
-                        <OptimizedImage 
-                          src={user.images?.[0]?.url || ''} 
-                          alt={`${user.profile?.firstName} ${user.profile?.lastName}`}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
+                      <div className="flex flex-col bg-white rounded-[30px] overflow-hidden">
+                        <div className="relative aspect-[4/5] overflow-hidden bg-muted">
+                          <OptimizedImage 
+                            src={user.images?.[0]?.url || ''} 
+                            alt={`${user.profile?.firstName} ${user.profile?.lastName}`}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
                         
                         {/* Status Tags */}
                         <div className="absolute top-6 left-6 flex flex-col gap-2">
@@ -261,7 +262,8 @@ export default function Search() {
                           </button>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
+                  </motion.div>
                   );
                 })}
               </div>
