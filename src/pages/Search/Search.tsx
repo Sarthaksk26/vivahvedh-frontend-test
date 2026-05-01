@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import apiClient from '../../lib/apiClient';
 import { motion } from 'framer-motion';
-import { Star, Loader2 } from 'lucide-react';
-import { resolveImageUrl } from '../../lib/url';
+import { Loader2, Star } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import OptimizedImage from '../../components/ui/OptimizedImage';
 
@@ -194,7 +193,7 @@ export default function Search() {
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                {results.map((user, index) => {
+                {results.map((user: any, index: number) => {
                   const isGold = user.planType === 'GOLD';
                   return (
                     <motion.div

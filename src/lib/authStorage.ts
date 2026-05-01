@@ -23,5 +23,12 @@ export const authStorage = {
       return;
     }
     sessionStorage.removeItem(FORCE_PASSWORD_CHANGE_KEY);
+  },
+  getUser(): any {
+    const user = sessionStorage.getItem('vivah_user');
+    return user ? JSON.parse(user) : null;
+  },
+  setUser(user: any): void {
+    sessionStorage.setItem('vivah_user', JSON.stringify(user));
   }
 };

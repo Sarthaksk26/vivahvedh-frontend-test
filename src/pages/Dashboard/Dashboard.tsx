@@ -28,11 +28,12 @@ export default function Dashboard() {
       setProfile(res.data);
       
       // Update local storage status if it changed (e.g. from PENDING to ACTIVE)
+      // Update local storage status if it changed (e.g. from INACTIVE to ACTIVE)
       const storedUser = authStorage.getUser();
-      if (storedUser && storedUser.accountStatus !== res.data.accountStatus) {
-        authStorage.setUser({ ...storedUser, accountStatus: res.data.accountStatus });
+      if (storedUser && storedUser.status !== res.data.accountStatus) {
+        authStorage.setUser({ ...storedUser, status: res.data.accountStatus });
         // Optional: toast if status changed to ACTIVE
-        if (res.data.accountStatus === 'ACTIVE' && storedUser.accountStatus !== 'ACTIVE') {
+        if (res.data.accountStatus === 'ACTIVE' && storedUser.status !== 'ACTIVE') {
           toast.success('Your account has been approved! You can now send match proposals.');
         }
       }

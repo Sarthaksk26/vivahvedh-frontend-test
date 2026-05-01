@@ -26,6 +26,7 @@ export default function Login() {
       const response = await apiClient.post('/auth/login', data);
       const { token, user } = response.data;
       authStorage.setToken(token);
+      authStorage.setUser(user);
 
       // If admin-created account, force password change on first login
       if (user.requiresPasswordChange) {
