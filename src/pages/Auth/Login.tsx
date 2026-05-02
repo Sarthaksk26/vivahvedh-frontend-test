@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
@@ -20,6 +21,12 @@ export default function Login() {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema)
   });
+
+  useEffect(() => {
+    if (authStorage.isAuthenticated()) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const onSubmit = async (data: LoginForm) => {
     try {

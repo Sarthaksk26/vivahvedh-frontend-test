@@ -5,6 +5,8 @@ import CarouselLightbox from '../../components/layout/Lightbox';
 import { resolveImageUrl } from '../../lib/url';
 import toast from 'react-hot-toast';
 import { authStorage } from '../../lib/authStorage';
+import { Loader2 } from 'lucide-react';
+import OptimizedImage from '../../components/ui/OptimizedImage';
 
 export default function PublicProfile() {
   const { id } = useParams();
@@ -13,8 +15,8 @@ export default function PublicProfile() {
   const [loading, setLoading] = useState(true);
   const [carouselOpen, setCarouselOpen] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const [isSending, setIsSending] = useState(false);
   const [isShortlisted, setIsShortlisted] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<'NONE' | 'PENDING_SENT' | 'PENDING_RECEIVED' | 'ACCEPTED' | 'REJECTED'>('NONE');
   const [connectionRequestId, setConnectionRequestId] = useState<string | null>(null);
 
@@ -22,25 +24,35 @@ export default function PublicProfile() {
     if (!authStorage.isAuthenticated()) {
       return navigate('/login');
     }
-    setIsSending(true);
+    setActionLoading(true);
     try {
       await apiClient.post('/connections/send', { receiverId: id });
-      toast.success('Match Proposal sent successfully! They will be notified via email.', {
-        icon: '💌',
-        duration: 5000
-      });
+      setConnectionStatus('PENDING_SENT');
+      toast.success('Match Proposal sent successfully!');
     } catch (error: any) {
       const code = error.response?.data?.code;
       if (code === 'PLAN_UPGRADE_REQUIRED') {
-        toast.error('Upgrade to Silver or Gold plan to send match proposals.', {
-          icon: '👑',
-          duration: 6000
-        });
+        toast.error('Upgrade plan to send proposals.');
       } else {
-        toast.error(error.response?.data?.error || 'Failed to send match proposal.');
+        toast.error(error.response?.data?.error || 'Failed to send proposal.');
       }
     } finally {
-      setIsSending(false);
+      setActionLoading(false);
+    }
+  };
+
+  const handleUpdateConnection = async (status: 'ACCEPTED' | 'REJECTED') => {
+    if (!connectionRequestId) return;
+    setActionLoading(true);
+    try {
+      const endpoint = status === 'ACCEPTED' ? '/connections/accept' : '/connections/reject';
+      await apiClient.post(endpoint, { requestId: connectionRequestId });
+      setConnectionStatus(status);
+      toast.success(status === 'ACCEPTED' ? 'Proposal Accepted!' : 'Proposal Declined');
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Action failed');
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -51,44 +63,32 @@ export default function PublicProfile() {
     try {
       const { data } = await apiClient.post('/user/shortlist', { targetUserId: id });
       setIsShortlisted(data.shortlisted);
-      toast.success(data.shortlisted ? 'Profile added to your shortlist' : 'Profile removed from shortlist');
+      toast.success(data.shortlisted ? 'Added to shortlist' : 'Removed from shortlist');
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Failed to shortlist.');
+      toast.error(error.response?.data?.error || 'Shortlist failed');
     }
   };
 
   useEffect(() => {
     async function loadData() {
+      setLoading(true);
       try {
-        const response = await apiClient.get(`/search/public/${id}`);
-        setProfile(response.data);
+        const [userRes, statusRes, shortRes] = await Promise.all([
+          apiClient.get(`/search/public/${id}`),
+          apiClient.get(`/connections/status/${id}`),
+          apiClient.get('/user/shortlist')
+        ]);
 
-        const token = authStorage.getToken();
-        if (token && id) {
-          try {
-            const connRes = await apiClient.get('/connections/my-connections');
-            const { incoming, outgoing } = connRes.data;
-            
-            // Check outgoing (current user sent to this profile)
-            const sent = outgoing.find((r: any) => r.receiverId === id || r.receiver?.id === id);
-            if (sent) {
-              setConnectionStatus(sent.status === 'PENDING' ? 'PENDING_SENT' : sent.status === 'ACCEPTED' ? 'ACCEPTED' : 'REJECTED');
-              setConnectionRequestId(sent.id);
-            }
-            
-            // Check incoming (this profile sent to current user)
-            const received = incoming.find((r: any) => r.senderId === id || r.sender?.id === id);
-            if (received) {
-              setConnectionStatus(received.status === 'PENDING' ? 'PENDING_RECEIVED' : received.status === 'ACCEPTED' ? 'ACCEPTED' : received.status);
-              setConnectionRequestId(received.id);
-            }
-          } catch { /* not logged in or error */ }
-        }
+        setProfile(userRes.data);
+        setConnectionStatus(statusRes.data.status);
+        setConnectionRequestId(statusRes.data.requestId);
+        
+        const shortlisted = shortRes.data.some((s: any) => s.targetUserId === id || s.target?.id === id);
+        setIsShortlisted(shortlisted);
 
       } catch (error) {
         console.error(error);
-        toast.error("This profile does not exist or is currently restricted.");
-
+        toast.error("Profile not available.");
         navigate('/search');
       } finally {
         setLoading(false);
@@ -115,18 +115,13 @@ export default function PublicProfile() {
 
       {/* Hero Header Card */}
       <div className="bg-card rounded-3xl overflow-hidden border shadow-sm flex flex-col md:flex-row">
-        <div className="md:w-1/3 bg-muted h-72 md:h-auto relative">
-          {hasImages ? (
-            <img
-              src={resolveImageUrl(profile.images[0].url)}
-              onClick={() => { setCarouselIndex(0); setCarouselOpen(true); }}
-              className="w-full h-full object-cover cursor-zoom-in hover:brightness-110 transition"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-primary/10">
-              <span className="text-6xl font-bold text-primary/30">{profile.profile?.firstName?.[0] || 'V'}</span>
-            </div>
-          )}
+        <div className="md:w-1/3 bg-muted h-72 md:h-auto relative overflow-hidden group">
+          <OptimizedImage 
+            src={profile.images?.find((i: any) => i.isPrimary)?.url || profile.images?.[0]?.url || ''} 
+            alt="Profile" 
+            className="w-full h-full object-cover cursor-zoom-in group-hover:scale-105 transition-transform duration-700" 
+            onClick={() => { setCarouselIndex(0); setCarouselOpen(true); }}
+          />
           {/* Plan Badge */}
           {profile.planType === 'GOLD' && (
             <span className="absolute top-3 left-3 bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow">👑 Gold Member</span>
@@ -157,60 +152,51 @@ export default function PublicProfile() {
             {profile.profile?.aboutMe || "This member hasn't written a biography yet."}
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-10 flex flex-wrap items-center gap-4 border-t pt-8">
             {connectionStatus === 'NONE' && (
               <button
                 onClick={handleSendInterest}
-                disabled={isSending}
-                className={`px-8 py-3 text-white rounded-full font-bold shadow transition-all ${isSending ? 'bg-primary/50 cursor-not-allowed' : 'bg-primary hover:bg-primary/90 active:scale-95'}`}
+                disabled={actionLoading}
+                className="clay-button-primary px-10 py-4 text-xs uppercase tracking-[0.2em] disabled:opacity-50"
               >
-                {isSending ? 'Sending...' : '💌 Send Match Proposal'}
+                {actionLoading ? 'Sending Request...' : '💌 Send Match Proposal'}
               </button>
             )}
             
             {connectionStatus === 'PENDING_SENT' && (
-              <div className="px-8 py-3 bg-amber-100 text-amber-700 rounded-full font-bold">
-                ⏳ Proposal Sent — Awaiting Response
+              <div className="px-8 py-4 bg-amber-50 text-amber-700 rounded-2xl font-bold text-sm border border-amber-200 flex items-center gap-2">
+                <Loader2 className="animate-spin" size={18} />
+                Proposal Sent — Awaiting Response
               </div>
             )}
-            
+
             {connectionStatus === 'PENDING_RECEIVED' && (
-              <div className="flex gap-3">
-                <button
-                  onClick={async () => {
-                    try {
-                      await apiClient.post('/connections/accept', { requestId: connectionRequestId });
-                      toast.success('Connection accepted!');
-                      setConnectionStatus('ACCEPTED');
-                    } catch (err: any) { toast.error(err.response?.data?.error || 'Failed'); }
-                  }}
-                  className="px-8 py-3 bg-green-600 text-white rounded-full font-bold hover:bg-green-700 transition"
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <button 
+                  onClick={() => handleUpdateConnection('ACCEPTED')} 
+                  disabled={actionLoading}
+                  className="px-8 py-4 bg-green-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-green-600 transition shadow-lg active:scale-95 disabled:opacity-50"
                 >
-                  ✅ Accept Proposal
+                  {actionLoading ? 'Approving...' : '✅ Accept Proposal'}
                 </button>
-                <button
-                  onClick={async () => {
-                    try {
-                      await apiClient.post('/connections/reject', { requestId: connectionRequestId });
-                      toast.success('Proposal declined.');
-                      setConnectionStatus('REJECTED');
-                    } catch (err: any) { toast.error(err.response?.data?.error || 'Failed'); }
-                  }}
-                  className="px-8 py-3 border-2 border-red-300 text-red-600 rounded-full font-bold hover:bg-red-50 transition"
+                <button 
+                  onClick={() => handleUpdateConnection('REJECTED')} 
+                  disabled={actionLoading}
+                  className="px-8 py-4 bg-red-50 text-red-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-100 transition active:scale-95 disabled:opacity-50"
                 >
-                  ❌ Decline
+                  {actionLoading ? 'Declining...' : '❌ Decline'}
                 </button>
               </div>
             )}
-            
+
             {connectionStatus === 'ACCEPTED' && (
-              <div className="px-8 py-3 bg-green-100 text-green-700 rounded-full font-bold">
-                ✅ Connected — Contact info visible below
+              <div className="px-8 py-4 bg-green-50 text-green-700 rounded-2xl font-black text-xs uppercase tracking-[0.2em] border border-green-200 shadow-sm">
+                ✅ Connected — Contact info unlocked
               </div>
             )}
             
             {connectionStatus === 'REJECTED' && (
-              <div className="px-8 py-3 bg-gray-100 text-gray-500 rounded-full font-bold">
+              <div className="px-8 py-4 bg-gray-100 text-gray-500 rounded-2xl font-bold text-sm">
                 This proposal was declined
               </div>
             )}

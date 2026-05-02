@@ -9,19 +9,56 @@ export type AdminTab =
   | 'connections'
   | 'profit';
 
+export interface ProfileData {
+  firstName: string;
+  lastName: string;
+  gender: 'MALE' | 'FEMALE' | 'OTHER';
+  maritalStatus: 'UNMARRIED' | 'DIVORCED' | 'WIDOWED' | 'SEPARATED';
+}
+
+export interface PhysicalData {
+  height?: string;
+  weight?: number;
+}
+
+export interface EducationData {
+  trade?: string;
+  jobBusiness?: string;
+  annualIncome?: string;
+}
+
+export interface FamilyData {
+  fatherName?: string;
+  motherName?: string;
+  familyBackground?: string;
+  motherHometown?: string;
+}
+
+export interface AstrologyData {
+  rashi?: string;
+  gothra?: string;
+  mangal?: string;
+}
+
+export interface AddressData {
+  city?: string;
+  district?: string;
+  state?: string;
+}
+
 export interface AdminUser {
   id: string;
   regId: string;
-  email?: string | null;
-  mobile?: string | null;
-  accountStatus?: string;
-  planType?: string;
-  profile?: { firstName?: string; lastName?: string; gender?: string; maritalStatus?: string };
-  physical?: { height?: string; weight?: number };
-  education?: { trade?: string; jobBusiness?: string; annualIncome?: string };
-  family?: { fatherName?: string; motherName?: string; familyBackground?: string; motherHometown?: string };
-  astrology?: { rashi?: string; gothra?: string; mangal?: string };
-  addresses?: Array<{ city?: string; district?: string; state?: string }>;
+  email: string | null;
+  mobile: string;
+  accountStatus: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'DELETED';
+  planType: 'FREE' | 'SILVER' | 'GOLD';
+  profile: ProfileData | null;
+  physical: PhysicalData | null;
+  education: EducationData | null;
+  family: FamilyData | null;
+  astrology: AstrologyData | null;
+  addresses: AddressData[];
 }
 
 export interface Enquiry {
@@ -39,17 +76,21 @@ export interface PaymentRecord {
   id: string;
   amount: number;
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  planType: string;
+  planType: 'FREE' | 'SILVER' | 'GOLD';
   transactionId: string;
   screenshotUrl: string;
-  user?: { regId?: string; email?: string; mobile?: string };
+  user: {
+    regId: string;
+    email: string | null;
+    mobile: string;
+  } | null;
 }
 
 export interface NotificationBucket {
-  urgent?: boolean;
-  count?: number;
-  label?: string;
-  tab?: AdminTab;
+  urgent: boolean;
+  count: number;
+  label: string;
+  tab: AdminTab;
 }
 
 export interface AdminNotifications {

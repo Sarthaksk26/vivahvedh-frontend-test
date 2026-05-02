@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Star } from 'lucide-react';
 import { authStorage } from '../../lib/authStorage';
 
 export default function Header() {
@@ -86,6 +86,9 @@ export default function Header() {
                 )}
                 <Link to="/dashboard" className="clay-button-secondary text-sm px-6 py-2.5">
                   Dashboard
+                </Link>
+                <Link to="/dashboard" onClick={() => sessionStorage.setItem('dashboard_tab', 'shortlist')} className="p-2.5 bg-amber-50 text-amber-600 rounded-xl hover:bg-amber-100 transition-colors" title="My Shortlist">
+                  <Star size={20} fill="currentColor" />
                 </Link>
                 <button
                   onClick={handleLogout}

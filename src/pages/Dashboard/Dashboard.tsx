@@ -1,6 +1,7 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import apiClient from '../../lib/apiClient';
 import PhotoUpload from '../../components/Dashboard/PhotoUpload';
+import OptimizedImage from '../../components/ui/OptimizedImage';
 import ProfileEditor from '../../components/Dashboard/ProfileEditor';
 import ConnectionsList from '../../components/Dashboard/ConnectionsList';
 import { Lock, Shield } from 'lucide-react';
@@ -12,7 +13,15 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const isForced = authStorage.getForcePasswordChange();
-  const [activeTab, setActiveTab] = useState(isForced ? 'password' : 'profile');
+  const [activeTab, setActiveTab] = useState(() => {
+    if (isForced) return 'password';
+    const savedTab = sessionStorage.getItem('dashboard_tab');
+    if (savedTab) {
+      sessionStorage.removeItem('dashboard_tab');
+      return savedTab;
+    }
+    return 'profile';
+  });
   const [isEditing, setIsEditing] = useState(false);
   const [shortlist, setShortlist] = useState<any[]>([]);
 
@@ -27,12 +36,9 @@ export default function Dashboard() {
       const res = await apiClient.get('/user/profile');
       setProfile(res.data);
       
-      // Update local storage status if it changed (e.g. from PENDING to ACTIVE)
-      // Update local storage status if it changed (e.g. from INACTIVE to ACTIVE)
       const storedUser = authStorage.getUser();
       if (storedUser && storedUser.status !== res.data.accountStatus) {
         authStorage.setUser({ ...storedUser, status: res.data.accountStatus });
-        // Optional: toast if status changed to ACTIVE
         if (res.data.accountStatus === 'ACTIVE' && storedUser.status !== 'ACTIVE') {
           toast.success('Your account has been approved! You can now send match proposals.');
         }
@@ -61,7 +67,7 @@ export default function Dashboard() {
     if (activeTab === 'shortlist') fetchShortlist();
   }, [activeTab, fetchShortlist]);
 
-  const handlePasswordChange = async (e: React.FormEvent) => {
+  const handlePasswordChange = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (newPassword.length < 6) { 
@@ -86,25 +92,33 @@ export default function Dashboard() {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-      // Clear force password change flag if set
       authStorage.setForcePasswordChange(false);
     } catch (err: any) {
       toast.error(err.response?.data?.error || 'Failed to change password.');
     } finally {
       setChangingPassword(false);
     }
-  };
+  }, [newPassword, confirmPassword, currentPassword]);
 
-  const switchTab = (tab: string) => {
+  const switchTab = useCallback((tab: string) => {
     setActiveTab(tab);
-    setIsEditing(false); // Reset editing mode when switching tabs
-  };
+    setIsEditing(false);
+  }, []);
 
-  const planColors: Record<string, string> = {
+  // PERFORMANCE: Memoize plan colors to prevent object recreation
+  const planColors: Record<string, string> = useMemo(() => ({
     FREE: 'bg-gray-100 text-gray-600',
     SILVER: 'bg-slate-200 text-slate-700',
     GOLD: 'bg-amber-100 text-amber-700'
-  };
+  }), []);
+
+  // PERFORMANCE: Memoize tabs list
+  const tabs = useMemo(() => [
+    { key: 'profile', label: 'Profile Settings' },
+    { key: 'connections', label: 'My Connections', highlight: true },
+    { key: 'shortlist', label: `My Shortlist ${shortlist.length > 0 ? `(${shortlist.length})` : ''}` },
+    { key: 'password', label: 'Security' },
+  ], [shortlist.length]);
 
   if (loading) {
     return <div className="min-h-[70vh] flex items-center justify-center font-semibold text-lg text-primary animate-pulse">Loading dashboard...</div>;
@@ -120,12 +134,12 @@ export default function Dashboard() {
       <aside className="w-full md:w-64 flex-shrink-0 flex flex-col gap-4">
         <div className="p-6 bg-card rounded-2xl shadow-sm border">
           <div className="mb-4">
-            <div className="w-20 h-20 bg-muted rounded-full flex overflow-hidden items-center justify-center mx-auto mb-3 border-4 border-background shadow-md">
-              {profile.images && profile.images.length > 0 ? (
-                <img src={resolveImageUrl(profile.images[0].url)} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-2xl font-bold text-muted-foreground">{profile.profile?.firstName?.[0] || 'V'}</span>
-              )}
+            <div className="w-24 h-24 bg-muted rounded-full flex overflow-hidden items-center justify-center mx-auto mb-3 border-4 border-background shadow-lg relative">
+              <OptimizedImage 
+                src={profile.images?.find((i: any) => i.isPrimary)?.url || profile.images?.[0]?.url || ''} 
+                alt="Profile" 
+                className="w-full h-full object-cover" 
+              />
             </div>
             <h2 className="text-center font-bold text-lg">{profile.profile?.firstName} {profile.profile?.lastName}</h2>
             <p className="text-center text-sm text-primary font-medium">{profile.regId}</p>
@@ -143,13 +157,7 @@ export default function Dashboard() {
 
           <hr className="my-2 border-border" />
           <nav className="flex flex-col gap-1 mt-2">
-            {[
-              { key: 'profile', label: 'My Profile' },
-              { key: 'photos', label: 'Photo Gallery' },
-              { key: 'connections', label: 'My Connections', highlight: true },
-              { key: 'shortlist', label: `My Shortlist ${shortlist.length > 0 ? `(${shortlist.length})` : ''}` },
-              { key: 'password', label: 'Change Password' },
-            ].map(tab => (
+            {tabs.map(tab => (
               <button
                 key={tab.key}
                 disabled={isForced && tab.key !== 'password'}
@@ -210,67 +218,112 @@ export default function Dashboard() {
 
 
         {activeTab === 'profile' && (
-          <div className="space-y-6">
+          <div className="space-y-8">
+            {/* Top Section: Photo Management */}
+            <div className="bg-card border shadow-sm rounded-3xl overflow-hidden">
+               <div className="p-8 border-b bg-rose-50/50">
+                  <h2 className="text-xl font-bold">Photo Gallery</h2>
+                  <p className="text-sm text-muted-foreground">Manage your profile visibility with high-quality photos.</p>
+               </div>
+               <div className="p-8">
+                  <PhotoUpload existingImages={profile.images} onUploadSuccess={fetchProfile} />
+               </div>
+            </div>
+
+            {/* Profile Content */}
             {!isEditing ? (
-              <>
-                <div className="bg-card border shadow-sm rounded-2xl p-6 md:p-8">
-                  <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold">Profile Overview</h1>
-                    <div className="flex items-center gap-3">
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${profile.accountStatus === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
-                        {profile.accountStatus}
-                      </span>
-                      <button 
-                        onClick={() => setIsEditing(true)}
-                        className="px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primary/90 transition shadow-sm active:scale-95"
-                      >
-                        ✏️ Edit Profile
-                      </button>
+              <div className="space-y-8">
+                <div className="bg-card border shadow-sm rounded-3xl p-8">
+                  <div className="flex justify-between items-center mb-8">
+                    <div>
+                      <h1 className="text-2xl font-bold">Primary Details</h1>
+                      <p className="text-sm text-muted-foreground mt-1">Basic information shown to other members.</p>
                     </div>
+                    <button 
+                      onClick={() => setIsEditing(true)}
+                      className="px-6 py-2.5 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary/90 transition shadow-premium active:scale-95 flex items-center gap-2"
+                    >
+                      ✏️ Edit Information
+                    </button>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
-                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Email</p><p className="font-medium">{profile.email || "Not Provided"}</p></div>
-                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Mobile</p><p className="font-medium">{profile.mobile}</p></div>
-                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Gender</p><p className="font-medium">{profile.profile?.gender}</p></div>
-                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Marital Status</p><p className="font-medium">{profile.profile?.maritalStatus}</p></div>
-                    <div className="col-span-full">
-                      <p className="text-sm font-semibold text-muted-foreground mb-1">About Me</p>
-                      <p className="font-medium text-foreground/80 leading-relaxed bg-muted/30 p-4 rounded-lg">{profile.profile?.aboutMe || "No description provided yet."}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-1">
+                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">Email</p>
+                      <p className="font-semibold text-foreground">{profile.email || "Not Provided"}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">Mobile</p>
+                      <p className="font-semibold text-foreground">{profile.mobile}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">Gender</p>
+                      <p className="font-semibold text-foreground">{profile.profile?.gender}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">Marital Status</p>
+                      <p className="font-semibold text-foreground">{profile.profile?.maritalStatus}</p>
+                    </div>
+                    <div className="col-span-full pt-4">
+                      <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 mb-3">About Me</p>
+                      <div className="bg-muted/30 p-6 rounded-2xl border border-dashed border-border/60">
+                        <p className="font-medium text-foreground/80 leading-relaxed italic">
+                          {profile.profile?.aboutMe || "Describe yourself here to help others know you better."}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-card border shadow-sm rounded-2xl p-6 md:p-8">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold">Extended Details</h2>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
-                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Height</p><p className="font-medium">{profile.physical?.height ? `${profile.physical.height} in` : "-"}</p></div>
-                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Profession</p><p className="font-medium">{profile.education?.jobBusiness || "-"}</p></div>
-                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Income</p><p className="font-medium">{profile.education?.annualIncome || "-"}</p></div>
-                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Father's Occupation</p><p className="font-medium">{profile.family?.fatherOccupation || "-"}</p></div>
-                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Gothra</p><p className="font-medium">{profile.astrology?.gothra || "-"}</p></div>
-                    <div><p className="text-sm font-semibold text-muted-foreground mb-1">Rashi</p><p className="font-medium">{profile.astrology?.rashi || "-"}</p></div>
+                <div className="bg-card border shadow-sm rounded-3xl p-8">
+                  <h2 className="text-xl font-bold mb-8">Personal & Astrology Details</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Height</p>
+                      <p className="font-bold">{profile.physical?.height ? `${profile.physical.height} in` : "-"}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Occupation</p>
+                      <p className="font-bold">{profile.education?.jobBusiness || "-"}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Income</p>
+                      <p className="font-bold">{profile.education?.annualIncome || "-"}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Gothra</p>
+                      <p className="font-bold">{profile.astrology?.gothra || "-"}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Rashi</p>
+                      <p className="font-bold">{profile.astrology?.rashi || "-"}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Mangal</p>
+                      <p className="font-bold">{profile.astrology?.mangal || "-"}</p>
+                    </div>
                   </div>
                 </div>
-              </>
+              </div>
             ) : (
-              <div className="bg-card border shadow-sm rounded-2xl p-6 md:p-8">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-bold">Edit Your Profile</h2>
+              <div className="bg-card border shadow-sm rounded-3xl p-8">
+                <div className="flex justify-between items-center mb-8">
+                  <div>
+                    <h2 className="text-2xl font-bold">Edit Profile Details</h2>
+                    <p className="text-sm text-muted-foreground mt-1">Updates to sensitive fields may require re-verification.</p>
+                  </div>
                   <button 
                     onClick={() => setIsEditing(false)}
-                    className="px-4 py-2 border text-sm font-bold rounded-lg hover:bg-muted transition"
+                    className="px-6 py-2.5 border rounded-xl font-bold hover:bg-muted transition text-sm shadow-sm"
                   >
-                    ← Cancel
+                    Cancel Editing
                   </button>
                 </div>
-                <p className="text-muted-foreground mb-6">Complete your profile to increase visibility and match quality.</p>
                 <ProfileEditor 
                   currentData={profile} 
                   onSaveSuccess={() => { 
                     fetchProfile(); 
-                    setIsEditing(false); // Return to view mode after save
+                    setIsEditing(false);
+                    toast.success('Profile updated successfully!');
                   }} 
                 />
               </div>

@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import apiClient from '../../lib/apiClient';
 import { motion } from 'framer-motion';
-import { Loader2, Star } from 'lucide-react';
+import { Loader2, Star, Search as SearchIcon, SlidersHorizontal } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import OptimizedImage from '../../components/ui/OptimizedImage';
 
 export default function Search() {
@@ -18,38 +19,59 @@ export default function Search() {
     const handler = setTimeout(() => {
       setDebouncedFilters(filters);
       setCursor(null); // Reset pagination on filter change
-    }, 500);
+    }, 400);
     return () => clearTimeout(handler);
   }, [filters]);
 
   const { data, isLoading: queryLoading, isError, error: queryError } = useQuery({
     queryKey: ['search', debouncedFilters, cursor],
-    queryKeyHashFn: (queryKey) => JSON.stringify(queryKey),
     queryFn: async () => {
       const params = new URLSearchParams();
       Object.entries(debouncedFilters).forEach(([key, value]) => {
         if (value) params.append(key, value);
       });
       if (cursor) params.append('cursor', cursor);
-      params.append('limit', '21'); // Fetch one extra to check if there's more
+      params.append('limit', '21');
 
       const response = await apiClient.get(`/search?${params.toString()}`);
       return response.data;
     },
+    // PERFORMANCE: Cache results for 5 minutes, keep stale data for 1 minute
+    staleTime: 60 * 1000, 
+    gcTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    retry: 1,
   });
 
-  const results = data?.results || [];
-  const nextCursor = data?.pagination?.nextCursor;
-  const totalResults = data?.pagination?.totalResults || 0;
+  // Memoize results processing to prevent recalculation on every render
+  const { results, nextCursor, totalResults } = useMemo(() => ({
+    results: data?.results || [],
+    nextCursor: data?.pagination?.nextCursor,
+    totalResults: data?.pagination?.totalResults || 0
+  }), [data]);
   
-  // Handle specific error for locked discovery
-  const restriction = isError && (queryError as any).response?.status === 403 
-    ? { message: (queryError as any).response.data.error || 'Discovery Locked' } 
-    : null;
+  const restriction = useMemo(() => {
+    if (isError && (queryError as any).response?.status === 403) {
+      return { message: (queryError as any).response.data.error || 'Discovery Locked' };
+    }
+    return null;
+  }, [isError, queryError]);
 
-  const handleFilterChange = (e: any) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
-  };
+  const handleFilterChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+  }, []);
+
+  const handleApplyFilters = useCallback(() => {
+    setDebouncedFilters({ ...filters });
+    setCursor(null);
+  }, [filters]);
+
+  const navigate = useNavigate();
+
+  const navigateToProfile = useCallback((id: string) => {
+    navigate(`/profile/${id}`);
+  }, [navigate]);
 
   return (
     <div className="bg-[#F7F9FB] min-h-screen pt-28 pb-20">
@@ -143,7 +165,7 @@ export default function Search() {
               </div>
 
               <button 
-                onClick={() => setDebouncedFilters({...filters})} 
+                onClick={handleApplyFilters} 
                 className="clay-button-primary w-full py-4 text-xs uppercase tracking-[0.2em]"
               >
                 Apply Filters
@@ -154,15 +176,18 @@ export default function Search() {
 
         {/* Right Content Area */}
         <div className="flex-1 min-w-0">
-          <div className="flex flex-col md:flex-row justify-between items-baseline mb-12 gap-4">
-            <div>
-              <h1 className="display-md text-foreground">Search Profiles</h1>
-              <p className="text-foreground/40 mt-2 font-medium tracking-wide">Browse and find your perfect match from verified profiles</p>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+            <div className="space-y-1">
+              <h1 className="text-3xl md:text-5xl font-display font-black text-foreground flex items-center gap-3">
+                <SearchIcon className="text-primary/20" size={32} />
+                Search Profiles
+              </h1>
+              <p className="text-foreground/40 font-medium tracking-wide">Find your perfect match from verified profiles</p>
             </div>
-            <div className="flex items-center gap-4">
-              {queryLoading && <Loader2 className="animate-spin text-primary" size={20} />}
-              <span className="text-xs font-black uppercase tracking-[3px] text-primary/40 bg-white px-4 py-2 rounded-full border border-black/5">
-                {totalResults} Profiles
+            <div className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl border border-black/5 shadow-sm">
+              {queryLoading && <Loader2 className="animate-spin text-primary" size={16} />}
+              <span className="text-[10px] font-black uppercase tracking-[3px] text-primary">
+                {totalResults} Profiles Found
               </span>
             </div>
           </div>
@@ -201,7 +226,7 @@ export default function Search() {
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      onClick={() => window.location.href = `/profile/${user.id}`}
+                      onClick={() => navigateToProfile(user.id)}
                       className={`group cursor-pointer transition-all duration-500 rounded-[32px] overflow-hidden flex flex-col shadow-ambient border border-black/5 bg-white ${isGold ? 'iridescent-border p-[2px]' : ''}`}
                     >
                       <div className="flex flex-col bg-white rounded-[30px] overflow-hidden">
@@ -246,7 +271,7 @@ export default function Search() {
                           </div>
                           <div className="space-y-1">
                             <p className="text-[10px] uppercase font-bold text-foreground/40 tracking-widest">Height</p>
-                            <p className="text-sm font-bold text-foreground/80">{user.physical?.height ? `${user.physical.height} cm` : 'N/A'}</p>
+                            <p className="text-sm font-bold text-foreground/80">{user.physical?.height ? `${user.physical.height} in` : 'N/A'}</p>
                           </div>
                           <div className="col-span-2 space-y-1 mt-2">
                             <p className="text-[10px] uppercase font-bold text-foreground/40 tracking-widest">Profession</p>

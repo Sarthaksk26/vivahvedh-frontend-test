@@ -1,7 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { authStorage } from './authStorage';
 
-// The base URL of our new Express Backend
 let API_URL = import.meta.env.VITE_API_URL;
 if (!API_URL) {
   API_URL = window.location.hostname === 'localhost' 
@@ -9,7 +8,6 @@ if (!API_URL) {
     : 'https://vivahvedh-api.onrender.com/api';
 }
 
-// Ensure the URL always ends with /api
 if (API_URL && !API_URL.endsWith('/api')) {
   API_URL = API_URL.endsWith('/') ? `${API_URL}api` : `${API_URL}/api`;
 }
@@ -21,13 +19,26 @@ const apiClient = axios.create({
   },
 });
 
-// Interceptor to automatically attach the Auth Token
-apiClient.interceptors.request.use((config) => {
+apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = authStorage.getToken();
-  if (token) {
+  if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      // Avoid redirect loops if we're already on login
+      if (!window.location.pathname.includes('/login')) {
+        authStorage.clearToken();
+        window.location.href = '/login?expired=true';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default apiClient;

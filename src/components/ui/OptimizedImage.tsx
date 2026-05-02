@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { resolveImageUrl } from '@/lib/url';
 import { cn } from '@/lib/utils';
 
 interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -15,21 +16,12 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   fallbackSrc = '/placeholder-user.png',
   ...props
 }) => {
-  const getProcessedSrc = (path: string) => {
-    if (!path) return fallbackSrc;
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-    if (path.startsWith('/uploads')) {
-      return `${apiUrl}${path}`;
-    }
-    return path;
-  };
-
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(false);
-  const [currentSrc, setCurrentSrc] = useState<string>(() => getProcessedSrc(src));
+  const [currentSrc, setCurrentSrc] = useState<string>(() => resolveImageUrl(src) || fallbackSrc);
 
   useEffect(() => {
-    setCurrentSrc(getProcessedSrc(src));
+    setCurrentSrc(resolveImageUrl(src) || fallbackSrc);
     setIsLoaded(false);
     setError(false);
   }, [src, fallbackSrc]);

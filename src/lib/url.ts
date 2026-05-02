@@ -26,14 +26,16 @@ export const resolveImageUrl = (path?: string | null): string => {
   
   if (path.startsWith('http')) return path;
 
-  // If it's just a filename (no slashes), it's likely an old record or payment screenshot
-  // that needs the /uploads/ prefix.
-  let cleanPath = path;
-  if (!path.includes('/')) {
-    cleanPath = `/uploads/${path}`;
-  } else if (!path.startsWith('/')) {
-    cleanPath = `/${path}`;
+  // Normalize backslashes (Windows) to forward slashes
+  let normalizedPath = path.replace(/\\/g, '/');
+
+  // Strip redundant leading slashes
+  normalizedPath = normalizedPath.replace(/^\/+/, '');
+
+  // Ensure it starts with uploads/ if it doesn't already
+  if (!normalizedPath.startsWith('uploads/')) {
+    normalizedPath = `uploads/${normalizedPath}`;
   }
   
-  return `${getApiBaseUrl()}${cleanPath}`;
+  return `${getApiBaseUrl()}/${normalizedPath}`;
 };
