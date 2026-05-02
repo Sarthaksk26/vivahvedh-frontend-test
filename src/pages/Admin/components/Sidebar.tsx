@@ -18,7 +18,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, notif
   }
 
   const tabs: Tab[] = [
-    { id: 'pending', label: 'Approvals', icon: <Users size={18} />, badge: notifications?.notifications?.pendingApprovals?.count || stats?.pendingApprovals || 0 },
+    { id: 'pending', label: 'Pending Approvals', icon: <Users size={18} />, badge: notifications?.notifications?.pendingApprovals?.count || stats?.pendingApprovals || 0 },
     { id: 'all', label: 'Community', icon: <Shield size={18} /> },
     { id: 'enquiries', label: 'Inbox', icon: <Mail size={18} />, badge: notifications?.notifications?.unresolvedEnquiries?.count || 0 },
     { id: 'birthdays', label: 'Birthdays', icon: <Cake size={18} />, badge: notifications?.notifications?.upcomingBirthdays?.count || 0 },

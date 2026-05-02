@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2, Check, Shield, ShieldOff, Edit, Eye } from 'lucide-react';
+import { Trash2, Check, Shield, ShieldOff, Edit } from 'lucide-react';
 import { resolveImageUrl } from '../../../lib/url';
 import type { AdminUser } from '../adminTypes';
 
@@ -55,10 +55,10 @@ export const UserTable: React.FC<UserTableProps> = React.memo(({
                       {user.profile?.firstName} {user.profile?.lastName}
                       <button 
                         onClick={() => onView(user)} 
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-primary hover:scale-110"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-black uppercase tracking-widest text-primary ml-2 hover:underline"
                         title="View Full Profile"
                       >
-                        <Eye size={14} />
+                        View Profile
                       </button>
                     </div>
                     <div className="text-[10px] font-bold text-primary uppercase tracking-widest">{user.regId}</div>

@@ -59,6 +59,7 @@ export interface AdminUser {
   family: FamilyData | null;
   astrology: AstrologyData | null;
   addresses: AddressData[];
+  images?: { id?: string; url: string; isPrimary: boolean; }[];
 }
 
 export interface Enquiry {

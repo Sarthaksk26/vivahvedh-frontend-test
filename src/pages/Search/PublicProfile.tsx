@@ -4,7 +4,6 @@ import apiClient from '../../lib/apiClient';
 import CarouselLightbox from '../../components/layout/Lightbox';
 import toast from 'react-hot-toast';
 import { authStorage } from '../../lib/authStorage';
-import { Loader2 } from 'lucide-react';
 import OptimizedImage from '../../components/ui/OptimizedImage';
 import type { AxiosError } from 'axios';
 import type { ApiErrorResponse, FullUserProfile, UserImage, ShortlistItem, ConnectionStatus } from '../../types';
@@ -22,9 +21,47 @@ export default function PublicProfile() {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('NONE');
   const [connectionRequestId, setConnectionRequestId] = useState<string | null>(null);
 
+  const currentUser = authStorage.getUser();
+  const isAuthenticated = authStorage.isAuthenticated();
+  const isAdmin = currentUser?.role === 'ADMIN';
+  const planType = currentUser?.planType || 'FREE';
+
+  const loadData = async (signal?: AbortSignal) => {
+    setLoading(true);
+    try {
+      const [userRes, statusRes, shortRes] = await Promise.all([
+        apiClient.get<FullUserProfile>(`/search/public/${id}`, { signal }),
+        apiClient.get<{ status: ConnectionStatus; requestId: string | null }>(`/connections/status/${id}`, { signal }),
+        apiClient.get<ShortlistItem[]>('/user/shortlist', { signal })
+      ]);
+
+      if (signal?.aborted) return;
+
+      setProfile(userRes.data);
+      setConnectionStatus(statusRes.data.status);
+      setConnectionRequestId(statusRes.data.requestId);
+      
+      const shortlisted = shortRes.data.some((s: ShortlistItem) => s.targetUserId === id || s.target?.id === id);
+      setIsShortlisted(shortlisted);
+
+    } catch (error: any) {
+      if (error?.name === 'CanceledError' || signal?.aborted) return;
+      console.error(error);
+      toast.error("Profile not available.");
+      navigate('/search');
+    } finally {
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
+    }
+  };
+
   const handleSendInterest = async () => {
-    if (!authStorage.isAuthenticated()) {
+    if (!isAuthenticated) {
       return navigate('/login');
+    }
+    if (planType === 'FREE') {
+      return navigate('/rules');
     }
     setActionLoading(true);
     try {
@@ -52,6 +89,9 @@ export default function PublicProfile() {
       await apiClient.post(endpoint, { requestId: connectionRequestId });
       setConnectionStatus(status);
       toast.success(status === 'ACCEPTED' ? 'Proposal Accepted!' : 'Proposal Declined');
+      if (status === 'ACCEPTED') {
+        await loadData();
+      }
     } catch (error: unknown) {
       toast.error(formatApiError(error, 'Action failed'));
     } finally {
@@ -60,7 +100,7 @@ export default function PublicProfile() {
   };
 
   const handleShortlist = async () => {
-    if (!authStorage.isAuthenticated()) {
+    if (!isAuthenticated) {
       return navigate('/login');
     }
     try {
@@ -73,31 +113,9 @@ export default function PublicProfile() {
   };
 
   useEffect(() => {
-    async function loadData() {
-      setLoading(true);
-      try {
-        const [userRes, statusRes, shortRes] = await Promise.all([
-          apiClient.get<FullUserProfile>(`/search/public/${id}`),
-          apiClient.get<{ status: ConnectionStatus; requestId: string | null }>(`/connections/status/${id}`),
-          apiClient.get<ShortlistItem[]>('/user/shortlist')
-        ]);
-
-        setProfile(userRes.data);
-        setConnectionStatus(statusRes.data.status);
-        setConnectionRequestId(statusRes.data.requestId);
-        
-        const shortlisted = shortRes.data.some((s: ShortlistItem) => s.targetUserId === id || s.target?.id === id);
-        setIsShortlisted(shortlisted);
-
-      } catch (error) {
-        console.error(error);
-        toast.error("Profile not available.");
-        navigate('/search');
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
+    const controller = new AbortController();
+    loadData(controller.signal);
+    return () => controller.abort();
   }, [id, navigate]);
 
   if (loading) return <div className="h-[80vh] flex items-center justify-center animate-pulse font-medium text-lg text-primary">Loading profile...</div>;
@@ -156,19 +174,21 @@ export default function PublicProfile() {
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-4 border-t pt-8">
-            {connectionStatus === 'NONE' && (
+            {!isAdmin && connectionStatus === 'NONE' && (
               <button
                 onClick={handleSendInterest}
                 disabled={actionLoading}
                 className="clay-button-primary px-10 py-4 text-xs uppercase tracking-[0.2em] disabled:opacity-50"
               >
-                {actionLoading ? 'Sending Request...' : '💌 Send Match Proposal'}
+                {actionLoading ? 'Sending Request...' : 
+                 !isAuthenticated ? 'Login to Send Proposal' :
+                 planType === 'FREE' ? 'Upgrade to Send Proposal' : 
+                 '💌 Send Match Proposal'}
               </button>
             )}
             
             {connectionStatus === 'PENDING_SENT' && (
               <div className="px-8 py-4 bg-amber-50 text-amber-700 rounded-2xl font-bold text-sm border border-amber-200 flex items-center gap-2">
-                <Loader2 className="animate-spin" size={18} />
                 Proposal Sent — Awaiting Response
               </div>
             )}

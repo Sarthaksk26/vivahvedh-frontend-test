@@ -38,6 +38,7 @@ export const BirthdayList: React.FC<BirthdayListProps> = React.memo(({ birthdays
     isOpen: false, userId: null, name: '', email: '', message: ''
   });
   const [sending, setSending] = useState(false);
+  const [loadingPreviewId, setLoadingPreviewId] = useState<string | null>(null);
 
   const fetchLogs = async () => {
     setLoadingLogs(true);
@@ -56,6 +57,7 @@ export const BirthdayList: React.FC<BirthdayListProps> = React.memo(({ birthdays
   }, [view]);
 
   const handleOpenPreview = async (id: string) => {
+    setLoadingPreviewId(id);
     try {
       const { data } = await apiClient.get(`/admin/birthdays/preview/${id}`);
       setPreviewModal({
@@ -65,8 +67,10 @@ export const BirthdayList: React.FC<BirthdayListProps> = React.memo(({ birthdays
         email: data.email,
         message: data.defaultMessage
       });
-    } catch (e) {
-      toast.error("Failed to load preview");
+    } catch (e: any) {
+      toast.error(e.response?.data?.error || "Failed to load preview");
+    } finally {
+      setLoadingPreviewId(null);
     }
   };
 
@@ -80,8 +84,8 @@ export const BirthdayList: React.FC<BirthdayListProps> = React.memo(({ birthdays
       toast.success(`Birthday wish sent to ${previewModal.name}!`);
       setPreviewModal(prev => ({ ...prev, isOpen: false }));
       fetchData();
-    } catch (e) {
-      toast.error("Failed to send wishes");
+    } catch (e: any) {
+      toast.error(e.response?.data?.error || "Failed to send wishes");
     } finally {
       setSending(false);
     }
@@ -135,9 +139,10 @@ export const BirthdayList: React.FC<BirthdayListProps> = React.memo(({ birthdays
                     <td className="px-10 py-6 text-right">
                       <button 
                         onClick={() => handleOpenPreview(b.id)} 
-                        className="px-4 py-2 bg-primary text-white shadow-lg shadow-primary/20 rounded-xl font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 ml-auto transition-all hover:scale-105 active:scale-95"
+                        disabled={loadingPreviewId === b.id}
+                        className="px-4 py-2 bg-primary text-white shadow-lg shadow-primary/20 rounded-xl font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 ml-auto transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
                       >
-                        <Cake size={14} /> 
+                        {loadingPreviewId === b.id ? <Loader2 className="animate-spin" size={14} /> : <Cake size={14} />}
                         Send Wish
                       </button>
                     </td>

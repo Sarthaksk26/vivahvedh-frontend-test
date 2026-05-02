@@ -8,29 +8,29 @@ interface AdminProfilePreviewModalProps {
   onClose: () => void;
 }
 
-export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> = ({ user, onClose }) => {
-  const images = (user as any).images || [];
-  
-  const Section = ({ title, icon: Icon, children }: { title: string, icon: any, children: React.ReactNode }) => (
-    <div className="bg-white rounded-3xl p-6 border border-black/5 shadow-sm">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-8 h-8 rounded-xl bg-primary/5 text-primary flex items-center justify-center">
-          <Icon size={16} />
-        </div>
-        <h3 className="text-sm font-black uppercase tracking-widest text-foreground/80">{title}</h3>
+const Section = ({ title, icon: Icon, children }: { title: string, icon: any, children: React.ReactNode }) => (
+  <div className="bg-white rounded-3xl p-6 border border-black/5 shadow-sm">
+    <div className="flex items-center gap-3 mb-4">
+      <div className="w-8 h-8 rounded-xl bg-primary/5 text-primary flex items-center justify-center">
+        <Icon size={16} />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {children}
-      </div>
+      <h3 className="text-sm font-black uppercase tracking-widest text-foreground/80">{title}</h3>
     </div>
-  );
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {children}
+    </div>
+  </div>
+);
 
-  const DataPoint = ({ label, value }: { label: string, value?: string | number | null }) => (
-    <div className="space-y-1">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/30">{label}</p>
-      <p className="text-sm font-semibold text-foreground/80">{value || '—'}</p>
-    </div>
-  );
+const DataPoint = ({ label, value }: { label: string, value?: string | number | null }) => (
+  <div className="space-y-1">
+    <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/30">{label}</p>
+    <p className="text-sm font-semibold text-foreground/80">{value || '—'}</p>
+  </div>
+);
+
+export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> = ({ user, onClose }) => {
+  const images = user.images || [];
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 overflow-y-auto">
@@ -95,6 +95,7 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
                 <DataPoint label="Gender" value={user.profile?.gender} />
                 <DataPoint label="Marital Status" value={user.profile?.maritalStatus} />
                 <DataPoint label="Plan Type" value={user.planType} />
+                <DataPoint label="Created By" value={(user as any).profileCreatedBy} />
               </Section>
 
               <Section title="Contact Information" icon={Phone}>
