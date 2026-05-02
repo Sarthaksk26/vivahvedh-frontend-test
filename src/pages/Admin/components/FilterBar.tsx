@@ -34,9 +34,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, setFilters }) => 
         <option value="MALE">Male</option>
         <option value="FEMALE">Female</option>
       </select>
-      <div className="flex gap-2">
-        <input name="ageMin" value={filters.ageMin} onChange={handleChange} placeholder="Min Age" className={`${inputClass} w-full`} />
-        <input name="ageMax" value={filters.ageMax} onChange={handleChange} placeholder="Max Age" className={`${inputClass} w-full`} />
+      <div className="grid grid-cols-2 gap-2">
+        <input name="ageMin" value={filters.ageMin} onChange={handleChange} placeholder="Min Age" className={`${inputClass} w-full min-w-[80px]`} />
+        <input name="ageMax" value={filters.ageMax} onChange={handleChange} placeholder="Max Age" className={`${inputClass} w-full min-w-[80px]`} />
       </div>
       <select name="accountStatus" value={filters.accountStatus} onChange={handleChange} className={inputClass}>
         <option value="">All Status</option>

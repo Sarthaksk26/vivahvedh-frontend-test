@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import apiClient from '../../lib/apiClient';
 import { Mail, X as CloseIcon, TrendingUp } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -16,6 +16,7 @@ import { ConnectionList } from './components/ConnectionList';
 import { StoryManager } from './components/StoryManager';
 import { UserTable } from './components/UserTable';
 import { FilterBar } from './components/FilterBar';
+import { AdminProfilePreviewModal } from './components/AdminProfilePreviewModal';
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<AdminTab>('pending');
@@ -29,7 +30,6 @@ export default function AdminPanel() {
   const [notifications, setNotifications] = useState<AdminNotifications | null>(null);
   const [stats, setStats] = useState<Record<string, number> | null>(null);
   const [loading, setLoading] = useState(true);
-  const [wishesSent, setWishesSent] = useState<Set<string>>(new Set());
 
   // Filters
   const [paymentFilter, setPaymentFilter] = useState('PENDING');
@@ -51,10 +51,10 @@ export default function AdminPanel() {
   const [offlineSuccess, setOfflineSuccess] = useState<{ regId: string; name: string; email: string } | null>(null);
   const [offlineError, setOfflineError] = useState('');
 
-  // Modals
   const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; title: string; message: string; onConfirm: () => void; loading?: boolean }>({ 
     isOpen: false, title: '', message: '', onConfirm: () => {} 
   });
+  const [previewUser, setPreviewUser] = useState<AdminUser | null>(null);
 
   const fetchStats = async () => {
     try {
@@ -172,7 +172,7 @@ export default function AdminPanel() {
     }
   };
 
-  const handleAction = async (action: 'approve' | 'ban' | 'unban' | 'delete', userId: string) => {
+  const handleAction = useCallback(async (action: 'approve' | 'ban' | 'unban' | 'delete', userId: string) => {
     if (action === 'delete') {
       setConfirmModal({
         isOpen: true,
@@ -220,17 +220,11 @@ export default function AdminPanel() {
     } catch (error: any) {
       toast.error(error.response?.data?.error || `Failed to ${action} user.`);
     }
-  };
+  }, []);
 
-  const handleSendWish = async (userId: string) => {
-    try {
-      await apiClient.post(`/admin/birthdays/send-wishes/${userId}`);
-      toast.success("Birthday wishes sent via email!");
-      setWishesSent(prev => new Set([...prev, userId]));
-    } catch (e) { toast.error("Failed to send wishes"); }
-  };
 
-  const handleSetPlan = async (userId: string, planType: string) => {
+
+  const handleSetPlan = useCallback(async (userId: string, planType: string) => {
     const durationMonths = planType === 'SILVER' ? 6 : planType === 'GOLD' ? 12 : 0;
     try {
       await apiClient.post('/admin/set-plan', { targetUserId: userId, planType, durationMonths });
@@ -240,7 +234,7 @@ export default function AdminPanel() {
       console.error(error);
       toast.error("Failed to update plan");
     }
-  };
+  }, []);
 
   const handleOfflineFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setOfflineForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -275,7 +269,7 @@ export default function AdminPanel() {
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6 pt-8">
           <div className="max-w-xl">
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-3 block">Command Center</span>
-            <h1 className="display-md text-foreground">Royal Curation Dash.</h1>
+            <h1 className="display-md text-foreground">Admin Dashboard.</h1>
             <p className="text-foreground/40 mt-4 font-medium leading-relaxed">Oversee the platform's integrity, manage premium members, and respond to community enquiries.</p>
           </div>
           <div className="flex items-center gap-3">
@@ -309,8 +303,8 @@ export default function AdminPanel() {
             <div className="bg-white rounded-[40px] shadow-ambient overflow-hidden border border-black/5">
               <div className="px-10 py-8 bg-[#F7F9FB]/50 border-b border-black/5 flex justify-between items-center">
                 <h2 className="text-xl font-display font-black text-foreground uppercase tracking-widest">
-                  {activeTab === 'pending' ? 'Curation Queue' : 
-                   activeTab === 'all' ? 'All Citizens' : 
+                  {activeTab === 'pending' ? 'Pending Approvals' : 
+                   activeTab === 'all' ? 'All Users' : 
                    activeTab === 'addProfile' ? 'Onboard Offline Customer' : 
                    activeTab === 'stories' ? 'Stories Manager' : 
                    activeTab === 'payments' ? 'Payment Approvals' : 
@@ -354,8 +348,7 @@ export default function AdminPanel() {
                     {activeTab === 'birthdays' && (
                       <BirthdayList 
                         birthdays={birthdays} 
-                        handleSendWish={handleSendWish} 
-                        wishesSent={wishesSent} 
+                        fetchData={fetchData} 
                       />
                     )}
                     {activeTab === 'connections' && (
@@ -407,6 +400,7 @@ export default function AdminPanel() {
                           handleAction={handleAction} 
                           handleSetPlan={handleSetPlan} 
                           setEditModal={() => toast.error("Quick edit coming soon!")}
+                          onView={(u) => setPreviewUser(u)}
                         />
                       </>
                     )}
@@ -469,6 +463,14 @@ export default function AdminPanel() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Profile Preview Modal */}
+      {previewUser && (
+        <AdminProfilePreviewModal 
+          user={previewUser} 
+          onClose={() => setPreviewUser(null)} 
+        />
       )}
     </div>
   );

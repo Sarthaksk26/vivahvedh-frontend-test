@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import apiClient from '../../lib/apiClient';
 import CarouselLightbox from '../../components/layout/Lightbox';
-import { resolveImageUrl } from '../../lib/url';
 import toast from 'react-hot-toast';
 import { authStorage } from '../../lib/authStorage';
 import { Loader2 } from 'lucide-react';
@@ -219,21 +218,40 @@ export default function PublicProfile() {
         </div>
       </div>
 
-      {/* Thumbnail Strip */}
-      {hasImages && profile.images!.length > 1 && (
-        <div className="flex gap-3 overflow-x-auto pb-2">
-          {profile.images!.map((img: UserImage, idx: number) => (
-            <button
-              key={img.id || idx}
-              onClick={() => { setCarouselIndex(idx); setCarouselOpen(true); }}
-              className={`w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all cursor-pointer hover:border-primary ${
-                idx === 0 ? 'border-primary' : 'border-transparent'
-              }`}
-            >
-              <img src={resolveImageUrl(img.url)} className="w-full h-full object-cover" alt={`Photo ${idx + 1}`} />
-            </button>
-          ))}
-        </div>
+      {/* Photo Gallery Section */}
+      {hasImages && (
+        <section className="bg-white rounded-[32px] p-8 border border-black/5 shadow-sm">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            </div>
+            <div>
+              <h2 className="text-xl font-display font-black text-foreground">Photo Gallery</h2>
+              <p className="text-xs text-foreground/40 font-medium">Click any photo to view in full screen</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {profile.images!.map((img: UserImage, idx: number) => (
+              <div 
+                key={img.id || idx}
+                onClick={() => { setCarouselIndex(idx); setCarouselOpen(true); }}
+                className="group relative aspect-square rounded-2xl overflow-hidden cursor-zoom-in border border-black/5 shadow-sm bg-muted"
+              >
+                <OptimizedImage 
+                  src={img.url} 
+                  alt={`Photo ${idx + 1}`} 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-[10px] font-black uppercase tracking-widest bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full">
+                    View Large
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* Grid Analytics */}

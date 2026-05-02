@@ -9,14 +9,16 @@ interface UserTableProps {
   handleAction: (action: 'approve' | 'ban' | 'unban' | 'delete', id: string) => void;
   handleSetPlan: (id: string, plan: string) => void;
   setEditModal: (modal: { isOpen: boolean; user: AdminUser }) => void;
+  onView: (user: AdminUser) => void;
 }
 
-export const UserTable: React.FC<UserTableProps> = ({ 
+export const UserTable: React.FC<UserTableProps> = React.memo(({ 
   users, 
   loading, 
   handleAction, 
   handleSetPlan, 
-  setEditModal
+  setEditModal,
+  onView
 }) => {
   if (loading) return null; // Handled in parent
 
@@ -51,9 +53,13 @@ export const UserTable: React.FC<UserTableProps> = ({
                   <div>
                     <div className="font-display font-black text-foreground flex items-center gap-2">
                       {user.profile?.firstName} {user.profile?.lastName}
-                      <a href={`/profile/${user.id}`} target="_blank" rel="noreferrer" className="opacity-0 group-hover:opacity-100 transition-opacity text-primary">
+                      <button 
+                        onClick={() => onView(user)} 
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-primary hover:scale-110"
+                        title="View Full Profile"
+                      >
                         <Eye size={14} />
-                      </a>
+                      </button>
                     </div>
                     <div className="text-[10px] font-bold text-primary uppercase tracking-widest">{user.regId}</div>
                   </div>
@@ -128,4 +134,4 @@ export const UserTable: React.FC<UserTableProps> = ({
       </table>
     </div>
   );
-};
+});

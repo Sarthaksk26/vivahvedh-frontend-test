@@ -68,7 +68,7 @@ export default function Search() {
     if (isError) {
       const axiosError = queryError as AxiosError<{ error?: string }>;
       if (axiosError?.response?.status === 403) {
-        return { message: axiosError.response.data?.error || 'Discovery Locked' };
+        return { message: axiosError.response.data?.error || 'Search Restricted' };
       }
     }
     return null;
@@ -220,7 +220,7 @@ export default function Search() {
           ) : restriction ? (
             <div className="min-h-[400px] flex flex-col items-center justify-center p-12 bg-white rounded-[40px] border border-primary/20 shadow-premium text-center">
               <div className="w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center text-3xl mb-6 grayscale-0 animate-pulse">🔒</div>
-              <h3 className="text-2xl font-display font-black text-foreground mb-4">Discovery Locked</h3>
+              <h3 className="text-2xl font-display font-black text-foreground mb-4">Search Restricted</h3>
               <p className="text-foreground/60 max-w-sm font-medium leading-relaxed mb-6">{restriction.message}</p>
               <button 
                 onClick={() => window.location.href = '/dashboard'}
