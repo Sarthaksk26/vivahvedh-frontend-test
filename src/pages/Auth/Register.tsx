@@ -6,6 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import apiClient from '../../lib/apiClient';
 import { UserPlus, Sparkles, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import type { ApiErrorResponse } from '../../types';
+import type { AxiosError } from 'axios';
 
 const registerSchema = z.object({
   firstName: z.string().min(2, "First Name is required"),
@@ -26,6 +28,9 @@ const registerSchema = z.object({
 
 type RegisterForm = z.infer<typeof registerSchema>;
 
+// Move impurity outside of render
+const MAX_BIRTH_DATE = new Date(Date.now() - 18 * 365.25 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
 export default function Register() {
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterForm>({
@@ -44,12 +49,14 @@ export default function Register() {
         </span>
       ), { duration: 10000 });
       navigate('/login');
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.error;
-      const displayMsg = typeof errorMsg === 'string'
-        ? errorMsg
-        : Array.isArray(errorMsg)
-          ? errorMsg.map((e: any) => e.message).join(', ')
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      const errorData = axiosError.response?.data?.error;
+      
+      const displayMsg = typeof errorData === 'string'
+        ? errorData
+        : Array.isArray(errorData)
+          ? errorData.map((e: any) => e.message).join(', ')
           : "Check your details and try again.";
 
       toast.error(displayMsg);
@@ -172,7 +179,7 @@ export default function Register() {
                 <input
                   {...register("birthDate")}
                   type="date"
-                  max={new Date(Date.now() - 18 * 365.25 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                  max={MAX_BIRTH_DATE}
                   className={inputClass}
                 />
                 {errors.birthDate && <p className="text-red-500 text-xs font-medium">{errors.birthDate.message}</p>}

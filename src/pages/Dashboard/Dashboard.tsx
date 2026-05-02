@@ -8,9 +8,11 @@ import { Lock, Shield } from 'lucide-react';
 import { resolveImageUrl } from '../../lib/url';
 import toast from 'react-hot-toast';
 import { authStorage } from '../../lib/authStorage';
+import type { FullUserProfile, ShortlistItem, UserImage, ApiErrorResponse } from '../../types';
+import type { AxiosError } from 'axios';
 
 export default function Dashboard() {
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<FullUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const isForced = authStorage.getForcePasswordChange();
   const [activeTab, setActiveTab] = useState(() => {
@@ -23,7 +25,7 @@ export default function Dashboard() {
     return 'profile';
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [shortlist, setShortlist] = useState<any[]>([]);
+  const [shortlist, setShortlist] = useState<ShortlistItem[]>([]);
 
   // Password change state
   const [currentPassword, setCurrentPassword] = useState('');
@@ -33,7 +35,7 @@ export default function Dashboard() {
 
   const fetchProfile = useCallback(async () => {
     try {
-      const res = await apiClient.get('/user/profile');
+      const res = await apiClient.get<FullUserProfile>('/user/profile');
       setProfile(res.data);
       
       const storedUser = authStorage.getUser();
@@ -52,7 +54,7 @@ export default function Dashboard() {
 
   const fetchShortlist = useCallback(async () => {
     try {
-      const res = await apiClient.get('/user/shortlist');
+      const res = await apiClient.get<ShortlistItem[]>('/user/shortlist');
       setShortlist(res.data);
     } catch (err) {
       console.error('Failed to fetch shortlist', err);
@@ -93,8 +95,9 @@ export default function Dashboard() {
       setNewPassword('');
       setConfirmPassword('');
       authStorage.setForcePasswordChange(false);
-    } catch (err: any) {
-      toast.error(err.response?.data?.error || 'Failed to change password.');
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      toast.error(axiosError.response?.data?.error || 'Failed to change password.');
     } finally {
       setChangingPassword(false);
     }
@@ -136,7 +139,7 @@ export default function Dashboard() {
           <div className="mb-4">
             <div className="w-24 h-24 bg-muted rounded-full flex overflow-hidden items-center justify-center mx-auto mb-3 border-4 border-background shadow-lg relative">
               <OptimizedImage 
-                src={profile.images?.find((i: any) => i.isPrimary)?.url || profile.images?.[0]?.url || ''} 
+                src={profile.images?.find((i: UserImage) => i.isPrimary)?.url || profile.images?.[0]?.url || ''} 
                 alt="Profile" 
                 className="w-full h-full object-cover" 
               />
@@ -357,7 +360,7 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="divide-y">
-                {shortlist.map((item: any) => (
+                {shortlist.map((item: ShortlistItem) => (
                   <div key={item.id} className="p-6 flex items-center gap-4 hover:bg-muted/30 transition">
                     <div className="w-16 h-16 rounded-full bg-muted border overflow-hidden flex-shrink-0">
                       {item.target.images?.[0]?.url ? (

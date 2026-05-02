@@ -2,10 +2,10 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { authStorage } from '../../lib/authStorage';
 
 export default function ProtectedRoute() {
-  const token = authStorage.getToken();
+  const isAuth = authStorage.isAuthenticated();
   const location = useLocation();
   
-  if (!token) {
+  if (!isAuth) {
     return <Navigate to="/login" replace />;
   }
 
@@ -16,12 +16,10 @@ export default function ProtectedRoute() {
   }
 
   // Redirect admin away from user dashboard
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    if (payload.role === 'ADMIN' && location.pathname === '/dashboard') {
-      return <Navigate to="/admin" replace />;
-    }
-  } catch { /* invalid token, let it through to be handled */ }
+  const user = authStorage.getUser();
+  if (user?.role === 'ADMIN' && location.pathname === '/dashboard') {
+    return <Navigate to="/admin" replace />;
+  }
 
   return <Outlet />;
 }

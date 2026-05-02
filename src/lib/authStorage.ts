@@ -1,22 +1,22 @@
-const TOKEN_KEY = 'vivah_auth_token';
+import type { StoredUser } from '../types';
+
 const FORCE_PASSWORD_CHANGE_KEY = 'vivah_force_password_change';
+const USER_KEY = 'vivah_user';
 
 export const authStorage = {
-  getToken(): string | null {
-    return sessionStorage.getItem(TOKEN_KEY);
-  },
-  setToken(token: string): void {
-    sessionStorage.setItem(TOKEN_KEY, token);
-  },
-  clearToken(): void {
-    sessionStorage.removeItem(TOKEN_KEY);
-  },
+  /**
+   * Authentication is now cookie-based (HttpOnly).
+   * We check for a stored user object as a proxy for login state.
+   * The actual auth enforcement is done server-side via cookies.
+   */
   isAuthenticated(): boolean {
-    return !!sessionStorage.getItem(TOKEN_KEY);
+    return !!sessionStorage.getItem(USER_KEY);
   },
+
   getForcePasswordChange(): boolean {
     return sessionStorage.getItem(FORCE_PASSWORD_CHANGE_KEY) === 'true';
   },
+
   setForcePasswordChange(value: boolean): void {
     if (value) {
       sessionStorage.setItem(FORCE_PASSWORD_CHANGE_KEY, 'true');
@@ -24,11 +24,27 @@ export const authStorage = {
     }
     sessionStorage.removeItem(FORCE_PASSWORD_CHANGE_KEY);
   },
-  getUser(): any {
-    const user = sessionStorage.getItem('vivah_user');
-    return user ? JSON.parse(user) : null;
+
+  getUser(): StoredUser | null {
+    const user = sessionStorage.getItem(USER_KEY);
+    if (!user) return null;
+    try {
+      return JSON.parse(user) as StoredUser;
+    } catch {
+      return null;
+    }
   },
-  setUser(user: any): void {
-    sessionStorage.setItem('vivah_user', JSON.stringify(user));
-  }
+
+  setUser(user: StoredUser): void {
+    sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+  },
+
+  /**
+   * Clears all client-side session data.
+   * Called on logout or when refresh token fails.
+   */
+  clearSession(): void {
+    sessionStorage.removeItem(USER_KEY);
+    sessionStorage.removeItem(FORCE_PASSWORD_CHANGE_KEY);
+  },
 };

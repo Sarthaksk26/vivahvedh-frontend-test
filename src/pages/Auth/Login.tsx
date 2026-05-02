@@ -8,6 +8,8 @@ import apiClient from '../../lib/apiClient';
 import { authStorage } from '../../lib/authStorage';
 import { LogIn, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
+import type { LoginResponse, ApiErrorResponse } from '../../types';
+import type { AxiosError } from 'axios';
 
 const loginSchema = z.object({
   identifier: z.string().min(3, "Username must be at least 3 characters"),
@@ -30,9 +32,10 @@ export default function Login() {
 
   const onSubmit = async (data: LoginForm) => {
     try {
-      const response = await apiClient.post('/auth/login', data);
-      const { token, user } = response.data;
-      authStorage.setToken(token);
+      const response = await apiClient.post<LoginResponse>('/auth/login', data);
+      const { user } = response.data;
+
+      // Tokens are now set via HttpOnly cookies by the backend — no client-side storage needed
       authStorage.setUser(user);
 
       // If admin-created account, force password change on first login
@@ -54,13 +57,12 @@ export default function Login() {
         toast.success('Welcome back!');
         navigate('/dashboard');
       }
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.error;
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      const errorMsg = axiosError.response?.data?.error;
       const displayMsg = typeof errorMsg === 'string' 
         ? errorMsg 
-        : Array.isArray(errorMsg)
-          ? errorMsg.map((e: any) => e.message).join(', ')
-          : "Login failed. Please check your credentials.";
+        : "Login failed. Please check your credentials.";
       
       toast.error(displayMsg);
       console.error(err);

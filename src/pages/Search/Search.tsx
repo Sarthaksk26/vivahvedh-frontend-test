@@ -5,13 +5,28 @@ import { Loader2, Star, Search as SearchIcon } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import OptimizedImage from '../../components/ui/OptimizedImage';
+import type { SearchResponse, SearchResultUser } from '../../types';
+import type { AxiosError } from 'axios';
+
+interface SearchFilters {
+  gender: string;
+  maritalStatus: string;
+  q: string;
+  ageMin: string;
+  ageMax: string;
+  height: string;
+  trade: string;
+  occupation: string;
+  location: string;
+  diet: string;
+}
 
 export default function Search() {
-  const [filters, setFilters] = useState({ 
+  const [filters, setFilters] = useState<SearchFilters>({ 
     gender: '', maritalStatus: '', q: '',
     ageMin: '', ageMax: '', height: '', trade: '', occupation: '', location: '', diet: ''
   });
-  const [debouncedFilters, setDebouncedFilters] = useState(filters);
+  const [debouncedFilters, setDebouncedFilters] = useState<SearchFilters>(filters);
   const [cursor, setCursor] = useState<string | null>(null);
 
   // Debounce filter changes
@@ -23,7 +38,7 @@ export default function Search() {
     return () => clearTimeout(handler);
   }, [filters]);
 
-  const { data, isLoading: queryLoading, isError, error: queryError } = useQuery({
+  const { data, isLoading: queryLoading, isError, error: queryError } = useQuery<SearchResponse>({
     queryKey: ['search', debouncedFilters, cursor],
     queryFn: async () => {
       const params = new URLSearchParams();
@@ -33,7 +48,7 @@ export default function Search() {
       if (cursor) params.append('cursor', cursor);
       params.append('limit', '21');
 
-      const response = await apiClient.get(`/search?${params.toString()}`);
+      const response = await apiClient.get<SearchResponse>(`/search?${params.toString()}`);
       return response.data;
     },
     // PERFORMANCE: Cache results for 5 minutes, keep stale data for 1 minute
@@ -44,15 +59,17 @@ export default function Search() {
   });
 
   // Memoize results processing to prevent recalculation on every render
-  const { results, nextCursor, totalResults } = useMemo(() => ({
+  const { results, hasMore } = useMemo(() => ({
     results: data?.results || [],
-    nextCursor: data?.pagination?.nextCursor,
-    totalResults: data?.pagination?.totalResults || 0
+    hasMore: data?.pagination?.hasMore ?? false,
   }), [data]);
   
   const restriction = useMemo(() => {
-    if (isError && (queryError as any).response?.status === 403) {
-      return { message: (queryError as any).response.data.error || 'Discovery Locked' };
+    if (isError) {
+      const axiosError = queryError as AxiosError<{ error?: string }>;
+      if (axiosError?.response?.status === 403) {
+        return { message: axiosError.response.data?.error || 'Discovery Locked' };
+      }
     }
     return null;
   }, [isError, queryError]);
@@ -72,6 +89,8 @@ export default function Search() {
   const navigateToProfile = useCallback((id: string) => {
     navigate(`/profile/${id}`);
   }, [navigate]);
+
+  const nextCursor = data?.pagination?.nextCursor ?? null;
 
   return (
     <div className="bg-[#F7F9FB] min-h-screen pt-28 pb-20">
@@ -187,7 +206,7 @@ export default function Search() {
             <div className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl border border-black/5 shadow-sm">
               {queryLoading && <Loader2 className="animate-spin text-primary" size={16} />}
               <span className="text-[10px] font-black uppercase tracking-[3px] text-primary">
-                {totalResults} Profiles Found
+                {results.length} Profiles Shown
               </span>
             </div>
           </div>
@@ -218,7 +237,7 @@ export default function Search() {
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                {results.map((user: any, index: number) => {
+                {results.map((user: SearchResultUser, index: number) => {
                   const isGold = user.planType === 'GOLD';
                   return (
                     <motion.div
@@ -294,7 +313,7 @@ export default function Search() {
               </div>
               
               {/* Pagination Controls */}
-              {nextCursor && (
+              {hasMore && nextCursor && (
                 <div className="mt-12 flex justify-center">
                   <button 
                     onClick={() => setCursor(nextCursor)}

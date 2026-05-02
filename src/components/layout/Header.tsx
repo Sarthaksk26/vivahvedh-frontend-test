@@ -3,36 +3,26 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Star } from 'lucide-react';
 import { authStorage } from '../../lib/authStorage';
+import apiClient from '../../lib/apiClient';
 
 export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  // Deriving auth state directly from storage on each render
+  // Since useLocation() triggers a re-render on navigation, this stays in sync
+  const user = authStorage.getUser();
+  const isLoggedIn = !!user;
+  const isAdmin = user?.role === 'ADMIN';
 
-  // Reactively check auth state
-  useEffect(() => {
-    const token = authStorage.getToken();
-    setIsLoggedIn(!!token);
-    
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        setIsAdmin(payload.role === 'ADMIN');
-      } catch (e) {
-        setIsAdmin(false);
-      }
-    } else {
-      setIsAdmin(false);
+  const handleLogout = async () => {
+    try {
+      // Tell the server to revoke the refresh token and clear cookies
+      await apiClient.post('/auth/logout');
+    } catch {
+      // Even if the API call fails, clear local state
     }
-  }, [location]);
-
-  const handleLogout = () => {
-    authStorage.clearToken();
-    authStorage.setForcePasswordChange(false);
-    setIsLoggedIn(false);
-    setIsAdmin(false);
+    authStorage.clearSession();
     window.location.href = '/login';
   };
 

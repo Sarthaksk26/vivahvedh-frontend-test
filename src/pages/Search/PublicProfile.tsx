@@ -7,17 +7,19 @@ import toast from 'react-hot-toast';
 import { authStorage } from '../../lib/authStorage';
 import { Loader2 } from 'lucide-react';
 import OptimizedImage from '../../components/ui/OptimizedImage';
+import type { FullUserProfile, UserImage, ShortlistItem, ConnectionStatus, ApiErrorResponse } from '../../types';
+import type { AxiosError } from 'axios';
 
 export default function PublicProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<FullUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [carouselOpen, setCarouselOpen] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [isShortlisted, setIsShortlisted] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<'NONE' | 'PENDING_SENT' | 'PENDING_RECEIVED' | 'ACCEPTED' | 'REJECTED'>('NONE');
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('NONE');
   const [connectionRequestId, setConnectionRequestId] = useState<string | null>(null);
 
   const handleSendInterest = async () => {
@@ -29,12 +31,13 @@ export default function PublicProfile() {
       await apiClient.post('/connections/send', { receiverId: id });
       setConnectionStatus('PENDING_SENT');
       toast.success('Match Proposal sent successfully!');
-    } catch (error: any) {
-      const code = error.response?.data?.code;
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError<ApiErrorResponse>;
+      const code = axiosError.response?.data?.code;
       if (code === 'PLAN_UPGRADE_REQUIRED') {
         toast.error('Upgrade plan to send proposals.');
       } else {
-        toast.error(error.response?.data?.error || 'Failed to send proposal.');
+        toast.error(axiosError.response?.data?.error || 'Failed to send proposal.');
       }
     } finally {
       setActionLoading(false);
@@ -49,8 +52,9 @@ export default function PublicProfile() {
       await apiClient.post(endpoint, { requestId: connectionRequestId });
       setConnectionStatus(status);
       toast.success(status === 'ACCEPTED' ? 'Proposal Accepted!' : 'Proposal Declined');
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Action failed');
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError<ApiErrorResponse>;
+      toast.error(axiosError.response?.data?.error || 'Action failed');
     } finally {
       setActionLoading(false);
     }
@@ -61,11 +65,12 @@ export default function PublicProfile() {
       return navigate('/login');
     }
     try {
-      const { data } = await apiClient.post('/user/shortlist', { targetUserId: id });
+      const { data } = await apiClient.post<{ shortlisted: boolean; message: string }>('/user/shortlist', { targetUserId: id });
       setIsShortlisted(data.shortlisted);
       toast.success(data.shortlisted ? 'Added to shortlist' : 'Removed from shortlist');
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Shortlist failed');
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError<ApiErrorResponse>;
+      toast.error(axiosError.response?.data?.error || 'Shortlist failed');
     }
   };
 
@@ -74,16 +79,16 @@ export default function PublicProfile() {
       setLoading(true);
       try {
         const [userRes, statusRes, shortRes] = await Promise.all([
-          apiClient.get(`/search/public/${id}`),
-          apiClient.get(`/connections/status/${id}`),
-          apiClient.get('/user/shortlist')
+          apiClient.get<FullUserProfile>(`/search/public/${id}`),
+          apiClient.get<{ status: ConnectionStatus; requestId: string | null }>(`/connections/status/${id}`),
+          apiClient.get<ShortlistItem[]>('/user/shortlist')
         ]);
 
         setProfile(userRes.data);
         setConnectionStatus(statusRes.data.status);
         setConnectionRequestId(statusRes.data.requestId);
         
-        const shortlisted = shortRes.data.some((s: any) => s.targetUserId === id || s.target?.id === id);
+        const shortlisted = shortRes.data.some((s: ShortlistItem) => s.targetUserId === id || s.target?.id === id);
         setIsShortlisted(shortlisted);
 
       } catch (error) {
@@ -107,7 +112,7 @@ export default function PublicProfile() {
       {/* Carousel Lightbox */}
       {carouselOpen && hasImages && (
         <CarouselLightbox
-          images={profile.images}
+          images={profile.images!}
           startIndex={carouselIndex}
           onClose={() => setCarouselOpen(false)}
         />
@@ -117,7 +122,7 @@ export default function PublicProfile() {
       <div className="bg-card rounded-3xl overflow-hidden border shadow-sm flex flex-col md:flex-row">
         <div className="md:w-1/3 bg-muted h-72 md:h-auto relative overflow-hidden group">
           <OptimizedImage 
-            src={profile.images?.find((i: any) => i.isPrimary)?.url || profile.images?.[0]?.url || ''} 
+            src={profile.images?.find((i: UserImage) => i.isPrimary)?.url || profile.images?.[0]?.url || ''} 
             alt="Profile" 
             className="w-full h-full object-cover cursor-zoom-in group-hover:scale-105 transition-transform duration-700" 
             onClick={() => { setCarouselIndex(0); setCarouselOpen(true); }}
@@ -216,9 +221,9 @@ export default function PublicProfile() {
       </div>
 
       {/* Thumbnail Strip */}
-      {hasImages && profile.images.length > 1 && (
+      {hasImages && profile.images!.length > 1 && (
         <div className="flex gap-3 overflow-x-auto pb-2">
-          {profile.images.map((img: any, idx: number) => (
+          {profile.images!.map((img: UserImage, idx: number) => (
             <button
               key={img.id || idx}
               onClick={() => { setCarouselIndex(idx); setCarouselOpen(true); }}

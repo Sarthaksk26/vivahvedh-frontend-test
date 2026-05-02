@@ -18,13 +18,16 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(false);
-  const [currentSrc, setCurrentSrc] = useState<string>(() => resolveImageUrl(src) || fallbackSrc);
 
-  useEffect(() => {
-    setCurrentSrc(resolveImageUrl(src) || fallbackSrc);
+  // Reset states when src changes (done during render to avoid cascading effects)
+  const [prevSrc, setPrevSrc] = useState(src);
+  if (src !== prevSrc) {
+    setPrevSrc(src);
     setIsLoaded(false);
     setError(false);
-  }, [src, fallbackSrc]);
+  }
+
+  const currentSrc = resolveImageUrl(src) || fallbackSrc;
 
   return (
     <div className={cn("relative overflow-hidden bg-muted", className)}>

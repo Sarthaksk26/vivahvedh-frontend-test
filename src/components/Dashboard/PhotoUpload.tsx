@@ -4,13 +4,14 @@ import CarouselLightbox from '../layout/Lightbox';
 import { resolveImageUrl } from '../../lib/url';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, Upload, ImagePlus, Star, ZoomIn, X, CheckCircle, AlertCircle } from 'lucide-react';
+import type { UserImage } from '../../types';
 
 export default function PhotoUpload({
   onUploadSuccess,
   existingImages = []
 }: {
   onUploadSuccess: () => void;
-  existingImages?: any[];
+  existingImages?: UserImage[];
 }) {
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
@@ -281,7 +282,7 @@ export default function PhotoUpload({
 
           <div className="p-6">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {existingImages.map((img: any, idx: number) => (
+              {existingImages.map((img: UserImage, idx: number) => (
                 <motion.div
                   key={img.id || idx}
                   layout
