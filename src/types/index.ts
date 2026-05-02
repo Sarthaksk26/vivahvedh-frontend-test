@@ -188,7 +188,7 @@ export interface ShortlistItem {
 // ═══════════════════════════════════════════════════════════════════
 
 export interface ApiErrorResponse {
-  error: string;
+  error: string | Array<{ message: string; [key: string]: any }>;
   code?: string;
   details?: Array<{ field: string; message: string }>;
 }

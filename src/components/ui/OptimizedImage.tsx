@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { resolveImageUrl } from '@/lib/url';
 import { cn } from '@/lib/utils';
 

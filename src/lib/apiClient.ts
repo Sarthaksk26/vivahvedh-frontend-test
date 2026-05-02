@@ -37,8 +37,8 @@ const processQueue = (error: AxiosError | null): void => {
     if (error) {
       reject(error);
     } else {
-      // Replay the original request
-      resolve(apiClient(config));
+      // Replay the original request and resolve with the resulting promise
+      apiClient(config).then(resolve).catch(reject);
     }
   });
   failedQueue = [];
