@@ -80,12 +80,16 @@ apiClient.interceptors.response.use(
         authStorage.setUser(refreshResponse.data.user);
       }
 
+      // Reset refreshing state BEFORE replaying queue
+      isRefreshing = false;
+
       // Replay all queued requests
       processQueue(null);
 
       // Replay the original request
       return apiClient(originalRequest);
     } catch (refreshError) {
+      isRefreshing = false;
       // Refresh failed — session is dead
       processQueue(refreshError as AxiosError);
       authStorage.clearSession();
@@ -96,8 +100,6 @@ apiClient.interceptors.response.use(
       }
 
       return Promise.reject(refreshError);
-    } finally {
-      isRefreshing = false;
     }
   }
 );
