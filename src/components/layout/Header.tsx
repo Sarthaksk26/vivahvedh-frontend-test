@@ -52,12 +52,12 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-10 font-sans font-semibold text-foreground/70 text-sm uppercase tracking-[0.15em] z-10 transition-all">
+          <nav className="hidden lg:flex flex-1 justify-center items-center gap-8 font-sans font-semibold text-foreground/70 text-sm uppercase tracking-[0.12em] z-10 transition-all">
             {navLinks.map(link => (
               <Link
                 key={link.to}
                 to={link.to}
-                className={`hover:text-primary relative group py-2 ${location.pathname === link.to ? 'text-primary' : ''}`}
+                className={`hover:text-primary relative group py-2 whitespace-nowrap ${location.pathname === link.to ? 'text-primary' : ''}`}
               >
                 {link.label}
                 <span className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all duration-300 ${location.pathname === link.to ? 'w-full' : 'w-0 group-hover:w-full'}`} />
@@ -66,7 +66,7 @@ export default function Header() {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden lg:flex items-center gap-6 z-20">
+          <div className="hidden lg:flex items-center justify-end gap-5 z-20 min-w-fit">
             {isLoggedIn ? (
               <>
                 {isAdmin && (
