@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import apiClient from '../../lib/apiClient';
 import { motion } from 'framer-motion';
-import { Loader2, Star, Search as SearchIcon, SlidersHorizontal } from 'lucide-react';
+import { Loader2, Star, Search as SearchIcon } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import OptimizedImage from '../../components/ui/OptimizedImage';
