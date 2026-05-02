@@ -8,7 +8,7 @@ import { authStorage } from '../../lib/authStorage';
 import { Loader2 } from 'lucide-react';
 import OptimizedImage from '../../components/ui/OptimizedImage';
 import type { FullUserProfile, UserImage, ShortlistItem, ConnectionStatus, ApiErrorResponse } from '../../types';
-import type { AxiosError } from 'axios';
+import { formatApiError } from '../../lib/errorUtils';
 
 export default function PublicProfile() {
   const { id } = useParams();
@@ -37,7 +37,7 @@ export default function PublicProfile() {
       if (code === 'PLAN_UPGRADE_REQUIRED') {
         toast.error('Upgrade plan to send proposals.');
       } else {
-        toast.error(axiosError.response?.data?.error || 'Failed to send proposal.');
+        toast.error(formatApiError(error, 'Failed to send proposal.'));
       }
     } finally {
       setActionLoading(false);
@@ -53,8 +53,7 @@ export default function PublicProfile() {
       setConnectionStatus(status);
       toast.success(status === 'ACCEPTED' ? 'Proposal Accepted!' : 'Proposal Declined');
     } catch (error: unknown) {
-      const axiosError = error as AxiosError<ApiErrorResponse>;
-      toast.error(axiosError.response?.data?.error || 'Action failed');
+      toast.error(formatApiError(error, 'Action failed'));
     } finally {
       setActionLoading(false);
     }
@@ -69,8 +68,7 @@ export default function PublicProfile() {
       setIsShortlisted(data.shortlisted);
       toast.success(data.shortlisted ? 'Added to shortlist' : 'Removed from shortlist');
     } catch (error: unknown) {
-      const axiosError = error as AxiosError<ApiErrorResponse>;
-      toast.error(axiosError.response?.data?.error || 'Shortlist failed');
+      toast.error(formatApiError(error, 'Shortlist failed'));
     }
   };
 

@@ -8,6 +8,7 @@ import { UserPlus, Sparkles, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import type { ApiErrorResponse } from '../../types';
 import type { AxiosError } from 'axios';
+import { formatApiError } from '../../lib/errorUtils';
 
 const registerSchema = z.object({
   firstName: z.string().min(2, "First Name is required"),
@@ -50,16 +51,7 @@ export default function Register() {
       ), { duration: 10000 });
       navigate('/login');
     } catch (err: unknown) {
-      const axiosError = err as AxiosError<ApiErrorResponse>;
-      const errorData = axiosError.response?.data?.error;
-      
-      const displayMsg = typeof errorData === 'string'
-        ? errorData
-        : Array.isArray(errorData)
-          ? errorData.map((e: any) => e.message).join(', ')
-          : "Check your details and try again.";
-
-      toast.error(displayMsg);
+      toast.error(formatApiError(err, "Check your details and try again."));
       console.error(err);
     }
   };

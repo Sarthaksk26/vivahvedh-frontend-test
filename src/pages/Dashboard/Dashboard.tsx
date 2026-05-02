@@ -11,6 +11,8 @@ import { authStorage } from '../../lib/authStorage';
 import type { FullUserProfile, ShortlistItem, UserImage, ApiErrorResponse } from '../../types';
 import type { AxiosError } from 'axios';
 
+import { formatApiError } from '../../lib/errorUtils';
+
 export default function Dashboard() {
   const [profile, setProfile] = useState<FullUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -96,8 +98,7 @@ export default function Dashboard() {
       setConfirmPassword('');
       authStorage.setForcePasswordChange(false);
     } catch (err: unknown) {
-      const axiosError = err as AxiosError<ApiErrorResponse>;
-      toast.error(axiosError.response?.data?.error || 'Failed to change password.');
+      toast.error(formatApiError(err, 'Failed to change password.'));
     } finally {
       setChangingPassword(false);
     }
