@@ -6,8 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import apiClient from '../../lib/apiClient';
 import { UserPlus, Sparkles, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
-import type { ApiErrorResponse } from '../../types';
-import type { AxiosError } from 'axios';
 import { formatApiError } from '../../lib/errorUtils';
 
 const registerSchema = z.object({

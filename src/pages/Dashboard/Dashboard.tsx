@@ -8,8 +8,7 @@ import { Lock, Shield } from 'lucide-react';
 import { resolveImageUrl } from '../../lib/url';
 import toast from 'react-hot-toast';
 import { authStorage } from '../../lib/authStorage';
-import type { FullUserProfile, ShortlistItem, UserImage, ApiErrorResponse } from '../../types';
-import type { AxiosError } from 'axios';
+import type { FullUserProfile, ShortlistItem, UserImage } from '../../types';
 
 import { formatApiError } from '../../lib/errorUtils';
 

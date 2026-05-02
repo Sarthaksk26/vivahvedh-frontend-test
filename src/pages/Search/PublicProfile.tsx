@@ -7,7 +7,8 @@ import toast from 'react-hot-toast';
 import { authStorage } from '../../lib/authStorage';
 import { Loader2 } from 'lucide-react';
 import OptimizedImage from '../../components/ui/OptimizedImage';
-import type { FullUserProfile, UserImage, ShortlistItem, ConnectionStatus, ApiErrorResponse } from '../../types';
+import type { AxiosError } from 'axios';
+import type { ApiErrorResponse, FullUserProfile, UserImage, ShortlistItem, ConnectionStatus } from '../../types';
 import { formatApiError } from '../../lib/errorUtils';
 
 export default function PublicProfile() {
