@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Star, LayoutDashboard, Settings, LogOut, Shield } from 'lucide-react';
+import { Menu, X, Star, LayoutDashboard, LogOut, ShieldCheck } from 'lucide-react';
 import { authStorage } from '../../lib/authStorage';
 import apiClient from '../../lib/apiClient';
 
@@ -84,7 +84,7 @@ export default function Header() {
               <div className="flex items-center gap-4">
                 {isAdmin && (
                   <Link to="/admin" className="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors" title="Admin">
-                    <Shield size={20} />
+                    <ShieldCheck size={20} />
                   </Link>
                 )}
                 <Link to="/dashboard" className="p-2.5 bg-primary/5 text-primary rounded-xl hover:bg-primary/10 transition-colors" title="Dashboard">
@@ -155,7 +155,7 @@ export default function Header() {
                   </Link>
                   {isAdmin && (
                     <Link to="/admin" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 text-lg font-bold text-red-600">
-                      <Shield size={20} /> Admin Panel
+                      <ShieldCheck size={20} /> Admin Panel
                     </Link>
                   )}
                   <button onClick={handleLogout} className="flex items-center gap-3 text-lg font-bold text-foreground/40">

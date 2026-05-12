@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Heart, Phone, Mail, MapPin, Instagram, Facebook, Twitter } from 'lucide-react';
+import { Heart, Phone, Mail, MapPin, Globe, MessageCircle, Share2 } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -22,7 +22,7 @@ export default function Footer() {
               Maharashtra's most distinguished matrimonial platform. We provide a sophisticated digital experience for those who value heritage, trust, and lasting connections.
             </p>
             <div className="flex items-center gap-6">
-              {[Instagram, Facebook, Twitter].map((Icon, i) => (
+              {[Globe, MessageCircle, Share2].map((Icon, i) => (
                 <a key={i} href="#" className="w-12 h-12 rounded-2xl bg-black/5 flex items-center justify-center text-foreground/60 hover:bg-primary hover:text-white transition-all duration-300">
                   <Icon size={20} />
                 </a>

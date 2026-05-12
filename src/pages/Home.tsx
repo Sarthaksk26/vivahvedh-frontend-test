@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Shield, Star, ArrowRight, Sparkles, Quote, CheckCircle2, Users, Trophy, Zap, ShieldCheck } from 'lucide-react';
+import { Heart, Star, ArrowRight, Sparkles, Quote, CheckCircle2, Users, Trophy, Zap, ShieldCheck } from 'lucide-react';
 import apiClient from '../lib/apiClient';
 import { resolveImageUrl } from '../lib/url';
 import { PaymentModal } from '../components/PaymentModal';
@@ -10,14 +10,14 @@ const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true },
-  transition: { duration: 0.6, ease: "easeOut" }
-};
+  transition: { duration: 0.6, ease: [0.33, 1, 0.68, 1] }
+} as const;
 
 const staggerContainer = {
   initial: {},
   whileInView: { transition: { staggerChildren: 0.1 } },
   viewport: { once: true }
-};
+} as const;
 
 export default function Home() {
   const navigate = useNavigate();
