@@ -95,7 +95,7 @@ export default function Header() {
                 </Link>
                 <button 
                   onClick={handleLogout}
-                  className="ml-2 text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-red-500 transition-colors flex items-center gap-2"
+                  className="ml-2 text-[10px] font-black uppercase tracking-widest text-foreground/60 hover:text-red-500 transition-colors flex items-center gap-2"
                 >
                   <LogOut size={14} />
                   Sign Out
@@ -139,7 +139,7 @@ export default function Header() {
                   to={link.to}
                   onClick={() => setMobileOpen(false)}
                   className={`text-2xl font-display font-black transition-all ${
-                    location.pathname === link.to ? 'text-primary translate-x-2' : 'text-foreground/40'
+                    location.pathname === link.to ? 'text-primary translate-x-2' : 'text-foreground/60'
                   }`}
                 >
                   {link.label}

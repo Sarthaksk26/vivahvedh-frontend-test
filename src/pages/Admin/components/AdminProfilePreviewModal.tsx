@@ -33,8 +33,8 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
   const images = user.images || [];
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 overflow-y-auto">
-      <div className="bg-[#F7F9FB] rounded-[40px] w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl border border-white/20">
+    <div className="fixed inset-0 z-[110] flex items-start justify-center bg-black/60 backdrop-blur-md p-4 overflow-y-auto">
+      <div className="bg-[#F7F9FB] rounded-[40px] w-full max-w-4xl my-auto shadow-2xl border border-white/20">
         
         {/* Header */}
         <div className="sticky top-0 z-10 px-8 py-6 bg-white/80 backdrop-blur-xl border-b border-black/5 flex justify-between items-center">

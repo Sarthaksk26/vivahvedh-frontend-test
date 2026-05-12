@@ -56,8 +56,8 @@ export default function Rules() {
             <li className="flex items-center gap-3 text-sm"><Check size={16} className="text-green-500 flex-shrink-0" /> Upload up to 3 photos</li>
             <li className="flex items-center gap-3 text-sm"><Check size={16} className="text-green-500 flex-shrink-0" /> Search active profiles</li>
             <li className="flex items-center gap-3 text-sm"><Check size={16} className="text-green-500 flex-shrink-0" /> Receive match proposals</li>
-            <li className="flex items-center gap-3 text-sm opacity-50"><X size={16} className="text-gray-400 flex-shrink-0" /> Cannot send proposals</li>
-            <li className="flex items-center gap-3 text-sm opacity-50"><X size={16} className="text-gray-400 flex-shrink-0" /> Cannot view contact info</li>
+            <li className="flex items-center gap-3 text-sm opacity-70"><X size={16} className="text-gray-400 flex-shrink-0" /> Cannot send proposals</li>
+            <li className="flex items-center gap-3 text-sm opacity-70"><X size={16} className="text-gray-400 flex-shrink-0" /> Cannot view contact info</li>
           </ul>
           <Link to="/register" className="block w-full py-3 border-2 border-green-600 text-green-600 font-bold rounded-xl hover:bg-green-50 transition text-center">
             Get Started Free

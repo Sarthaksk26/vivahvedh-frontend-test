@@ -25,7 +25,7 @@ export const StatSummary: React.FC<StatSummaryProps> = ({ stats }) => {
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
       {statItems.map((s, i) => (
         <div key={i} className={`${s.bg} p-6 rounded-[24px] border border-black/5 shadow-sm`}>
-          <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-2">{s.label}</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-2">{s.label}</p>
           <p className={`text-2xl font-display font-black ${s.color}`}>{s.value}</p>
         </div>
       ))}

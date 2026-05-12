@@ -278,7 +278,7 @@ export default function AdminPanel() {
           <div className="max-w-xl">
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-3 block">Command Center</span>
             <h1 className="display-md text-foreground">Admin Dashboard.</h1>
-            <p className="text-foreground/40 mt-4 font-medium leading-relaxed">Oversee the platform's integrity, manage premium members, and respond to community enquiries.</p>
+            <p className="text-foreground/60 mt-4 font-medium leading-relaxed">Oversee the platform's integrity, manage premium members, and respond to community enquiries.</p>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -290,13 +290,13 @@ export default function AdminPanel() {
                   toast.success('Test email sent!');
                 } catch (err: any) { toast.error('Email test failed'); }
               }}
-              className="px-4 py-2 text-xs font-bold border border-black/10 rounded-xl hover:bg-muted transition text-foreground/40"
+              className="px-4 py-2 text-xs font-bold border border-black/10 rounded-xl hover:bg-muted transition text-foreground/60"
             >
               📧 Test Email
             </button>
             <div className="px-6 py-3 bg-white shadow-ambient rounded-2xl flex items-center gap-3 border border-black/5">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-xs font-black uppercase tracking-widest text-foreground/40 font-display">Systems Active</span>
+              <span className="text-xs font-black uppercase tracking-widest text-foreground/60 font-display">Systems Active</span>
             </div>
           </div>
         </div>
@@ -384,7 +384,7 @@ export default function AdminPanel() {
                           </div>
                           <div>
                             <h3 className="text-xl font-display font-black text-foreground">Revenue Analytics</h3>
-                            <p className="text-sm text-foreground/40 font-medium">Tracking platform growth and subscription performance.</p>
+                            <p className="text-sm text-foreground/60 font-medium">Tracking platform growth and subscription performance.</p>
                           </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -433,7 +433,7 @@ export default function AdminPanel() {
             <div className="flex gap-4">
               <button 
                 onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))} 
-                className="flex-1 h-14 rounded-2xl font-display font-black text-xs uppercase tracking-widest text-foreground/40 hover:bg-black/5 transition-all"
+                className="flex-1 h-14 rounded-2xl font-display font-black text-xs uppercase tracking-widest text-foreground/60 hover:bg-black/5 transition-all"
               >
                 Cancel
               </button>
@@ -454,7 +454,7 @@ export default function AdminPanel() {
           <div className="bg-white rounded-3xl p-8 max-w-xl w-full shadow-2xl border border-black/10">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-black text-foreground">Reply to Enquiry</h3>
-              <button onClick={() => setReplyModal({ isOpen: false, enquiryId: null, email: '', message: '' })} className="p-2 text-foreground/40 hover:text-foreground bg-black/5 rounded-full"><CloseIcon size={16} /></button>
+              <button onClick={() => setReplyModal({ isOpen: false, enquiryId: null, email: '', message: '' })} className="p-2 text-foreground/60 hover:text-foreground bg-black/5 rounded-full"><CloseIcon size={16} /></button>
             </div>
             <p className="text-xs font-bold text-foreground/50 mb-2 uppercase tracking-widest">To: {replyModal.email}</p>
             <div className="p-4 bg-black/5 rounded-xl text-sm text-foreground/70 mb-6 max-h-32 overflow-y-auto italic border-l-4 border-primary/20">

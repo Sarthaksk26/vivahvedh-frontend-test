@@ -40,7 +40,7 @@ export default function Search() {
 
   const { data, isLoading: queryLoading, isError, error: queryError } = useQuery<SearchResponse>({
     queryKey: ['search', debouncedFilters, cursor],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       const params = new URLSearchParams();
       Object.entries(debouncedFilters).forEach(([key, value]) => {
         if (value) params.append(key, value);
@@ -48,7 +48,7 @@ export default function Search() {
       if (cursor) params.append('cursor', cursor);
       params.append('limit', '21');
 
-      const response = await apiClient.get<SearchResponse>(`/search?${params.toString()}`);
+      const response = await apiClient.get<SearchResponse>(`/search?${params.toString()}`, { signal });
       return response.data;
     },
     // PERFORMANCE: Cache results for 5 minutes, keep stale data for 1 minute
@@ -103,7 +103,7 @@ export default function Search() {
             
             <div className="space-y-8">
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Identification</label>
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">Identification</label>
                 <input
                   type="text"
                   name="q"
@@ -115,7 +115,7 @@ export default function Search() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Looking For</label>
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">Looking For</label>
                 <select 
                   name="gender" 
                   onChange={handleFilterChange} 
@@ -129,7 +129,7 @@ export default function Search() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Marital Status</label>
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">Marital Status</label>
                 <select 
                   name="maritalStatus" 
                   onChange={handleFilterChange} 
@@ -145,7 +145,7 @@ export default function Search() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Age Range</label>
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">Age Range</label>
                 <div className="flex gap-2">
                   <input type="number" name="ageMin" placeholder="Min" value={filters.ageMin} onChange={handleFilterChange} className="w-1/2 h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none" />
                   <input type="number" name="ageMax" placeholder="Max" value={filters.ageMax} onChange={handleFilterChange} className="w-1/2 h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none" />
@@ -153,27 +153,27 @@ export default function Search() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Height</label>
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">Height</label>
                 <input type="text" name="height" placeholder="e.g. 5'8&quot; or 170cm" value={filters.height} onChange={handleFilterChange} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none placeholder:text-foreground/20" />
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Location (City/State)</label>
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">Location (City/State)</label>
                 <input type="text" name="location" placeholder="Pune, Maharashtra..." value={filters.location} onChange={handleFilterChange} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none placeholder:text-foreground/20" />
               </div>
               
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Education / Trade</label>
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">Education / Trade</label>
                 <input type="text" name="trade" placeholder="e.g. B.Tech, MBA" value={filters.trade} onChange={handleFilterChange} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none placeholder:text-foreground/20" />
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Occupation</label>
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">Occupation</label>
                 <input type="text" name="occupation" placeholder="Software Engineer..." value={filters.occupation} onChange={handleFilterChange} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none placeholder:text-foreground/20" />
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Diet</label>
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">Diet</label>
                 <select name="diet" onChange={handleFilterChange} value={filters.diet} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none appearance-none cursor-pointer">
                   <option value="">Any Diet</option>
                   <option value="Vegetarian">Vegetarian</option>
@@ -201,7 +201,7 @@ export default function Search() {
                 <SearchIcon className="text-primary/20" size={32} />
                 Search Profiles
               </h1>
-              <p className="text-foreground/40 font-medium tracking-wide">Find your perfect match from verified profiles</p>
+              <p className="text-foreground/60 font-medium tracking-wide">Find your perfect match from verified profiles</p>
             </div>
             <div className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl border border-black/5 shadow-sm">
               {queryLoading && <Loader2 className="animate-spin text-primary" size={16} />}
@@ -285,15 +285,15 @@ export default function Search() {
                       <div className="p-8 flex-1 flex flex-col justify-between">
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1">
-                            <p className="text-[10px] uppercase font-bold text-foreground/40 tracking-widest">Status</p>
+                            <p className="text-[10px] uppercase font-bold text-foreground/60 tracking-widest">Status</p>
                             <p className="text-sm font-bold text-foreground/80">{user.profile?.maritalStatus}</p>
                           </div>
                           <div className="space-y-1">
-                            <p className="text-[10px] uppercase font-bold text-foreground/40 tracking-widest">Height</p>
+                            <p className="text-[10px] uppercase font-bold text-foreground/60 tracking-widest">Height</p>
                             <p className="text-sm font-bold text-foreground/80">{user.physical?.height ? `${user.physical.height} in` : 'N/A'}</p>
                           </div>
                           <div className="col-span-2 space-y-1 mt-2">
-                            <p className="text-[10px] uppercase font-bold text-foreground/40 tracking-widest">Profession</p>
+                            <p className="text-[10px] uppercase font-bold text-foreground/60 tracking-widest">Profession</p>
                             <p className="text-sm font-bold text-foreground/80 truncate">
                               {user.education?.jobBusiness || 'Student/Professional'}
                             </p>

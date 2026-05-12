@@ -121,10 +121,10 @@ export const BirthdayList: React.FC<BirthdayListProps> = React.memo(({ birthdays
               </tr>
             </thead>
             <tbody>
-              {birthdays.length === 0 ? (
+              {!birthdays?.length ? (
                 <tr><td colSpan={4} className="p-20 text-center text-foreground/20 font-medium">No upcoming birthdays in the next 30 days.</td></tr>
               ) : (
-                birthdays.map((b) => (
+                birthdays?.map((b) => (
                   <tr key={b.id} className="border-b border-black/[0.03] hover:bg-[#F7F9FB] transition-colors">
                     <td className="px-10 py-6">
                       <div className="font-black text-foreground">{b.firstName} {b.lastName}</div>
@@ -164,10 +164,10 @@ export const BirthdayList: React.FC<BirthdayListProps> = React.memo(({ birthdays
             <tbody>
               {loadingLogs ? (
                 <tr><td colSpan={4} className="p-20 text-center"><Loader2 className="animate-spin mx-auto text-primary" /></td></tr>
-              ) : logs.length === 0 ? (
+              ) : !logs?.length ? (
                 <tr><td colSpan={4} className="p-20 text-center text-foreground/20 font-medium">No history found.</td></tr>
               ) : (
-                logs.map((log) => (
+                logs?.map((log) => (
                   <tr key={log.id} className="border-b border-black/[0.03] hover:bg-[#F7F9FB] transition-colors">
                     <td className="px-10 py-6">
                       <div className="font-bold text-foreground">{log.user?.profile?.firstName} {log.user?.profile?.lastName}</div>

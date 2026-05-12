@@ -19,7 +19,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
-    if (isOpen) setSubmitted(false);
+    if (isOpen) {
+      // Full reset on every open — prevents stale state if closed mid-upload
+      setSubmitted(false);
+      setTxId('');
+      setFile(null);
+      setLoading(false);
+    }
   }, [isOpen]);
 
   const UPI_VPA = import.meta.env.VITE_UPI_VPA as string | undefined;
@@ -73,7 +79,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
             <h2 className="text-3xl font-display font-black text-foreground">
               {planType === 'GOLD' ? 'Gold Membership' : 'Silver Membership'}
             </h2>
-            <p className="text-sm text-foreground/40 mt-1 font-medium italic">Transform your search into a royal experience</p>
+            <p className="text-sm text-foreground/60 mt-1 font-medium italic">Transform your search into a royal experience</p>
           </div>
           <button onClick={onClose} className="p-3 hover:bg-[#F2F4F6] rounded-full transition-colors text-foreground/20 hover:text-foreground">
             <X className="w-6 h-6" />
@@ -125,7 +131,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
                   <p className="text-xs font-black uppercase tracking-[0.2em] text-foreground/30 mb-1">Amount Due</p>
                   <p className="text-3xl font-display font-black silk-gradient bg-clip-text text-transparent">₹{price}</p>
                   {UPI_VPA ? (
-                    <p className="text-[10px] font-bold text-foreground/40 mt-3 uppercase tracking-widest">Scan with any UPI App</p>
+                    <p className="text-[10px] font-bold text-foreground/60 mt-3 uppercase tracking-widest">Scan with any UPI App</p>
                   ) : (
                     <p className="text-[10px] font-bold text-primary mt-3 font-mono">{/* fallback shown above */}</p>
                   )}
@@ -135,7 +141,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
               {/* Form Section */}
               <form onSubmit={handleSubmit} className="space-y-8 flex flex-col justify-center">
                 <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">Transaction ID</label>
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60">Transaction ID</label>
                   <input
                     type="text"
                     required
@@ -147,10 +153,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
                 </div>
 
                 <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">Payment Proof</label>
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60">Payment Proof</label>
                   <div
                     className={`relative group border-2 border-dashed rounded-[24px] p-6 transition-all cursor-pointer flex flex-col items-center justify-center
-                      ${file ? 'border-primary/40 bg-primary/5' : 'border-black/10 hover:border-primary bg-transparent text-foreground/40'}`}
+                      ${file ? 'border-primary/40 bg-primary/5' : 'border-black/10 hover:border-primary bg-transparent text-foreground/60'}`}
                     onClick={() => document.getElementById('file-upload')?.click()}
                   >
                     <input
@@ -187,7 +193,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
               )}
             </button>
 
-            <div className="flex items-start gap-3 p-6 bg-[#F7F9FB] rounded-3xl border border-black/5 text-foreground/40">
+            <div className="flex items-start gap-3 p-6 bg-[#F7F9FB] rounded-3xl border border-black/5 text-foreground/60">
               <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-primary/40" />
               <p className="text-[10px] font-bold uppercase tracking-widest leading-relaxed">
                 Curator verification typically takes 24 hours. Your privacy is our priority during processing.

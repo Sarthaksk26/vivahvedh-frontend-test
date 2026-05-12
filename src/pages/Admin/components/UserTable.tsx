@@ -22,7 +22,7 @@ export const UserTable: React.FC<UserTableProps> = React.memo(({
 }) => {
   if (loading) return null; // Handled in parent
 
-  if (users.length === 0) {
+  if (!users?.length) {
     return <div className="p-20 text-center text-foreground/20 font-medium">No citizens found in this segment.</div>;
   }
 
@@ -38,7 +38,7 @@ export const UserTable: React.FC<UserTableProps> = React.memo(({
           </tr>
         </thead>
         <tbody className="divide-y divide-black/[0.03]">
-          {users.map((user) => (
+          {users?.map((user) => (
             <tr key={user.id} className="hover:bg-[#F7F9FB] transition-colors group">
               <td className="px-10 py-6">
                 <div className="flex items-center gap-4">

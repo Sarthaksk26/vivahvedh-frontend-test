@@ -88,12 +88,12 @@ export default function Home() {
             <div className="mt-16 flex items-center gap-10 pt-10 border-t border-black/5 w-full max-w-md">
               <div className="flex flex-col">
                 <span className="text-3xl font-display font-black text-foreground">2.5k+</span>
-                <span className="text-[10px] uppercase font-bold tracking-widest text-foreground/40">Verified Members</span>
+                <span className="text-[10px] uppercase font-bold tracking-widest text-foreground/60">Verified Members</span>
               </div>
               <div className="w-px h-10 bg-black/5" />
               <div className="flex flex-col">
                 <span className="text-3xl font-display font-black text-foreground">500+</span>
-                <span className="text-[10px] uppercase font-bold tracking-widest text-foreground/40">Success Stories</span>
+                <span className="text-[10px] uppercase font-bold tracking-widest text-foreground/60">Success Stories</span>
               </div>
             </div>
           </motion.div>
@@ -248,7 +248,7 @@ export default function Home() {
                     </div>
                     <div className="px-4">
                       <p className="text-sm font-bold text-foreground mb-1">{p.profile?.gender} • {p.profile?.maritalStatus}</p>
-                      <p className="text-xs text-foreground/40 font-medium truncate">{p.education?.trade || 'Professional'}</p>
+                      <p className="text-xs text-foreground/60 font-medium truncate">{p.education?.trade || 'Professional'}</p>
                     </div>
                   </motion.div>
                 );
@@ -362,7 +362,7 @@ export default function Home() {
           <motion.div {...fadeInUp} className="text-center mb-24">
             <h2 className="text-xs font-black uppercase tracking-[0.4em] text-primary mb-6">Membership</h2>
             <h3 className="text-4xl md:text-6xl font-display font-extrabold text-foreground tracking-tight mb-8">Elevate Your Search.</h3>
-            <p className="text-lg text-foreground/40 max-w-xl mx-auto font-medium">Simple, premium pricing to help you find your perfect match faster.</p>
+            <p className="text-lg text-foreground/60 max-w-xl mx-auto font-medium">Simple, premium pricing to help you find your perfect match faster.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-end">

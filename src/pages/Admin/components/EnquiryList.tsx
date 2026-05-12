@@ -8,13 +8,13 @@ interface EnquiryListProps {
 }
 
 export const EnquiryList: React.FC<EnquiryListProps> = ({ enquiries, setReplyModal, handleResolveEnquiry }) => {
-  if (enquiries.length === 0) {
+  if (!enquiries?.length) {
     return <div className="p-20 text-center text-foreground/20 font-medium">No voices from the community today.</div>;
   }
 
   return (
     <div className="divide-y divide-black/[0.03]">
-      {enquiries.map((enq) => (
+      {enquiries?.map((enq) => (
         <div key={enq.id} className={`p-10 transition-all group ${enq.isResolved ? 'bg-[#F2F4F6]/50 opacity-60' : 'hover:bg-[#F7F9FB]'}`}>
           <div className="flex justify-between items-start mb-6">
             <div>

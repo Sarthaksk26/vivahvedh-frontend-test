@@ -31,10 +31,10 @@ export const PaymentList: React.FC<PaymentListProps> = ({
         ))}
       </div>
       <div className="divide-y divide-black/[0.03]">
-        {payments.length === 0 ? (
+        {!payments?.length ? (
           <div className="p-20 text-center text-foreground/20 font-medium">No payments found for this filter.</div>
         ) : (
-          payments.map((pay) => (
+          payments?.map((pay) => (
             <div key={pay.id} className="p-10 flex flex-col md:flex-row gap-8 hover:bg-[#F7F9FB] transition-colors">
               <div className="w-full md:w-64 h-80 bg-black/5 rounded-3xl overflow-hidden border border-black/5 flex-shrink-0 group relative">
                 <img src={resolveImageUrl(pay.screenshotUrl)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />

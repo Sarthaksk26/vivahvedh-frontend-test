@@ -45,10 +45,10 @@ export const ConnectionList: React.FC<ConnectionListProps> = ({
             </tr>
           </thead>
           <tbody>
-            {connections.length === 0 ? (
+            {!connections?.length ? (
               <tr><td colSpan={4} className="p-20 text-center text-foreground/20 font-medium">No connection logs found.</td></tr>
             ) : (
-              connections.map((c) => (
+              connections?.map((c) => (
                 <tr key={c.id} className="border-b border-black/[0.03] hover:bg-[#F7F9FB] transition-colors">
                   <td className="px-10 py-6">
                     <div className="font-bold text-foreground">

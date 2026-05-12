@@ -30,11 +30,14 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const currentSrc = resolveImageUrl(src) || fallbackSrc;
 
   return (
-    <div className={cn("relative overflow-hidden bg-muted", className)}>
-      {/* Blur placeholder */}
+    <div className={cn("relative overflow-hidden bg-[#F2F4F6]", className)}>
+      {/* Premium Shimmer placeholder */}
       {!isLoaded && !error && (
-        <div className="absolute inset-0 animate-pulse bg-foreground/5 flex items-center justify-center">
-           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/20 border-t-primary/60"></div>
+        <div className="absolute inset-0 z-10">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/10 border-t-primary/40"></div>
+          </div>
         </div>
       )}
 
@@ -42,7 +45,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         src={error ? fallbackSrc : currentSrc}
         alt={alt}
         className={cn(
-          "transition-opacity duration-500 ease-in-out",
+          "w-full h-full object-cover object-center transition-opacity duration-700 ease-out",
           isLoaded ? "opacity-100" : "opacity-0",
           className
         )}
