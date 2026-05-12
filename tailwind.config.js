@@ -52,6 +52,20 @@ export default {
         'premium': '0 32px 64px -12px rgba(184, 0, 53, 0.12)',
         'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.05)',
       },
+      animation: {
+        'slow-fade': 'fadeIn 2s ease-out',
+        'subtle-float': 'float 6s ease-in-out infinite',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        }
+      }
     },
   },
   plugins: [],

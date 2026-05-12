@@ -1,44 +1,52 @@
 import { Link } from 'react-router-dom';
-import { Heart, Phone, Mail } from 'lucide-react';
+import { Heart, Phone, Mail, MapPin, Instagram, Facebook, Twitter } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="relative bg-[#F2F4F6] border-t mt-16 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 py-20">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-16">
+    <footer className="relative bg-[#FCFDFF] border-t border-black/5 overflow-hidden">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 md:gap-24">
 
-          {/* Brand Column */}
-          <div className="md:col-span-5">
-            <Link to="/" className="inline-block mb-6 group transition-transform hover:scale-105">
-              <div className="w-64 h-20 flex items-center justify-start">
-                <img src="/logo.png" alt="Vivahvedh Logo" className="w-full h-full object-contain filter drop-shadow-sm mix-blend-multiply" />
+          {/* Brand Identity */}
+          <div className="lg:col-span-5 flex flex-col items-start">
+            <Link to="/" className="inline-block mb-10 group transition-transform duration-300 hover:scale-105">
+              <div className="w-56 h-20 flex items-center">
+                <img 
+                  src="/logo.png" 
+                  alt="Vivahvedh" 
+                  className="w-full h-full object-contain mix-blend-multiply" 
+                />
               </div>
             </Link>
-            <p className="text-foreground/60 text-base leading-relaxed max-w-sm">
-              विश्वासार्ह वैवाहिक सेवा — Maharashtra's most trusted matrimonial platform. 
-              Find your soulmate with an heirloom-style digital experience.
+            <p className="text-lg text-foreground/50 leading-relaxed max-w-sm mb-10">
+              Maharashtra's most distinguished matrimonial platform. We provide a sophisticated digital experience for those who value heritage, trust, and lasting connections.
             </p>
-            <div className="flex items-center gap-2 mt-8 text-xs font-bold uppercase tracking-widest text-primary/40">
-              <Heart size={14} className="text-primary" fill="currentColor" />
-              <span>Maharashtrian Pride</span>
+            <div className="flex items-center gap-6">
+              {[Instagram, Facebook, Twitter].map((Icon, i) => (
+                <a key={i} href="#" className="w-12 h-12 rounded-2xl bg-black/5 flex items-center justify-center text-foreground/40 hover:bg-primary hover:text-white transition-all duration-300">
+                  <Icon size={20} />
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="md:col-span-3">
-            <h3 className="font-display font-extrabold text-sm uppercase tracking-[3px] text-foreground mb-8">Navigation</h3>
-            <ul className="space-y-4">
+          {/* Navigation Links */}
+          <div className="lg:col-span-3">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-10">Platform</h3>
+            <ul className="space-y-5">
               {[
-                { to: '/search', label: 'Find Matches' },
-                { to: '/register', label: 'Register Free' },
-                { to: '/rules', label: 'Plans & Pricing' },
-                { to: '/contact', label: 'Contact Us' },
+                { to: '/search', label: 'Explore Profiles' },
+                { to: '/success-stories', label: 'Success Stories' },
+                { to: '/rules', label: 'Pricing Plans' },
+                { to: '/about', label: 'Our Story' },
+                { to: '/contact', label: 'Help & Support' },
               ].map(link => (
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-sm font-medium text-foreground/50 hover:text-primary transition-colors inline-block"
+                    className="text-sm font-bold text-foreground/50 hover:text-foreground transition-all duration-300 flex items-center gap-2 group"
                   >
+                    <span className="w-0 h-px bg-primary transition-all duration-300 group-hover:w-4" />
                     {link.label}
                   </Link>
                 </li>
@@ -46,41 +54,54 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact Info */}
-          <div className="md:col-span-4">
-            <h3 className="font-display font-extrabold text-sm uppercase tracking-[3px] text-foreground mb-8">Connect</h3>
-            <ul className="space-y-5">
-              <li className="flex items-start gap-4 text-sm">
-                <div className="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center flex-shrink-0">
-                  <Phone size={16} className="text-primary" />
+          {/* Contact Details */}
+          <div className="lg:col-span-4">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-10">Connect</h3>
+            <div className="space-y-8">
+              <div className="flex gap-6 group">
+                <div className="w-14 h-14 rounded-2xl bg-white shadow-ambient flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <Phone size={20} className="text-primary" />
                 </div>
-                <div>
-                  <p className="font-bold text-foreground">+91 98765 43210</p>
-                  <p className="text-xs text-foreground/40 mt-1 uppercase tracking-wider">Customer Support</p>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Call Us</span>
+                  <span className="text-lg font-bold text-foreground">+91 98765 43210</span>
                 </div>
-              </li>
-              <li className="flex items-start gap-4 text-sm">
-                <div className="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center flex-shrink-0">
-                  <Mail size={16} className="text-primary" />
+              </div>
+              <div className="flex gap-6 group">
+                <div className="w-14 h-14 rounded-2xl bg-white shadow-ambient flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <Mail size={20} className="text-primary" />
                 </div>
-                <div>
-                  <p className="font-bold text-foreground">info@vivahvedh.com</p>
-                  <p className="text-xs text-foreground/40 mt-1 uppercase tracking-wider">Email Inquiry</p>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Email Inquiry</span>
+                  <span className="text-lg font-bold text-foreground">hello@vivahvedh.com</span>
                 </div>
-              </li>
-            </ul>
+              </div>
+              <div className="flex gap-6 group">
+                <div className="w-14 h-14 rounded-2xl bg-white shadow-ambient flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <MapPin size={20} className="text-primary" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Office</span>
+                  <span className="text-lg font-bold text-foreground leading-tight">Pune, Maharashtra</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Bottom bar */}
-      <div className="border-t border-black/5 bg-white/50">
-        <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] font-bold uppercase tracking-widest text-foreground/30">
-          <p>© {new Date().getFullYear()} Vivahvedh. All Rights Reserved.</p>
-          <div className="flex gap-8">
-            <a href="#" className="hover:text-primary transition-colors">Privacy</a>
-            <a href="#" className="hover:text-primary transition-colors">Terms</a>
-            <a href="#" className="hover:text-primary transition-colors">Legal</a>
+        {/* Global Footer Bottom */}
+        <div className="mt-24 pt-12 border-t border-black/5 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-foreground/20">
+            <Heart size={14} fill="currentColor" className="text-primary/40" />
+            <span>Maharashtrian Heritage</span>
+          </div>
+          <div className="text-[10px] font-bold text-foreground/20 uppercase tracking-[0.1em]">
+            © {new Date().getFullYear()} Vivahvedh Matrimony. All Rights Reserved.
+          </div>
+          <div className="flex gap-10">
+            {['Privacy Policy', 'Terms of Service', 'Legal Notice'].map(txt => (
+              <a key={txt} href="#" className="text-[10px] font-black uppercase tracking-[0.15em] text-foreground/20 hover:text-primary transition-colors">{txt}</a>
+            ))}
           </div>
         </div>
       </div>

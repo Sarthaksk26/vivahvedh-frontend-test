@@ -1,16 +1,23 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Shield, Star, ArrowRight, Sparkles, Quote } from 'lucide-react';
+import { Heart, Shield, Star, ArrowRight, Sparkles, Quote, CheckCircle2, Users, Trophy, Zap, ShieldCheck } from 'lucide-react';
 import apiClient from '../lib/apiClient';
 import { resolveImageUrl } from '../lib/url';
 import { PaymentModal } from '../components/PaymentModal';
 
-const fadeUp = (delay = 0) => ({
-  initial: { y: 30, opacity: 0 },
-  animate: { y: 0, opacity: 1 },
-  transition: { duration: 0.7, delay }
-});
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.6, ease: "easeOut" }
+};
+
+const staggerContainer = {
+  initial: {},
+  whileInView: { transition: { staggerChildren: 0.1 } },
+  viewport: { once: true }
+};
 
 export default function Home() {
   const navigate = useNavigate();
@@ -20,12 +27,8 @@ export default function Home() {
   const [selectedPlan, setSelectedPlan] = useState<{ type: 'SILVER' | 'GOLD', price: number } | null>(null);
 
   useEffect(() => {
-    // Fetch generic/public profiles
     apiClient.get('/search')
-      .then(res => {
-        // take first 4 for home page
-        setFeaturedProfiles(res.data.results.slice(0, 4));
-      })
+      .then(res => setFeaturedProfiles(res.data.results.slice(0, 4)))
       .catch(err => console.error("Failed to load featured profiles", err));
 
     apiClient.get('/stories')
@@ -34,426 +37,425 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex-1 w-full flex flex-col items-center overflow-hidden">
-
-      {/* ========== HERO SECTION ========== */}
-      <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden py-24">
-        {/* Refined background layers - No excessive blurs to prevent distortion */}
-        <div className="absolute inset-0 z-0 bg-[#F7F9FB] overflow-hidden">
-          <div className="absolute top-0 right-0 w-[65%] h-full bg-gradient-to-l from-primary/5 to-transparent" />
-          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-accent/20 rounded-full blur-3xl opacity-40" />
+    <div className="flex-1 w-full flex flex-col items-center bg-[#FCFDFF]">
+      
+      {/* ========== PREMIUM HERO SECTION ========== */}
+      <section className="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden">
+        {/* Background Atmosphere */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-white to-accent/10" />
+          <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4" />
+          <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-accent/10 rounded-full blur-[100px] translate-y-1/4 -translate-x-1/4" />
         </div>
 
-        {/* Floating 3D-style elements */}
-        <div className="absolute inset-0 z-[1] pointer-events-none">
-          <motion.div
-            animate={{ 
-              y: [-20, 20, -20],
-              rotate: [0, 10, 0],
-              scale: [1, 1.05, 1]
-            }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute top-[15%] right-[10%] drop-shadow-2xl"
+        <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 lg:py-32 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="flex flex-col items-start"
           >
-            <div className="text-8xl filter blur-[1px] opacity-20">🪷</div>
-          </motion.div>
-          <motion.div
-            animate={{ 
-              y: [20, -20, 20],
-              rotate: [0, -15, 0]
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-            className="absolute bottom-[20%] left-[8%] drop-shadow-premium"
-          >
-            <div className="text-7xl opacity-15">✨</div>
-          </motion.div>
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-7 text-left">
-            {/* Badge */}
-            <motion.div {...fadeUp(0)} className="mb-8">
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/50 border border-primary/10 rounded-full text-primary text-xs font-bold uppercase tracking-[0.2em] backdrop-blur-sm shadow-sm">
-                <Sparkles size={14} className="animate-pulse" /> Maharashtra&apos;s Trusted Matrimony
-              </span>
-            </motion.div>
-
-            {/* Main Headline */}
-            <motion.h1 {...fadeUp(0.1)} className="display-lg text-foreground mb-8 leading-[1.2]">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 border border-primary/10 rounded-full text-primary text-[10px] font-bold uppercase tracking-[0.25em] backdrop-blur-md shadow-sm mb-8">
+              <Sparkles size={14} className="text-primary animate-pulse" /> Maharashtra's Premier Matrimony
+            </div>
+            
+            <h1 className="text-6xl md:text-8xl font-display font-extrabold text-foreground leading-[1.05] tracking-tight mb-8">
               शोध <br />
-              <span className="silk-gradient bg-clip-text text-transparent italic px-4 py-2">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-rose-600 to-primary-container">
                 नव्या नात्यांचा
               </span>
-            </motion.h1>
+            </h1>
+            
+            <p className="text-lg md:text-xl text-foreground/70 max-w-lg leading-relaxed mb-12">
+              Experience a sophisticated journey to find your life partner. We combine deep cultural heritage with modern matchmaking technology.
+            </p>
 
-            <motion.p {...fadeUp(0.2)} className="text-lg md:text-xl text-foreground/80 max-w-xl leading-relaxed mb-12">
-              Find your perfect life partner from verified Maharashtrian profiles. 
-              Find your partner on a platform designed like an heirloom.
-            </motion.p>
-
-            <motion.div {...fadeUp(0.35)} className="flex flex-col sm:flex-row items-center gap-6">
+            <div className="flex flex-wrap items-center gap-5">
               <Link
                 to="/register"
-                className="clay-button-primary px-10 py-5 text-xl flex items-center gap-3"
+                className="px-10 py-5 bg-primary text-white font-bold rounded-2xl shadow-[0_20px_40px_-10px_rgba(190,18,60,0.3)] hover:shadow-[0_25px_50px_-12px_rgba(190,18,60,0.4)] hover:-translate-y-1 transition-all duration-300 text-lg flex items-center gap-2"
               >
-                Get Started
-                <ArrowRight size={20} />
+                Join Free <ArrowRight size={20} />
               </Link>
               <Link
                 to="/search"
-                className="clay-button-secondary px-10 py-5 text-xl"
+                className="px-10 py-5 bg-white text-foreground border border-foreground/5 font-bold rounded-2xl shadow-sm hover:bg-foreground/5 transition-all duration-300 text-lg"
               >
-                Browse Now
+                Explore Profiles
               </Link>
-            </motion.div>
+            </div>
 
-            {/* Stats Summary */}
-            <motion.div {...fadeUp(0.5)} className="mt-20 flex gap-12 pt-12 border-t border-black/5">
-              {[
-                { count: '2.5k+', label: 'Verified Profiles' },
-                { count: '500+', label: 'Royal Stories' },
-              ].map((stat, i) => (
-                <div key={i}>
-                  <p className="text-3xl font-display font-black text-foreground">{stat.count}</p>
-                  <p className="text-xs font-bold uppercase tracking-widest text-foreground/60 mt-1">{stat.label}</p>
-                </div>
-              ))}
-            </motion.div>
-          </div>
+            <div className="mt-16 flex items-center gap-10 pt-10 border-t border-black/5 w-full max-w-md">
+              <div className="flex flex-col">
+                <span className="text-3xl font-display font-black text-foreground">2.5k+</span>
+                <span className="text-[10px] uppercase font-bold tracking-widest text-foreground/40">Verified Members</span>
+              </div>
+              <div className="w-px h-10 bg-black/5" />
+              <div className="flex flex-col">
+                <span className="text-3xl font-display font-black text-foreground">500+</span>
+                <span className="text-[10px] uppercase font-bold tracking-widest text-foreground/40">Success Stories</span>
+              </div>
+            </div>
+          </motion.div>
 
-          <div className="lg:col-span-5 relative hidden lg:block">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
-              className="relative aspect-square"
-            >
-              {/* Decorative Frame */}
-              <div className="absolute inset-0 border-[20px] border-white/40 rounded-[40px] shadow-ambient" />
-              <img 
-                src="/wedding_hero.png" 
-                className="w-full h-full object-cover rounded-[32px] shadow-premium" 
-                alt="Royal Wedding" 
-              />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, rotate: 2 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+            className="relative hidden lg:block"
+          >
+            {/* Main Visual Container */}
+            <div className="relative aspect-[4/5] rounded-[48px] overflow-hidden shadow-[0_60px_100px_-20px_rgba(0,0,0,0.15)] ring-1 ring-black/5">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
+              {/* High-res photography placeholder */}
+              <div className="w-full h-full bg-[#E2E8F0] flex items-center justify-center">
+                <img 
+                  src="/real_couple_hero.jpg" 
+                  alt="Premium Matrimony" 
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=2000&auto=format&fit=crop";
+                  }}
+                />
+              </div>
               
-              {/* Floating Match Card */}
-              <motion.div
-                animate={{ y: [0, -15, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute -bottom-4 -left-4 glass-card p-6 w-56 flex items-center gap-4 animate-in fade-in zoom-in duration-1000 shadow-xl"
-              >
-                <div className="w-12 h-12 rounded-xl silk-gradient flex items-center justify-center text-white font-bold shadow-lg">
-                  98%
+              <div className="absolute bottom-10 left-10 z-20">
+                <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-3xl">
+                  <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white shadow-lg">
+                    <Heart size={24} fill="currentColor" />
+                  </div>
+                  <div className="text-white">
+                    <p className="text-sm font-bold">Trusted by Thousands</p>
+                    <p className="text-[10px] opacity-70 uppercase font-black tracking-tighter">Premium Experience</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-bold text-foreground">Perfect Match</p>
-                  <p className="text-[10px] uppercase text-foreground/70 font-black tracking-tighter">Found Today</p>
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
+              </div>
+            </div>
+
+            {/* Floating Decorative Elements */}
+            <motion.div 
+              animate={{ y: [-15, 15, -15] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -top-10 -right-10 w-32 h-32 bg-accent/20 rounded-full blur-3xl"
+            />
+          </motion.div>
         </div>
       </section>
 
-      {/* ========== TRADITIONAL DECORATIVE STRIP ========== */}
-      <section className="w-full relative overflow-hidden h-28 md:h-36">
-        <img src="/traditional_elements.png" alt="Traditional Decorations" className="w-full h-full object-cover opacity-80" />
-        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white to-transparent" />
-      </section>
+      {/* ========== TRUSTED BY BAR ========== */}
+      <div className="w-full py-10 bg-white border-y border-black/5 flex justify-center overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 flex flex-wrap justify-center gap-12 md:gap-24 opacity-30 grayscale contrast-125">
+          {['Authentic', 'Verified', 'Secure', 'Personal', 'Traditional'].map(text => (
+            <span key={text} className="text-sm font-black uppercase tracking-[0.3em] font-display whitespace-nowrap">{text}</span>
+          ))}
+        </div>
+      </div>
 
-      {/* ========== HOW IT WORKS ========== */}
-      <section className="w-full py-32 relative overflow-hidden bg-white">
+      {/* ========== HOW IT WORKS - REFINED ========== */}
+      <section className="w-full py-32 bg-[#FCFDFF]">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.div {...fadeUp()} className="text-left mb-20 max-w-2xl">
-            <span className="text-xs font-bold uppercase tracking-[4px] text-primary/60">Step-by-Step Guide</span>
-            <h2 className="display-md text-foreground mt-4">Simple, Personal, <br />Secure.</h2>
-            <p className="text-foreground/70 mt-6 text-lg">Four intentional steps to finding a partner who shares your values and family traditions.</p>
+          <motion.div {...fadeInUp} className="max-w-2xl mb-24">
+            <h2 className="text-xs font-black uppercase tracking-[0.4em] text-primary mb-6">Simple Process</h2>
+            <h3 className="text-4xl md:text-6xl font-display font-extrabold text-foreground leading-[1.1] tracking-tight">
+              Four Steps to Your <br />Perfect Life Match.
+            </h3>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <motion.div 
+            variants={staggerContainer}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-4 gap-10"
+          >
             {[
-              { step: '01', icon: '📝', title: 'Register', desc: 'Create your detailed profile with family values and expectations.', color: 'bg-[#F2F4F6]' },
-              { step: '02', icon: '✅', title: 'Verify', desc: 'Every profile is reviewed to ensure a 100% genuine community.', color: 'bg-[#F2F4F6]' },
-              { step: '03', icon: '🔍', title: 'Discover', desc: 'Explore curated matches with advanced cultural and educational filters.', color: 'bg-primary/5' },
-              { step: '04', icon: '💑', title: 'Connect', desc: 'Personal introductions and meetings facilitated by our curators.', color: 'bg-primary/10' },
+              { icon: <Users size={32} />, title: 'Create Profile', desc: 'Detail your background, values, and what you seek in a partner.' },
+              { icon: <ShieldCheck size={32} />, title: 'Verification', desc: 'We verify every profile manually to ensure a safe, genuine community.' },
+              { icon: <Star size={32} />, title: 'Smart Search', desc: 'Use advanced filters to find profiles that align with your lifestyle.' },
+              { icon: <Zap size={32} />, title: 'Instant Connect', desc: 'Express interest and start meaningful conversations immediately.' },
             ].map((item, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className={`relative ${item.color} rounded-[32px] p-10 group hover:shadow-ambient transition-all duration-500`}
+                variants={fadeInUp}
+                className="relative p-10 bg-white border border-black/5 rounded-[40px] hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] transition-all duration-500 group"
               >
-                <div className="absolute top-10 right-10 text-[60px] opacity-[0.05] font-display font-black group-hover:opacity-10 transition-opacity">
-                  {item.step}
+                <div className="w-16 h-16 rounded-2xl bg-primary/5 flex items-center justify-center text-primary mb-8 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-500">
+                  {item.icon}
                 </div>
-                <div className="text-5xl mb-8 group-hover:scale-110 transition-transform duration-500 origin-left">{item.icon}</div>
-                <h3 className="text-xl font-display font-black mb-4">{item.title}</h3>
-                <p className="text-sm text-foreground/70 leading-relaxed font-medium">{item.desc}</p>
+                <h4 className="text-xl font-display font-black mb-4">{item.title}</h4>
+                <p className="text-sm text-foreground/60 leading-relaxed font-medium">{item.desc}</p>
+                <div className="absolute top-10 right-10 text-4xl font-display font-black text-black/[0.03]">{String(i + 1).padStart(2, '0')}</div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ========== FEATURED PROFILES (PUBLIC PREVIEW) ========== */}
+      {/* ========== FEATURED PROFILES - LUXURY CARDS ========== */}
       {featuredProfiles.length > 0 && (
-        <section className="w-full py-32 relative bg-[#F7F9FB]">
+        <section className="w-full py-32 bg-white">
           <div className="max-w-7xl mx-auto px-6">
-            <motion.div {...fadeUp()} className="text-center mb-16">
-              <span className="text-xs font-bold uppercase tracking-[4px] text-primary/60">Curation Highlights</span>
-              <h2 className="display-md text-foreground mt-4">Discover Your Match.</h2>
-              <p className="text-foreground/60 mt-6 max-w-lg mx-auto">A glimpse into our diverse and growing community of verified individuals.</p>
-            </motion.div>
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
+              <motion.div {...fadeInUp}>
+                <h2 className="text-xs font-black uppercase tracking-[0.4em] text-primary mb-6">Recent Members</h2>
+                <h3 className="text-4xl md:text-5xl font-display font-extrabold text-foreground tracking-tight">Discover New Possibilities.</h3>
+              </motion.div>
+              <motion.div {...fadeInUp}>
+                <Link to="/search" className="inline-flex items-center gap-2 font-bold text-sm uppercase tracking-widest text-foreground hover:text-primary transition-colors">
+                  View All Profiles <ArrowRight size={16} />
+                </Link>
+              </motion.div>
+            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
               {featuredProfiles.map((p, i) => {
                 const imgUrl = p.images?.[0]?.url;
                 const initial = p.profile?.firstName?.[0] || 'V';
                 return (
                   <motion.div 
                     key={p.id}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
                     onClick={() => navigate(`/profile/${p.id}`)}
-                    className="glass-card group cursor-pointer hover:-translate-y-2 transition-all duration-500 overflow-hidden"
+                    className="relative group cursor-pointer"
                   >
-                    <div className="h-72 relative bg-[#eceef0] overflow-hidden">
+                    <div className="relative aspect-[3/4] rounded-[40px] overflow-hidden bg-[#F2F4F7] mb-6">
                       {imgUrl ? (
-                         <img src={imgUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                        <img 
+                          src={imgUrl} 
+                          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                          alt="Profile" 
+                        />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-primary/5">
                           <span className="text-6xl font-display font-black text-primary/10">{initial}</span>
                         </div>
                       )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
                       
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
-                      
-                      <div className="absolute inset-x-0 bottom-0 p-6">
-                         <h3 className="text-white font-display font-bold text-xl leading-tight truncate">
-                           {p.profile?.firstName} {p.profile?.lastName}
-                         </h3>
-                         <div className="flex items-center gap-2 mt-2">
-                           <span className="w-1.5 h-1.5 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.6)]" />
-                           <p className="text-white/80 text-[10px] font-black uppercase tracking-widest">{p.regId}</p>
-                         </div>
+                      <div className="absolute bottom-6 left-6 right-6">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,1)]" />
+                          <span className="text-[10px] text-white/70 uppercase font-black tracking-widest">{p.regId}</span>
+                        </div>
+                        <p className="text-xl text-white font-display font-bold leading-tight truncate">
+                          {p.profile?.firstName} {p.profile?.lastName}
+                        </p>
                       </div>
                     </div>
-                    <div className="p-6 bg-white">
-                       <ul className="text-sm font-medium text-foreground/80 space-y-1">
-                         <li className="text-foreground font-bold">{p.profile?.maritalStatus} • {p.profile?.gender}</li>
-                         {p.education?.trade && <li className="text-xs text-foreground/60 italic">🎓 {p.education.trade}</li>}
-                       </ul>
+                    <div className="px-4">
+                      <p className="text-sm font-bold text-foreground mb-1">{p.profile?.gender} • {p.profile?.maritalStatus}</p>
+                      <p className="text-xs text-foreground/40 font-medium truncate">{p.education?.trade || 'Professional'}</p>
                     </div>
                   </motion.div>
                 );
               })}
             </div>
-            
-            <div className="mt-20 text-center">
-               <Link to="/search" className="clay-button-secondary px-10 py-4 text-sm uppercase tracking-widest">
-                 View All Profiles
-               </Link>
-            </div>
           </div>
         </section>
       )}
 
-      {/* ========== WHY VIVAHVEDH ========== */}
-      <section className="w-full py-32 relative">
+      {/* ========== WHY VIVAHVEDH - TRUST & QUALITY ========== */}
+      <section className="w-full py-32 bg-[#FCFDFF]">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-            <div className="lg:col-span-4">
-              <span className="text-xs font-bold uppercase tracking-[4px] text-primary/40">Our Commitment</span>
-              <h2 className="display-md text-foreground mt-4 mb-8">What Makes Us <br />Regal.</h2>
-              <p className="text-foreground/50 text-lg mb-10">We prioritize family dignity over digital volume, ensuring every connection is meaningful and culturally aligned.</p>
-              <Link to="/about" className="clay-button-secondary px-8 py-3.5 inline-block">Learn Our Story</Link>
-            </div>
-            
-            <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[
-                {
-                  icon: <Shield size={28} />,
-                  title: 'Pure Integrity',
-                  desc: 'Every profile is manually curated and verified. We maintain a zero-tolerance policy for misleading information.',
-                  color: 'bg-white'
-                },
-                {
-                  icon: <Heart size={28} />,
-                  title: 'Personal Curation',
-                  desc: 'Our relationship managers don\'t just match data; they facilitate introductions and family meetings with care.',
-                  color: 'bg-primary/5'
-                },
-                {
-                  icon: <Star size={28} />,
-                  title: 'Cultural Alignment',
-                  desc: 'Tailored specifically for Maharashtrian households who value tradition, education, and family legacy.',
-                  color: 'bg-accent/10'
-                },
-                {
-                   icon: <Quote size={28} />,
-                   title: 'Match Privacy',
-                   desc: 'Control who sees your PII. We mask email and mobile data until you decide to connect.',
-                   color: 'bg-[#F2F4F6]'
-                }
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className={`${item.color} rounded-[32px] p-8 shadow-ambient group hover:-translate-y-2 transition-all duration-500`}
-                >
-                  <div className="w-14 h-14 rounded-2xl bg-white shadow-premium flex items-center justify-center mb-6 text-primary scale-90 group-hover:scale-100 transition-transform">
-                    {item.icon}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+            <motion.div {...fadeInUp} className="relative">
+              <div className="relative aspect-square rounded-[60px] overflow-hidden shadow-premium">
+                <img 
+                  src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1200&auto=format&fit=crop" 
+                  className="w-full h-full object-cover" 
+                  alt="Tradition" 
+                />
+                <div className="absolute inset-0 bg-primary/10 mix-blend-overlay" />
+              </div>
+              <div className="absolute -bottom-10 -right-10 bg-white p-10 rounded-[40px] shadow-ambient hidden md:block">
+                <Trophy size={40} className="text-primary mb-4" />
+                <p className="text-2xl font-display font-black text-foreground leading-tight">10+ Years of <br />Excellence</p>
+              </div>
+            </motion.div>
+
+            <motion.div {...fadeInUp}>
+              <h2 className="text-xs font-black uppercase tracking-[0.4em] text-primary mb-6">Our Philosophy</h2>
+              <h3 className="text-4xl md:text-6xl font-display font-extrabold text-foreground leading-[1.1] tracking-tight mb-10">
+                Where Tradition <br />Meets Integrity.
+              </h3>
+              <p className="text-lg text-foreground/60 leading-relaxed mb-12">
+                We believe in quality over quantity. Every profile on Vivahvedh undergoes a strict verification process, ensuring that your search for a life partner is secure and meaningful.
+              </p>
+              
+              <div className="space-y-8 mb-12">
+                {[
+                  { icon: <CheckCircle2 className="text-green-500" />, title: '100% Verified Profiles', desc: 'Manual screening of every single user identity.' },
+                  { icon: <CheckCircle2 className="text-green-500" />, title: 'Cultural Deep-Dive', desc: 'Sophisticated matching based on family values.' },
+                  { icon: <CheckCircle2 className="text-green-500" />, title: 'Strict Privacy Controls', desc: 'You decide who sees your contact information.' },
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-5 items-start">
+                    <div className="mt-1">{item.icon}</div>
+                    <div>
+                      <h5 className="font-bold text-foreground mb-1">{item.title}</h5>
+                      <p className="text-sm text-foreground/50">{item.desc}</p>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-display font-black mb-3">{item.title}</h3>
-                  <p className="text-sm text-foreground/70 leading-relaxed font-medium">{item.desc}</p>
-                </motion.div>
-              ))}
-            </div>
+                ))}
+              </div>
+              
+              <Link to="/about" className="px-8 py-4 bg-foreground text-white font-bold rounded-2xl hover:bg-foreground/90 transition-all duration-300">
+                Learn More About Us
+              </Link>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ========== SUCCESS STORIES ========== */}
+      {/* ========== SUCCESS STORIES - TESTIMONIALS ========== */}
       {successStories.length > 0 && (
-        <section className="w-full py-28 bg-white">
+        <section className="w-full py-32 bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto px-6">
-            <motion.div {...fadeUp()} className="text-center mb-16">
-              <span className="text-xs font-bold uppercase tracking-[4px] text-primary/40">Real Couples</span>
-              <h2 className="display-md text-foreground mt-4 mb-4">यशोगाथा — Success Stories</h2>
-              <p className="text-foreground/40 max-w-xl mx-auto text-lg">Celebrating unions forged through Vivahvedh.</p>
+            <motion.div {...fadeInUp} className="text-center mb-24">
+              <h2 className="text-xs font-black uppercase tracking-[0.4em] text-primary mb-6">Testimonials</h2>
+              <h3 className="text-4xl md:text-5xl font-display font-extrabold text-foreground tracking-tight">यशोगाथा — Success Stories</h3>
             </motion.div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-              {successStories.map((story: any, i: number) => (
-                <motion.div key={story.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12 }} className="bg-card rounded-[32px] overflow-hidden shadow-premium border border-primary/10 hover:-translate-y-3 transition-all duration-500 relative group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                  <div className="absolute top-4 right-4 z-10 px-3 py-1 bg-white/80 backdrop-blur-md text-[10px] uppercase font-black tracking-widest text-primary rounded-full shadow-sm">
-                    Featured Highlight
-                  </div>
-                  <div className="w-full h-64 bg-gradient-to-br from-primary/10 to-accent/10 relative overflow-hidden">
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              {successStories.map((story, i) => (
+                <motion.div 
+                  key={story.id} 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="flex flex-col items-center text-center p-10 bg-[#FCFDFF] border border-black/5 rounded-[48px] hover:shadow-ambient transition-all duration-500 group"
+                >
+                  <div className="w-32 h-32 rounded-full overflow-hidden mb-10 ring-4 ring-white shadow-premium group-hover:scale-105 transition-transform duration-500">
                     {story.photoUrl ? (
-                      <img src={resolveImageUrl(story.photoUrl)} alt={`${story.groomName} & ${story.brideName}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <img src={resolveImageUrl(story.photoUrl)} alt="Couple" className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center"><Heart size={40} className="text-primary/15" /></div>
+                      <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary">
+                        <Heart size={40} fill="currentColor" className="opacity-10" />
+                      </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90" />
-                    <p className="absolute bottom-5 left-6 text-white font-display font-black text-xl drop-shadow-lg leading-tight">
-                      {story.groomName} <br/><span className="text-primary-foreground/70 text-sm font-medium italic">&</span> {story.brideName}
-                    </p>
                   </div>
-                  <div className="p-8">
-                    <Quote size={24} className="text-primary/20 mb-3" />
-                    <p className="text-foreground/80 text-sm leading-relaxed line-clamp-4 italic font-medium">"{story.message}"</p>
-                  </div>
+                  <Quote size={32} className="text-primary/20 mb-8" />
+                  <p className="text-lg text-foreground/70 font-medium italic mb-10 line-clamp-4">"{story.message}"</p>
+                  <p className="text-xl font-display font-black text-foreground">
+                    {story.groomName} <span className="text-primary">&</span> {story.brideName}
+                  </p>
                 </motion.div>
               ))}
             </div>
-            <div className="text-center mt-8">
-              <Link to="/success-stories" className="clay-button-secondary px-10 py-5 text-sm uppercase tracking-[0.2em] inline-flex items-center gap-3">
-                Read More Heartwarming Stories <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+
+            <div className="text-center mt-20">
+              <Link to="/success-stories" className="text-sm font-black uppercase tracking-[0.3em] text-foreground hover:text-primary transition-colors flex items-center justify-center gap-2">
+                Discover More Stories <ArrowRight size={16} />
               </Link>
             </div>
           </div>
         </section>
       )}
 
-      {/* ========== PLANS TEASER ========== */}
-      <section className="w-full py-32 bg-[#F7F9FB]">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <motion.div {...fadeUp()}>
-            <span className="text-xs font-bold uppercase tracking-[4px] text-primary/40">Premium Membership</span>
-            <h2 className="display-md text-foreground mt-4 mb-6">Invest in Your Future.</h2>
-            <p className="text-foreground/40 max-w-xl mx-auto mb-16 text-lg">
-              Simple, transparent pricing. Start free and upgrade when you're ready.
-            </p>
+      {/* ========== MEMBERSHIP PLANS - PREMIUM ALIGNMENT ========== */}
+      <section className="w-full py-32 bg-[#FCFDFF]">
+        <div className="max-w-7xl mx-auto px-6">
+          <motion.div {...fadeInUp} className="text-center mb-24">
+            <h2 className="text-xs font-black uppercase tracking-[0.4em] text-primary mb-6">Membership</h2>
+            <h3 className="text-4xl md:text-6xl font-display font-extrabold text-foreground tracking-tight mb-8">Elevate Your Search.</h3>
+            <p className="text-lg text-foreground/40 max-w-xl mx-auto font-medium">Simple, premium pricing to help you find your perfect match faster.</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-end">
             {[
-              { name: 'Basic', price: '₹0', amount: 0, sub: 'Forever', color: 'text-foreground/40', bg: 'bg-white', features: ['Profile creation', 'Browse profiles', 'Basic search'] },
-              { name: 'Silver', price: '₹2,000', amount: 2000, sub: '6 Months', color: 'text-primary', bg: 'bg-white shadow-ambient ring-1 ring-primary/5', features: ['Send proposals', 'View contacts', 'Full gallery', 'Advanced filters'] },
-              { name: 'Gold', price: '₹5,000', amount: 5000, sub: '1 Year', color: 'text-amber-700', bg: 'bg-primary/5 border border-primary/10', features: ['All Silver features', 'Priority listing ⭐', 'Verified badge ✅', 'Personal manager 🤝'] },
+              { name: 'Free', price: '0', amount: 0, sub: 'Lifetime Access', cta: 'Join Now', variant: 'secondary', features: ['Create Profile', 'Browse Members', 'Basic Search', 'Receive Proposals'] },
+              { name: 'Silver', price: '2,000', amount: 2000, sub: 'Valid for 1 Year', cta: 'Choose Silver', variant: 'primary', features: ['Send Proposals (5/day)', 'View Contact Info', 'Full Photo Gallery', 'Advanced Filters', 'Who Viewed Me'] },
+              { name: 'Gold', price: '5,000', amount: 5000, sub: 'Valid for 1 Year', cta: 'Go Gold', variant: 'luxury', features: ['Unlimited Proposals', 'Priority Listing ⭐', 'Verified Badge ✅', 'Offline Manager 🤝', 'WhatsApp Support 📱'] },
             ].map((plan, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className={`${plan.bg} rounded-[40px] p-12 text-center transition-all duration-500 hover:scale-105`}
+                className={`relative p-12 rounded-[48px] transition-all duration-500 hover:-translate-y-2 ${
+                  plan.variant === 'luxury' 
+                  ? 'bg-foreground text-white shadow-[0_40px_80px_-20px_rgba(0,0,0,0.2)] md:p-14' 
+                  : plan.variant === 'primary'
+                  ? 'bg-white border-2 border-primary/10 shadow-premium md:p-14'
+                  : 'bg-white border border-black/5'
+                }`}
               >
-                <p className={`text-xs font-black uppercase tracking-[3px] ${plan.color} mb-4`}>{plan.name}</p>
-                <p className={`text-5xl font-display font-black ${plan.color} mb-2`}>{plan.price}</p>
-                <p className="text-xs font-bold text-foreground/30 uppercase tracking-widest mb-10">{plan.sub}</p>
-                <ul className="space-y-4 text-sm text-left mb-12 border-t border-black/5 pt-8">
+                {plan.variant === 'luxury' && (
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-black uppercase tracking-[0.2em] px-6 py-2.5 rounded-full shadow-lg">
+                    Recommended Premium
+                  </div>
+                )}
+                
+                <p className={`text-xs font-black uppercase tracking-[0.3em] mb-4 ${plan.variant === 'luxury' ? 'text-primary' : 'text-primary'}`}>{plan.name}</p>
+                <div className="flex items-baseline gap-1 mb-2">
+                  <span className="text-2xl font-bold">₹</span>
+                  <span className="text-5xl md:text-6xl font-display font-black tracking-tighter">{plan.price}</span>
+                </div>
+                <p className={`text-[10px] font-bold uppercase tracking-widest mb-10 ${plan.variant === 'luxury' ? 'text-white/40' : 'text-foreground/30'}`}>{plan.sub}</p>
+                
+                <ul className="space-y-4 mb-12 border-t border-white/10 pt-10">
                   {plan.features.map((f, j) => (
-                    <li key={j} className="flex items-center gap-3 font-medium text-foreground/80">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary/40" /> {f}
+                    <li key={j} className="flex items-center gap-3 text-sm font-bold">
+                      <CheckCircle2 size={18} className={plan.variant === 'luxury' ? 'text-primary' : 'text-primary'} />
+                      <span className={plan.variant === 'luxury' ? 'text-white/80' : 'text-foreground/80'}>{f}</span>
                     </li>
                   ))}
                 </ul>
-                {plan.name !== 'Basic' && (
+
+                {plan.amount > 0 ? (
                   <button
                     onClick={() => {
                       setSelectedPlan({ type: plan.name as 'SILVER' | 'GOLD', price: plan.amount });
                       setIsPaymentModalOpen(true);
                     }}
-                    className={`w-full py-4 text-sm uppercase tracking-widest ${plan.name === 'Gold' ? 'clay-button-primary silk-gradient' : 'clay-button-secondary'}`}
+                    className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs transition-all duration-300 ${
+                      plan.variant === 'luxury' 
+                      ? 'bg-primary text-white hover:bg-rose-600 shadow-[0_10px_30px_-5px_rgba(190,18,60,0.5)]' 
+                      : 'bg-foreground text-white hover:bg-foreground/90'
+                    }`}
                   >
-                    Select Plan
+                    {plan.cta}
                   </button>
+                ) : (
+                  <Link
+                    to="/register"
+                    className="block w-full py-5 text-center rounded-2xl font-black uppercase tracking-[0.2em] text-xs bg-black/5 text-foreground hover:bg-black/10 transition-all"
+                  >
+                    {plan.cta}
+                  </Link>
                 )}
               </motion.div>
             ))}
           </div>
-
-          <Link to="/rules" className="text-primary font-bold hover:underline tracking-widest text-xs uppercase group inline-flex items-center gap-2">
-            Compare All Features
-            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
         </div>
       </section>
 
-      {/* ========== CTA BANNER ========== */}
-      <section className="w-full py-32 px-6">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="relative silk-gradient rounded-[60px] p-20 md:p-32 text-center text-white overflow-hidden shadow-premium"
-          >
-            {/* Texture overlay */}
-            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-            
-            <div className="relative z-10">
-              <span className="text-xs font-bold uppercase tracking-[6px] text-white/60 mb-8 block font-display">Let's Begin</span>
-              <h2 className="display-lg text-white mb-10">
-                तुमचा जोडीदार वाट <br />पाहत आहे!
-              </h2>
-              <p className="text-xl text-white/70 max-w-2xl mx-auto mb-16 leading-relaxed">
-                Join a community where tradition meets the future. Your perfect match is just a click away.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <Link
-                  to="/register"
-                  className="clay-button bg-white text-primary px-12 py-5 text-xl"
-                >
-                  Join Free
-                </Link>
-                <Link
-                  to="/contact"
-                  className="clay-button bg-white/20 backdrop-blur-md border border-white/20 text-white px-12 py-5 text-xl"
-                >
-                  Contact Us
-                </Link>
-              </div>
+      {/* ========== FINAL CTA - ELEVATED ========== */}
+      <section className="w-full py-40 px-6 bg-white overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-[40vw] h-[40vw] bg-primary/5 rounded-full blur-[120px] translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-accent/5 rounded-full blur-[120px] -translate-x-1/2 translate-y-1/2" />
+        
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          <motion.div {...fadeInUp}>
+            <h2 className="text-6xl md:text-8xl font-display font-extrabold text-foreground leading-[1.05] tracking-tight mb-12">
+              तुमचा जोडीदार वाट <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-600">पाहत आहे!</span>
+            </h2>
+            <p className="text-xl text-foreground/60 max-w-2xl mx-auto mb-16 leading-relaxed font-medium">
+              Join a distinguished community where tradition meets technology. Start your journey today and find the one you've been waiting for.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-6">
+              <Link to="/register" className="px-12 py-6 bg-primary text-white font-black uppercase tracking-[0.2em] text-sm rounded-2xl shadow-[0_20px_40px_-10px_rgba(190,18,60,0.3)] hover:-translate-y-1 transition-all">
+                Register Now Free
+              </Link>
+              <Link to="/contact" className="px-12 py-6 bg-white border border-black/5 text-foreground font-black uppercase tracking-[0.2em] text-sm rounded-2xl hover:bg-black/5 transition-all shadow-sm">
+                Inquire Locally
+              </Link>
             </div>
           </motion.div>
         </div>

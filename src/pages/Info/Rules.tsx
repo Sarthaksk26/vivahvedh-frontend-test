@@ -11,13 +11,13 @@ const features = [
   { name: "View other's photos", free: 'Primary only', silver: 'Full gallery', gold: 'Full gallery' },
   { name: 'Send match proposals', free: false, silver: '5 per day', gold: 'Unlimited' },
   { name: 'Receive match proposals', free: true, silver: true, gold: true },
-  { name: 'View contact info', free: false, silver: true, gold: true },
+  { name: 'View contact info (mutual accept)', free: false, silver: true, gold: true },
   { name: 'Shortlist profiles', free: 'Up to 5', silver: 'Up to 50', gold: 'Unlimited' },
   { name: 'Who viewed my profile', free: false, silver: '30 days', gold: 'Full history' },
   { name: 'Priority listing', free: false, silver: false, gold: true },
   { name: 'Verified badge', free: false, silver: false, gold: true },
-  { name: 'Personal assistance', free: false, silver: 'Email', gold: 'Dedicated' },
-  { name: 'Meeting arrangement', free: false, silver: false, gold: true },
+  { name: 'Dedicated Offline Relationship Manager', free: false, silver: false, gold: true },
+  { name: 'Premium WhatsApp Support', free: false, silver: false, gold: true },
 ];
 
 function FeatureValue({ value }: { value: boolean | string }) {
@@ -69,7 +69,7 @@ export default function Rules() {
           <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1.5 rounded-bl-xl rounded-tr-2xl tracking-widest uppercase shadow">★ Popular</div>
           <h3 className="text-2xl font-bold mb-2 text-primary-foreground/90">Silver</h3>
           <p className="text-4xl font-extrabold mb-1">₹2,000</p>
-          <p className="text-sm text-primary-foreground/70 font-medium mb-6">Valid for 6 Months</p>
+          <p className="text-sm text-primary-foreground/70 font-medium mb-6">Valid for 1 Year</p>
           <ul className="space-y-3 mb-8 text-primary-foreground/90">
             <li className="flex items-center gap-3 text-sm"><Check size={16} className="flex-shrink-0" /> Everything in Free</li>
             <li className="flex items-center gap-3 text-sm"><Check size={16} className="flex-shrink-0" /> Send 5 proposals per day</li>
@@ -99,9 +99,8 @@ export default function Rules() {
             <li className="flex items-center gap-3"><Check size={16} className="text-amber-600 flex-shrink-0" /> Unlimited match proposals</li>
             <li className="flex items-center gap-3"><Check size={16} className="text-amber-600 flex-shrink-0" /> ⭐ Priority listing in search</li>
             <li className="flex items-center gap-3"><Check size={16} className="text-amber-600 flex-shrink-0" /> ✅ Verified profile badge</li>
-            <li className="flex items-center gap-3"><Check size={16} className="text-amber-600 flex-shrink-0" /> Dedicated relationship manager</li>
-            <li className="flex items-center gap-3"><Check size={16} className="text-amber-600 flex-shrink-0" /> Meeting arrangement</li>
-            <li className="flex items-center gap-3"><Check size={16} className="text-amber-600 flex-shrink-0" /> Personal counselling</li>
+            <li className="flex items-center gap-3"><Check size={16} className="text-amber-600 flex-shrink-0" /> 🤝 Dedicated Offline Relationship Manager</li>
+            <li className="flex items-center gap-3"><Check size={16} className="text-amber-600 flex-shrink-0" /> 📱 Premium WhatsApp Support</li>
           </ul>
           <button 
             onClick={() => handleUpgrade('GOLD', 5000)}
@@ -140,7 +139,7 @@ export default function Rules() {
               <tr className="border-t-2 bg-muted/30">
                 <td className="p-4 font-bold">Duration</td>
                 <td className="p-4 text-center font-bold">Lifetime</td>
-                <td className="p-4 text-center font-bold text-primary">6 Months</td>
+                <td className="p-4 text-center font-bold text-primary">1 Year</td>
                 <td className="p-4 text-center font-bold text-amber-700">1 Year</td>
               </tr>
             </tbody>

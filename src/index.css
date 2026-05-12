@@ -58,60 +58,85 @@
     @apply bg-background text-foreground font-sans antialiased;
     overflow-x: hidden;
     width: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight transition-all;
+    @apply font-display tracking-tight transition-colors duration-300;
   }
 }
 
 @layer components {
-  .glass-card {
-    @apply bg-white/60 backdrop-blur-xl border border-white/20 shadow-glass rounded-2xl;
-    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
+  /* Premium Containers */
+  .premium-card {
+    @apply bg-white border border-black/5 rounded-[40px] transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)];
   }
 
-  .clay-button {
-    @apply relative overflow-hidden rounded-2xl font-bold transition-all duration-300 active:scale-95;
-    box-shadow: 
-      inset 4px 4px 8px rgba(255, 255, 255, 0.3),
-      inset -4px -4px 8px rgba(0, 0, 0, 0.1),
-      0 10px 20px -5px rgba(184, 0, 53, 0.3);
+  .glass-container {
+    @apply bg-white/70 backdrop-blur-2xl border border-white/20 shadow-glass;
   }
 
-  .clay-button-primary {
-    @apply clay-button bg-primary text-white hover:bg-primary-container hover:shadow-premium;
+  /* Luxury Buttons */
+  .btn-premium {
+    @apply relative overflow-hidden px-8 py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-xs transition-all duration-300 active:scale-95;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
   }
 
-  .clay-button-secondary {
-    @apply clay-button bg-white text-primary border border-primary/10 hover:bg-accent/20;
-    box-shadow: 
-      inset 2px 2px 4px rgba(255, 255, 255, 1),
-      inset -2px -2px 4px rgba(0, 0, 0, 0.05),
-      0 4px 10px -2px rgba(0, 0, 0, 0.1);
+  .btn-premium-primary {
+    @apply btn-premium bg-primary text-white hover:bg-rose-600 shadow-[0_15px_30px_-5px_rgba(190,18,60,0.25)];
   }
 
-  .silk-gradient {
-    @apply bg-gradient-to-br from-primary via-primary-container to-rose-600;
+  .btn-premium-outline {
+    @apply btn-premium bg-white border border-black/5 text-foreground hover:bg-black/5;
   }
 
-  .display-lg {
-    @apply text-5xl md:text-7xl font-extrabold leading-[1.1] tracking-[-0.03em];
+  /* Refined Gradients */
+  .gradient-silk {
+    @apply bg-gradient-to-br from-primary via-rose-600 to-primary-container;
   }
 
-  .display-md {
-    @apply text-3xl md:text-5xl font-extrabold leading-tight tracking-[-0.02em];
+  .text-gradient {
+    @apply text-transparent bg-clip-text gradient-silk;
   }
 
-  .iridescent-border {
-    @apply relative p-[2px] rounded-[34px] overflow-hidden;
-    background: linear-gradient(135deg, #FFD700 0%, #FF8C00 50%, #B80035 100%);
-    background-size: 200% 200%;
-    animation: shine 3s linear infinite;
+  /* Typography Utilities */
+  .display-hero {
+    @apply text-6xl md:text-8xl font-display font-black leading-[1.05] tracking-tighter;
   }
 
-  @keyframes shine {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  .section-title {
+    @apply text-4xl md:text-5xl font-display font-extrabold tracking-tight;
   }
+
+  .shadow-premium {
+    box-shadow: 0 32px 64px -12px rgba(184, 0, 53, 0.12);
+  }
+  
+  .shadow-ambient {
+    box-shadow: 0 24px 40px -8px rgba(25, 28, 30, 0.08);
+  }
+}
+
+/* Smooth Scrollbars for Premium feel */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/10 rounded-full hover:bg-primary/20 transition-colors;
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-easeInOut infinite;
 }

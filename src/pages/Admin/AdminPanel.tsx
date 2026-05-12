@@ -56,14 +56,14 @@ export default function AdminPanel() {
   });
   const [previewUser, setPreviewUser] = useState<AdminUser | null>(null);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const response = await apiClient.get('/admin/stats');
       setStats(response.data);
     } catch (e) { console.error("Stats Fetch Error", e); }
-  };
+  }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (activeTab === 'addProfile') return;
     setLoading(true);
     try {
@@ -95,7 +95,6 @@ export default function AdminPanel() {
         if (allUsersFilters.ageMin) params.append('ageMin', allUsersFilters.ageMin);
         if (allUsersFilters.ageMax) params.append('ageMax', allUsersFilters.ageMax);
         if (allUsersFilters.accountStatus) params.append('accountStatus', allUsersFilters.accountStatus);
-        
         const response = await apiClient.get(`/admin/all-users?${params.toString()}`);
         setUsers(response.data);
       }
@@ -105,7 +104,7 @@ export default function AdminPanel() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab, paymentFilter, connectionFilter, allUsersFilters]);
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -124,7 +123,7 @@ export default function AdminPanel() {
     if (activeTab !== 'all') {
       fetchData();
     }
-  }, [activeTab, paymentFilter, connectionFilter]);
+  }, [activeTab, paymentFilter, connectionFilter, fetchStats, fetchData]);
 
   useEffect(() => {
     if (activeTab !== 'all') return;
@@ -133,17 +132,18 @@ export default function AdminPanel() {
       fetchData();
     }, 500);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [allUsersFilters, activeTab]);
+  }, [allUsersFilters, activeTab, fetchData]);
 
   const handleReplyEnquiry = async () => {
     if (!replyModal.enquiryId || !replyText.trim()) return;
     setReplying(true);
     try {
       await apiClient.post('/admin/enquiries/reply', { enquiryId: replyModal.enquiryId, replyMessage: replyText });
-      toast.success("Reply sent successfully.");
+      toast.success("Reply sent and enquiry resolved.");
+      // Optimistic UI update
+      setEnquiries(prev => prev.map(e => e.id === replyModal.enquiryId ? { ...e, isResolved: true } : e));
       setReplyModal({ isOpen: false, enquiryId: null, email: '', message: '' });
       setReplyText('');
-      fetchData();
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Failed to send reply.");
     } finally {
@@ -152,22 +152,29 @@ export default function AdminPanel() {
   };
 
   const handleResolveEnquiry = async (enquiryId: string, isResolved: boolean) => {
+    // Optimistic UI update — instant feedback
+    setEnquiries(prev => prev.map(e => e.id === enquiryId ? { ...e, isResolved } : e));
     try {
       await apiClient.patch('/admin/enquiries/resolve', { enquiryId, isResolved });
-      toast.success(isResolved ? "Enquiry marked as resolved" : "Enquiry marked as unresolved");
-      fetchData();
+      toast.success(isResolved ? "Marked as resolved" : "Marked as unresolved");
     } catch (error) {
+      // Revert on failure
+      setEnquiries(prev => prev.map(e => e.id === enquiryId ? { ...e, isResolved: !isResolved } : e));
       console.error(error);
       toast.error("Failed to update status");
     }
   };
 
   const handleVerifyPayment = async (paymentId: string, status: 'APPROVED' | 'REJECTED') => {
+    // Optimistic UI update
+    setPayments(prev => prev.map(p => p.id === paymentId ? { ...p, status } : p));
     try {
       await apiClient.patch(`/payments/admin/verify/${paymentId}`, { status });
       toast.success(`Payment ${status.toLowerCase()} successfully.`);
-      fetchData();
+      fetchStats();
     } catch (error: any) {
+      // Revert on failure
+      setPayments(prev => prev.map(p => p.id === paymentId ? { ...p, status: 'PENDING' } : p));
       toast.error(error.response?.data?.error || "Failed to verify payment.");
     }
   };
@@ -199,7 +206,7 @@ export default function AdminPanel() {
         onConfirm: async () => {
           try {
             await apiClient.post('/admin/approve', { targetUserId: userId });
-            toast.success('User approved successfully. Approval email sent.');
+            toast.success('User approved. Approval email sent.');
             setConfirmModal(prev => ({ ...prev, isOpen: false }));
             fetchData();
             fetchStats();
@@ -220,21 +227,22 @@ export default function AdminPanel() {
     } catch (error: any) {
       toast.error(error.response?.data?.error || `Failed to ${action} user.`);
     }
-  }, []);
+  }, [fetchData, fetchStats]);
 
 
 
   const handleSetPlan = useCallback(async (userId: string, planType: string) => {
-    const durationMonths = planType === 'SILVER' ? 6 : planType === 'GOLD' ? 12 : 0;
     try {
-      await apiClient.post('/admin/set-plan', { targetUserId: userId, planType, durationMonths });
-      toast.success(`Plan updated to ${planType}`);
+      // Duration is hardcoded server-side (12 months for both SILVER and GOLD)
+      await apiClient.post('/admin/set-plan', { targetUserId: userId, planType });
+      toast.success(`Plan updated to ${planType} (12 months)`);
       fetchData();
+      fetchStats();
     } catch (error) {
       console.error(error);
       toast.error("Failed to update plan");
     }
-  }, []);
+  }, [fetchData, fetchStats]);
 
   const handleOfflineFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setOfflineForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -304,11 +312,15 @@ export default function AdminPanel() {
               <div className="px-10 py-8 bg-[#F7F9FB]/50 border-b border-black/5 flex justify-between items-center">
                 <h2 className="text-xl font-display font-black text-foreground uppercase tracking-widest">
                   {activeTab === 'pending' ? 'Pending Approvals' : 
-                   activeTab === 'all' ? 'All Users' : 
+                   activeTab === 'all' ? 'All Members' : 
                    activeTab === 'addProfile' ? 'Onboard Offline Customer' : 
                    activeTab === 'stories' ? 'Stories Manager' : 
-                   activeTab === 'payments' ? 'Payment Approvals' : 
-                   'Communication Log'}
+                   activeTab === 'payments' ? 'Payment Approvals' :
+                   activeTab === 'enquiries' ? 'Enquiries & Support' :
+                   activeTab === 'birthdays' ? 'Birthday Wishes' :
+                   activeTab === 'connections' ? 'Connection Logs' :
+                   activeTab === 'profit' ? 'Revenue Analytics' :
+                   'Dashboard'}
                 </h2>
               </div>
 
