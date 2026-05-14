@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import apiClient from '../../lib/apiClient';
 import { authStorage } from '../../lib/authStorage';
-import { LogIn, Sparkles } from 'lucide-react';
+import { LogIn, Sparkles, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import type { LoginResponse, ApiErrorResponse } from '../../types';
 import type { AxiosError } from 'axios';
@@ -20,6 +20,7 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema)
   });
@@ -111,12 +112,21 @@ export default function Login() {
                 <label className="text-sm font-bold text-foreground/80">Password</label>
                 <a href="#" className="text-xs text-primary hover:underline font-semibold">Forgot?</a>
               </div>
-              <input
-                {...register("password")}
-                type="password"
-                className="flex h-12 w-full rounded-xl border border-input bg-background/80 px-4 text-sm ring-offset-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all"
-                placeholder="Enter your password"
-              />
+              <div className="relative">
+                <input
+                  {...register("password")}
+                  type={showPassword ? "text" : "password"}
+                  className="flex h-12 w-full rounded-xl border border-input bg-background/80 px-4 pr-12 text-sm ring-offset-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               {errors.password && <p className="text-red-500 text-xs font-medium">{errors.password.message}</p>}
             </div>
 

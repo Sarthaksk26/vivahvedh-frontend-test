@@ -22,8 +22,8 @@ export interface UserImage {
 
 export interface UserProfile {
   firstName: string;
+  middleName: string;
   lastName: string;
-  middleName?: string | null;
   gender: Gender;
   maritalStatus: MaritalStatus;
   birthDateTime?: string | null;

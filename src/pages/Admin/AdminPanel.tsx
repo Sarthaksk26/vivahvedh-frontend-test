@@ -17,6 +17,7 @@ import { StoryManager } from './components/StoryManager';
 import { UserTable } from './components/UserTable';
 import { FilterBar } from './components/FilterBar';
 import { AdminProfilePreviewModal } from './components/AdminProfilePreviewModal';
+import { AdminUserEditModal } from './components/AdminUserEditModal';
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<AdminTab>('pending');
@@ -55,6 +56,7 @@ export default function AdminPanel() {
     isOpen: false, title: '', message: '', onConfirm: () => {} 
   });
   const [previewUser, setPreviewUser] = useState<AdminUser | null>(null);
+  const [editModal, setEditModal] = useState<{ isOpen: boolean; user: AdminUser | null }>({ isOpen: false, user: null });
 
   const fetchStats = useCallback(async () => {
     try {
@@ -411,7 +413,7 @@ export default function AdminPanel() {
                           loading={loading} 
                           handleAction={handleAction} 
                           handleSetPlan={handleSetPlan} 
-                          setEditModal={() => toast.error("Quick edit coming soon!")}
+                          setEditModal={setEditModal}
                           onView={(u) => setPreviewUser(u)}
                         />
                       </>
@@ -482,6 +484,17 @@ export default function AdminPanel() {
         <AdminProfilePreviewModal 
           user={previewUser} 
           onClose={() => setPreviewUser(null)} 
+        />
+      )}
+
+      {/* Edit User Modal */}
+      {editModal.isOpen && editModal.user && (
+        <AdminUserEditModal 
+          user={editModal.user} 
+          onClose={() => setEditModal({ isOpen: false, user: null })} 
+          onUpdateSuccess={() => {
+            fetchData();
+          }}
         />
       )}
     </div>

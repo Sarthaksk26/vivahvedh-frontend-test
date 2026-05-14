@@ -1,15 +1,17 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import apiClient from '../../lib/apiClient';
-import { UserPlus, Sparkles, CheckCircle } from 'lucide-react';
+import { UserPlus, Sparkles, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { formatApiError } from '../../lib/errorUtils';
 
 const registerSchema = z.object({
   firstName: z.string().min(2, "First Name is required"),
+  middleName: z.string().min(2, "Middle Name is required"),
   lastName: z.string().min(2, "Last Name is required"),
   mobile: z.string().min(10, "Valid mobile required").max(15),
   email: z.string().email("Valid email required"),
@@ -23,6 +25,10 @@ const registerSchema = z.object({
   }, { message: 'You must be at least 18 years old.' }),
   profileCreatedBy: z.enum(['Self', 'Father', 'Mother', 'Sibling', 'Relative', 'Friend', 'Marriage Bureau']).optional(),
   password: z.string().min(6, "Password must be 6+ characters"),
+  confirmPassword: z.string().min(1, "Please confirm your password"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
 
 type RegisterForm = z.infer<typeof registerSchema>;
@@ -32,6 +38,8 @@ const MAX_BIRTH_DATE = new Date(Date.now() - 18 * 365.25 * 24 * 60 * 60 * 1000).
 
 export default function Register() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
     defaultValues: { profileCreatedBy: 'Self' }
@@ -112,11 +120,16 @@ export default function Register() {
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-sm font-bold text-foreground/80">First Name *</label>
                   <input {...register("firstName")} className={inputClass} placeholder="पहिले नाव" />
                   {errors.firstName && <p className="text-red-500 text-xs font-medium">{errors.firstName.message}</p>}
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-bold text-foreground/80">Middle Name *</label>
+                  <input {...register("middleName")} className={inputClass} placeholder="मधले नाव" />
+                  {errors.middleName && <p className="text-red-500 text-xs font-medium">{errors.middleName.message}</p>}
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-bold text-foreground/80">Last Name *</label>
@@ -190,10 +203,46 @@ export default function Register() {
                 {errors.profileCreatedBy && <p className="text-red-500 text-xs font-medium">Please select an option</p>}
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-sm font-bold text-foreground/80">Password *</label>
-                <input {...register("password")} type="password" className={inputClass} placeholder="Minimum 6 characters" />
-                {errors.password && <p className="text-red-500 text-xs font-medium">{errors.password.message}</p>}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-bold text-foreground/80">Password *</label>
+                  <div className="relative">
+                    <input 
+                      {...register("password")} 
+                      type={showPassword ? "text" : "password"} 
+                      className={`${inputClass} pr-12`} 
+                      placeholder="Minimum 6 characters" 
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  {errors.password && <p className="text-red-500 text-xs font-medium">{errors.password.message}</p>}
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-bold text-foreground/80">Confirm Password *</label>
+                  <div className="relative">
+                    <input 
+                      {...register("confirmPassword")} 
+                      type={showConfirmPassword ? "text" : "password"} 
+                      className={`${inputClass} pr-12`} 
+                      placeholder="Re-enter password" 
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  {errors.confirmPassword && <p className="text-red-500 text-xs font-medium">{errors.confirmPassword.message}</p>}
+                </div>
               </div>
 
               <button

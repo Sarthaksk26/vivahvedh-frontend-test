@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Star, LayoutDashboard, LogOut, ShieldCheck } from 'lucide-react';
 import { authStorage } from '../../lib/authStorage';
@@ -14,6 +14,8 @@ export default function Header() {
   const isLoggedIn = !!user;
   const isAdmin = user?.role === 'ADMIN';
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
@@ -21,13 +23,13 @@ export default function Header() {
   }, []);
 
   const handleLogout = async () => {
+    authStorage.clearSession();
     try {
       await apiClient.post('/auth/logout');
     } catch {
-      // Clear local even if server fails
+      // Server cleanup failed, but local is already clear
     }
-    authStorage.clearSession();
-    window.location.href = '/login';
+    navigate('/login');
   };
 
   const navLinks = [

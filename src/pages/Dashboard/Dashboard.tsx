@@ -3,8 +3,9 @@ import apiClient from '../../lib/apiClient';
 import PhotoUpload from '../../components/Dashboard/PhotoUpload';
 import OptimizedImage from '../../components/ui/OptimizedImage';
 import ProfileEditor from '../../components/Dashboard/ProfileEditor';
+import DocumentUpload from '../../components/Dashboard/DocumentUpload';
 import ConnectionsList from '../../components/Dashboard/ConnectionsList';
-import { Lock, Shield } from 'lucide-react';
+import { Lock, Shield, Eye, EyeOff } from 'lucide-react';
 import { resolveImageUrl } from '../../lib/url';
 import toast from 'react-hot-toast';
 import { authStorage } from '../../lib/authStorage';
@@ -33,6 +34,9 @@ export default function Dashboard() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [changingPassword, setChangingPassword] = useState(false);
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -118,6 +122,7 @@ export default function Dashboard() {
   // PERFORMANCE: Memoize tabs list
   const tabs = useMemo(() => [
     { key: 'profile', label: 'Profile Settings' },
+    { key: 'documents', label: 'Documents & KYC' },
     { key: 'connections', label: 'My Connections', highlight: true },
     { key: 'shortlist', label: `My Shortlist ${shortlist.length > 0 ? `(${shortlist.length})` : ''}` },
     { key: 'password', label: 'Security' },
@@ -308,30 +313,22 @@ export default function Dashboard() {
                 </div>
               </div>
             ) : (
-              <div className="bg-card border shadow-sm rounded-3xl p-8">
-                <div className="flex justify-between items-center mb-8">
-                  <div>
-                    <h2 className="text-2xl font-bold">Edit Profile Details</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Updates to sensitive fields may require re-verification.</p>
-                  </div>
-                  <button 
-                    onClick={() => setIsEditing(false)}
-                    className="px-6 py-2.5 border rounded-xl font-bold hover:bg-muted transition text-sm shadow-sm"
-                  >
-                    Cancel Editing
-                  </button>
-                </div>
-                <ProfileEditor 
-                  currentData={profile} 
-                  onSaveSuccess={() => { 
-                    fetchProfile(); 
-                    setIsEditing(false);
-                    toast.success('Profile updated successfully!');
-                  }} 
-                />
-              </div>
+              <ProfileEditor 
+                currentData={profile} 
+                onSaveSuccess={() => { 
+                  fetchProfile(); 
+                  setIsEditing(false);
+                }} 
+                onCancel={() => setIsEditing(false)}
+              />
             )}
           </div>
+        )}
+
+        {activeTab === 'documents' && (
+          <section>
+            <DocumentUpload profile={profile} onUploadSuccess={fetchProfile} />
+          </section>
         )}
 
         {activeTab === 'photos' && (
@@ -413,28 +410,46 @@ export default function Dashboard() {
               {/* Current Password */}
               <div className="space-y-1">
                 <label className="text-sm font-semibold text-muted-foreground">Current Password</label>
-                <input 
-                  type="password" 
-                  value={currentPassword} 
-                  onChange={e => setCurrentPassword(e.target.value)} 
-                  required 
-                  className="w-full h-10 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30" 
-                  placeholder="Enter your current password" 
-                />
+                <div className="relative">
+                  <input 
+                    type={showCurrent ? "text" : "password"} 
+                    value={currentPassword} 
+                    onChange={e => setCurrentPassword(e.target.value)} 
+                    required 
+                    className="w-full h-10 px-3 pr-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30" 
+                    placeholder="Enter your current password" 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrent(!showCurrent)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
               
               {/* New Password with strength indicator */}
               <div className="space-y-1">
                 <label className="text-sm font-semibold text-muted-foreground">New Password</label>
-                <input 
-                  type="password" 
-                  value={newPassword} 
-                  onChange={e => setNewPassword(e.target.value)} 
-                  required 
-                  minLength={6} 
-                  className="w-full h-10 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30" 
-                  placeholder="Minimum 6 characters" 
-                />
+                <div className="relative">
+                  <input 
+                    type={showNew ? "text" : "password"} 
+                    value={newPassword} 
+                    onChange={e => setNewPassword(e.target.value)} 
+                    required 
+                    minLength={6} 
+                    className="w-full h-10 px-3 pr-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30" 
+                    placeholder="Minimum 6 characters" 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNew(!showNew)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
                 {/* Password strength bar */}
                 {newPassword.length > 0 && (
                   <div className="space-y-1">
@@ -462,16 +477,25 @@ export default function Dashboard() {
               {/* Confirm New Password */}
               <div className="space-y-1">
                 <label className="text-sm font-semibold text-muted-foreground">Confirm New Password</label>
-                <input 
-                  type="password" 
-                  value={confirmPassword} 
-                  onChange={e => setConfirmPassword(e.target.value)} 
-                  required 
-                  className={`w-full h-10 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 ${
-                    confirmPassword && confirmPassword !== newPassword ? 'border-red-400' : ''
-                  }`}
-                  placeholder="Re-enter new password" 
-                />
+                <div className="relative">
+                  <input 
+                    type={showConfirm ? "text" : "password"} 
+                    value={confirmPassword} 
+                    onChange={e => setConfirmPassword(e.target.value)} 
+                    required 
+                    className={`w-full h-10 px-3 pr-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 ${
+                      confirmPassword && confirmPassword !== newPassword ? 'border-red-400' : ''
+                    }`}
+                    placeholder="Re-enter new password" 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirm(!showConfirm)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
                 {confirmPassword && confirmPassword !== newPassword && (
                   <p className="text-xs text-red-500 font-medium">Passwords do not match</p>
                 )}

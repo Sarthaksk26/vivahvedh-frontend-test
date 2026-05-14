@@ -1,7 +1,9 @@
-import React from 'react';
-import { X, User, Ruler, BookOpen, Users, MapPin, Phone, Image as ImageIcon } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, User, Ruler, BookOpen, Users, MapPin, Phone, Image as ImageIcon, ShieldCheck } from 'lucide-react';
 import { resolveImageUrl } from '../../../lib/url';
 import type { AdminUser } from '../adminTypes';
+import apiClient from '../../../lib/apiClient';
+import { toast } from 'react-hot-toast';
 
 interface AdminProfilePreviewModalProps {
   user: AdminUser;
@@ -29,8 +31,19 @@ const DataPoint = ({ label, value }: { label: string, value?: string | number | 
   </div>
 );
 
-export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> = ({ user, onClose }) => {
+export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> = ({ user: initialUser, onClose }) => {
+  const [user, setUser] = useState(initialUser);
   const images = user.images || [];
+
+  const handleToggleKyc = async () => {
+    try {
+      const response = await apiClient.patch(`/admin/users/${user.id}/kyc`, { kycVerified: !user.kycVerified });
+      setUser((prev) => ({ ...prev, kycVerified: !prev.kycVerified }));
+      toast.success(response.data.message || 'KYC status updated.');
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Failed to update KYC status.');
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[110] flex items-start justify-center bg-black/60 backdrop-blur-md p-4 overflow-y-auto">
@@ -49,7 +62,7 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
             </div>
             <div>
               <h2 className="text-xl font-display font-black text-foreground">
-                {user.profile?.firstName} {user.profile?.lastName}
+                {user.profile?.firstName} {user.profile?.middleName ? `${user.profile.middleName} ` : ''}{user.profile?.lastName}
               </h2>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-primary uppercase tracking-widest">{user.regId}</span>
@@ -91,7 +104,7 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
 
             <div className="lg:col-span-2 space-y-6">
               <Section title="Basic Profile" icon={User}>
-                <DataPoint label="Full Name" value={`${user.profile?.firstName} ${user.profile?.lastName}`} />
+                <DataPoint label="Full Name" value={`${user.profile?.firstName} ${user.profile?.middleName ? user.profile.middleName + ' ' : ''}${user.profile?.lastName}`} />
                 <DataPoint label="Gender" value={user.profile?.gender} />
                 <DataPoint label="Marital Status" value={user.profile?.maritalStatus} />
                 <DataPoint label="Plan Type" value={user.planType} />
@@ -134,6 +147,52 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
                 <DataPoint label="District/State" value={`${addr.district || ''}, ${addr.state || ''}`} />
               </React.Fragment>
             )) : <p className="text-sm text-foreground/40 italic col-span-2">No address provided</p>}
+          </Section>
+
+          <Section title="Verification & Documents" icon={ShieldCheck}>
+            <div className="space-y-4 col-span-2">
+              <div className="flex items-center justify-between p-4 bg-[#F7F9FB] rounded-2xl border border-black/5">
+                <div>
+                  <h4 className="text-sm font-black uppercase tracking-widest text-foreground">KYC Verification</h4>
+                  <p className="text-xs text-foreground/50 mt-1">Status: {user.kycVerified ? <span className="text-green-600 font-bold">Verified</span> : <span className="text-amber-600 font-bold">Unverified</span>}</p>
+                </div>
+                <button
+                  onClick={handleToggleKyc}
+                  className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-colors ${
+                    user.kycVerified ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20' : 'bg-green-500/10 text-green-600 hover:bg-green-500/20'
+                  }`}
+                >
+                  {user.kycVerified ? 'Revoke KYC' : 'Verify KYC'}
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 border border-black/5 rounded-2xl">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 mb-2">KYC Document</p>
+                  {user.kycDocumentUrl ? (
+                    <a href={resolveImageUrl(user.kycDocumentUrl)} target="_blank" rel="noreferrer" className="text-primary text-xs font-bold hover:underline">View Document ({user.kycType || 'Unknown'})</a>
+                  ) : (
+                    <p className="text-xs text-foreground/40">Not uploaded</p>
+                  )}
+                </div>
+                <div className="p-4 border border-black/5 rounded-2xl">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 mb-2">Income Proof</p>
+                  {user.education?.incomeProofUrl ? (
+                    <a href={resolveImageUrl(user.education.incomeProofUrl)} target="_blank" rel="noreferrer" className="text-primary text-xs font-bold hover:underline">View Document</a>
+                  ) : (
+                    <p className="text-xs text-foreground/40">Not uploaded</p>
+                  )}
+                </div>
+                <div className="p-4 border border-black/5 rounded-2xl">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 mb-2">Medical Report</p>
+                  {user.physical?.medicalReportUrl ? (
+                    <a href={resolveImageUrl(user.physical.medicalReportUrl)} target="_blank" rel="noreferrer" className="text-primary text-xs font-bold hover:underline">View Document</a>
+                  ) : (
+                    <p className="text-xs text-foreground/40">Not uploaded</p>
+                  )}
+                </div>
+              </div>
+            </div>
           </Section>
 
           <div className="flex justify-center pt-8">

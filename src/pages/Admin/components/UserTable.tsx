@@ -52,7 +52,7 @@ export const UserTable: React.FC<UserTableProps> = React.memo(({
                   </div>
                   <div>
                     <div className="font-display font-black text-foreground flex items-center gap-2">
-                      {user.profile?.firstName} {user.profile?.lastName}
+                      {user.profile?.firstName} {user.profile?.middleName ? `${user.profile.middleName} ` : ''}{user.profile?.lastName}
                       <button 
                         onClick={() => onView(user)} 
                         className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-black uppercase tracking-widest text-primary ml-2 hover:underline"

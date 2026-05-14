@@ -112,6 +112,20 @@ export default function PublicProfile() {
     }
   };
 
+  const handleRequestContact = async () => {
+    if (!isAuthenticated) return navigate('/login');
+    
+    setActionLoading(true);
+    try {
+      await apiClient.post('/connections/request-contact', { targetUserId: id });
+      toast.success('Contact details have been sent to your registered email address.', { duration: 6000 });
+    } catch (error: unknown) {
+      toast.error(formatApiError(error, 'Failed to request contact details.'));
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   useEffect(() => {
     const controller = new AbortController();
     loadData(controller.signal);
@@ -326,24 +340,72 @@ export default function PublicProfile() {
             <div><p className="text-sm font-semibold text-muted-foreground mb-1">Sisters</p><p className="font-medium">{profile.family?.sisters ?? '0'}</p></div>
           </div>
         </section>
-        {/* Contact Info (If conditionally provided by backend) */}
-        {profile.mobile && (
-          <section className="bg-green-50 border border-green-200 rounded-2xl p-8 shadow-sm md:col-span-2">
-            <h2 className="text-xl font-bold mb-4 text-green-900 border-b border-green-200 pb-4">Contact Information</h2>
-            <div className="flex flex-col md:flex-row gap-8">
-              <div>
-                <p className="text-sm font-semibold text-green-700 mb-1">Mobile Number</p>
-                <p className="font-bold text-lg text-green-950">{profile.mobile}</p>
-              </div>
-              {profile.email && (
-                <div>
-                  <p className="text-sm font-semibold text-green-700 mb-1">Email Address</p>
-                  <p className="font-bold text-lg text-green-950">{profile.email}</p>
-                </div>
-              )}
+        {/* Contact Info (Secured and Restricted) */}
+        <section className="md:col-span-2">
+          {(!isAuthenticated) ? (
+            <div className="bg-muted border rounded-2xl p-10 text-center shadow-sm">
+              <h2 className="text-xl font-bold mb-4">Contact Information</h2>
+              <p className="text-muted-foreground mb-6">Login to view contact details and express interest.</p>
+              <button 
+                onClick={() => navigate('/login')}
+                className="px-10 py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all"
+              >
+                Login to View Details
+              </button>
             </div>
-          </section>
-        )}
+          ) : (connectionStatus === 'ACCEPTED' || isAdmin) ? (
+            <div className="bg-green-50 border border-green-200 rounded-2xl p-8 shadow-sm">
+              <h2 className="text-xl font-bold mb-4 text-green-900 border-b border-green-200 pb-4">Contact Information</h2>
+              <div className="flex flex-col md:flex-row gap-8">
+                <div>
+                  <p className="text-sm font-semibold text-green-700 mb-1">Mobile Number</p>
+                  <p className="font-bold text-lg text-green-950">{profile.mobile || "Masked"}</p>
+                </div>
+                {profile.email && (
+                  <div>
+                    <p className="text-sm font-semibold text-green-700 mb-1">Email Address</p>
+                    <p className="font-bold text-lg text-green-950">{profile.email}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (planType === 'SILVER' || planType === 'GOLD') ? (
+            <div className="bg-primary/5 border border-primary/20 rounded-2xl p-8 text-center shadow-sm">
+              <h2 className="text-xl font-bold mb-4">Secure Contact Access</h2>
+              <p className="text-muted-foreground mb-6">
+                As a {planType} member, you can request contact details directly via email.
+              </p>
+              <button 
+                onClick={handleRequestContact}
+                disabled={actionLoading}
+                className="px-10 py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all disabled:opacity-50"
+              >
+                {actionLoading ? 'Requesting...' : '📧 Get Contact Details via Email'}
+              </button>
+            </div>
+          ) : (
+            <div className="bg-rose-50 border border-rose-100 rounded-2xl p-8 text-center shadow-sm">
+              <h2 className="text-xl font-bold mb-4 text-rose-900">Contact Restricted</h2>
+              <p className="text-rose-800/60 mb-6 text-sm">
+                To view contact details, you must either be connected with this member or upgrade to a Premium plan.
+              </p>
+              <div className="flex justify-center gap-3">
+                <button 
+                  onClick={handleSendInterest}
+                  className="px-6 py-2.5 bg-rose-500 text-white rounded-lg font-bold text-sm shadow-md"
+                >
+                  Send Proposal
+                </button>
+                <button 
+                  onClick={() => navigate('/rules')}
+                  className="px-6 py-2.5 border border-rose-200 text-rose-700 rounded-lg font-bold text-sm"
+                >
+                  View Plans
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
