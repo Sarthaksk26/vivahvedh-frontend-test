@@ -1,6 +1,6 @@
 import React from 'react';
 import { Trash2, Check, Shield, ShieldOff, Edit } from 'lucide-react';
-import { resolveImageUrl } from '../../../lib/url';
+import { resolveImageUrl, DEFAULT_USER_AVATAR } from '../../../lib/url';
 import type { AdminUser } from '../adminTypes';
 
 interface UserTableProps {
@@ -47,7 +47,7 @@ export const UserTable: React.FC<UserTableProps> = React.memo(({
                       src={resolveImageUrl((user as any).images?.[0]?.url || '')} 
                       className="w-full h-full object-cover" 
                       alt="Avatar"
-                      onError={(e) => (e.currentTarget.src = '/placeholder-user.png')}
+                      onError={(e) => (e.currentTarget.src = DEFAULT_USER_AVATAR)}
                     />
                   </div>
                   <div>

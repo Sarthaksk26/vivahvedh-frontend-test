@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, User, Ruler, BookOpen, Users, MapPin, Phone, Image as ImageIcon, ShieldCheck } from 'lucide-react';
-import { resolveImageUrl } from '../../../lib/url';
+import { resolveImageUrl, DEFAULT_USER_AVATAR } from '../../../lib/url';
 import type { AdminUser } from '../adminTypes';
 import apiClient from '../../../lib/apiClient';
 import { toast } from 'react-hot-toast';
@@ -57,7 +57,7 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
                 src={resolveImageUrl(images[0]?.url || '')} 
                 className="w-full h-full object-cover"
                 alt="Avatar"
-                onError={(e) => (e.currentTarget.src = '/placeholder-user.png')}
+                onError={(e) => (e.currentTarget.src = DEFAULT_USER_AVATAR)}
               />
             </div>
             <div>

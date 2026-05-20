@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { resolveImageUrl } from '@/lib/url';
+import { resolveImageUrl, DEFAULT_USER_AVATAR } from '@/lib/url';
 import { cn } from '@/lib/utils';
 
 interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -13,7 +13,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   src,
   alt,
   className,
-  fallbackSrc = '/placeholder-user.png',
+  fallbackSrc = DEFAULT_USER_AVATAR,
   ...props
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
