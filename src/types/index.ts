@@ -44,6 +44,7 @@ export interface UserPhysical {
   diet?: string | null;
   smoke?: boolean | null;
   drink?: boolean | null;
+  medicalReportUrl?: string | null;
 }
 
 export interface UserEducation {
@@ -54,6 +55,7 @@ export interface UserEducation {
   jobAddress?: string | null;
   annualIncome?: string | null;
   specialAchievement?: string | null;
+  incomeProofUrl?: string | null;
 }
 
 export interface UserFamily {
@@ -114,6 +116,9 @@ export interface FullUserProfile {
   accountStatus: AccountStatus;
   planExpiresAt?: string | null;
   profileCreatedBy?: string | null;
+  kycDocumentUrl?: string | null;
+  kycType?: 'AADHAR' | 'PAN' | 'PASSPORT' | null;
+  kycVerified?: boolean;
   profile?: UserProfile | null;
   family?: UserFamily | null;
   physical?: UserPhysical | null;

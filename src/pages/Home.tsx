@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Heart, Star, ArrowRight, Quote, CheckCircle2, Users, ShieldCheck, Award, Sparkles, Compass } from 'lucide-react';
+import { Heart, ArrowRight, Quote, CheckCircle2, Users, ShieldCheck, Sparkles, Compass } from 'lucide-react';
 import apiClient from '../lib/apiClient';
 import { resolveImageUrl } from '../lib/url';
 import { PaymentModal } from '../components/PaymentModal';
