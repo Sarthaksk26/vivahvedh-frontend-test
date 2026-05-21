@@ -44,8 +44,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Outfit", "sans-serif"],
-        display: ["'Yatra One'", "cursive"],
+        sans: ["Poppins", "sans-serif"],
+        display: ["Mukta", "sans-serif"],
       },
       boxShadow: {
         'ambient': '0 24px 40px -8px rgba(25, 28, 30, 0.08)',

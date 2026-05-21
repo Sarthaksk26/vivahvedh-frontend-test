@@ -62,6 +62,87 @@ const AkshataAnimation = () => {
   );
 };
 
+// --- Lord Ganesha Elegant Inline SVG ---
+const GaneshaIcon = () => (
+  <svg 
+    viewBox="0 0 120 120" 
+    className="w-full h-full text-orange-600" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <linearGradient id="ganeshaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#EA580C" />
+        <stop offset="50%" stopColor="#F59E0B" />
+        <stop offset="100%" stopColor="#BE123C" />
+      </linearGradient>
+    </defs>
+    {/* Ears */}
+    <path 
+      d="M35 50 C20 50, 15 70, 30 80 C32 82, 38 82, 40 75" 
+      fill="none" 
+      stroke="url(#ganeshaGrad)" 
+      strokeWidth="3.5" 
+      strokeLinecap="round" 
+    />
+    <path 
+      d="M85 50 C100 50, 105 70, 90 80 C88 82, 82 82, 80 75" 
+      fill="none" 
+      stroke="url(#ganeshaGrad)" 
+      strokeWidth="3.5" 
+      strokeLinecap="round" 
+    />
+    {/* Head / Face */}
+    <path 
+      d="M48 40 C48 30, 72 30, 72 40 C72 50, 48 50, 48 40 Z" 
+      fill="none" 
+      stroke="url(#ganeshaGrad)" 
+      strokeWidth="3.5" 
+      strokeLinecap="round" 
+    />
+    {/* Trunk */}
+    <path 
+      d="M60 45 C60 65, 45 75, 45 85 C45 92, 55 95, 60 95 C68 95, 72 88, 68 82 C65 78, 58 78, 55 82" 
+      fill="none" 
+      stroke="url(#ganeshaGrad)" 
+      strokeWidth="3.5" 
+      strokeLinecap="round" 
+    />
+    {/* Crown (Mukut) */}
+    <path 
+      d="M50 30 L60 10 L70 30 Z" 
+      fill="none" 
+      stroke="url(#ganeshaGrad)" 
+      strokeWidth="3.5" 
+      strokeLinejoin="round" 
+      strokeLinecap="round" 
+    />
+    <path 
+      d="M53 25 L60 15 L67 25" 
+      fill="none" 
+      stroke="url(#ganeshaGrad)" 
+      strokeWidth="2.5" 
+      strokeLinecap="round" 
+    />
+    {/* Tusk */}
+    <path 
+      d="M50 56 L44 58" 
+      fill="none" 
+      stroke="url(#ganeshaGrad)" 
+      strokeWidth="2.5" 
+      strokeLinecap="round" 
+    />
+    {/* Red Tilak */}
+    <path 
+      d="M58 28 L62 28 M60 28 L60 36" 
+      fill="none" 
+      stroke="#BE123C" 
+      strokeWidth="3.5" 
+      strokeLinecap="round" 
+    />
+    <circle cx="60" cy="24" r="3" fill="#BE123C" />
+  </svg>
+);
+
 export default function Home() {
   const navigate = useNavigate();
   const [featuredProfiles, setFeaturedProfiles] = useState<any[]>([]);
@@ -122,11 +203,7 @@ export default function Home() {
               className="mb-8"
             >
               <div className="w-16 h-16 rounded-full bg-white/80 backdrop-blur-sm shadow-md border border-orange-100 p-2.5 flex items-center justify-center mx-auto lg:mx-0">
-                <img 
-                  src="https://cdn-icons-png.flaticon.com/512/3595/3595995.png" 
-                  alt="Lord Ganesha" 
-                  className="w-full h-full object-contain drop-shadow-sm opacity-90"
-                />
+                <GaneshaIcon />
               </div>
             </motion.div>
 
@@ -199,7 +276,7 @@ export default function Home() {
             {/* The Arched Frame */}
             <div className="relative z-10 w-full aspect-[3/4] rounded-t-full rounded-b-[40px] border-4 border-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden group">
               <img 
-                src="https://images.unsplash.com/photo-1583089892943-e02e5b017b6a?q=80&w=1000&auto=format&fit=crop" 
+                src="/happy_couple.png" 
                 alt="Traditional Marathi Couple" 
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
               />
@@ -420,7 +497,7 @@ export default function Home() {
 
             <Reveal delay={0.2} className="relative hidden lg:block">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-amber-100/50 rounded-3xl transform rotate-3" />
-              <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=800&auto=format&fit=crop" className="relative z-10 rounded-3xl shadow-xl w-full aspect-[4/3] object-cover" alt="Maharashtrian Wedding" />
+              <img src="/wedding_hero.png" className="relative z-10 rounded-3xl shadow-xl w-full aspect-[4/3] object-cover" alt="Maharashtrian Wedding" />
             </Reveal>
           </div>
         </div>
