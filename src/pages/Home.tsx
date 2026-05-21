@@ -17,6 +17,51 @@ function Reveal({ children, className = '', delay = 0 }: { children: React.React
   );
 }
 
+// --- Akshata (Rice, Haldi, Kumkum) Falling Animation ---
+const AkshataAnimation = () => {
+  const [grains, setGrains] = useState<{ id: number, x: number, delay: number, duration: number, color: string, rotation: number }[]>([]);
+
+  useEffect(() => {
+    // Generate 60 grains of rice
+    // Colors: Kumkum (Red/Rose), Haldi (Yellow/Amber), White (Plain Rice)
+    const colors = ['bg-rose-600', 'bg-amber-400', 'bg-white', 'bg-rose-500', 'bg-amber-500', 'bg-yellow-400'];
+    const newGrains = Array.from({ length: 70 }).map((_, i) => ({
+      id: i,
+      x: Math.random() * 100, // random x percentage
+      delay: Math.random() * 5, // random delay up to 5s
+      duration: 3 + Math.random() * 5, // 3 to 8 seconds fall time
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * 360,
+    }));
+    setGrains(newGrains);
+  }, []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      {grains.map((grain) => (
+        <motion.div
+          key={grain.id}
+          className={`absolute top-[-20px] w-1.5 h-3.5 rounded-full ${grain.color} opacity-80 shadow-[0_2px_4px_rgba(0,0,0,0.1)]`}
+          style={{ left: `${grain.x}%` }}
+          initial={{ y: 0, x: 0, rotate: grain.rotation, opacity: 0 }}
+          animate={{ 
+            y: ['0vh', '110vh'], 
+            x: [0, Math.random() * 40 - 20, Math.random() * 40 - 20], // subtle drift
+            rotate: grain.rotation + (Math.random() > 0.5 ? 720 : -720), // spinning while falling
+            opacity: [0, 1, 1, 0]
+          }}
+          transition={{
+            duration: grain.duration,
+            delay: grain.delay,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
 export default function Home() {
   const navigate = useNavigate();
   const [featuredProfiles, setFeaturedProfiles] = useState<any[]>([]);
@@ -53,69 +98,132 @@ export default function Home() {
     <div className="flex-1 w-full flex flex-col items-center bg-[#FAFCFF] overflow-x-hidden font-sans">
 
       {/* ═══════════════════════════════════════════════════
-          HERO SECTION — Trust & Elegance
+          HERO SECTION — Trust, Elegance & Culture
       ═══════════════════════════════════════════════════ */}
-      <section className="relative w-full pt-32 lg:pt-40 pb-36 flex flex-col items-center justify-center overflow-hidden bg-white border-b border-primary/5">
+      <section className="relative w-full pt-32 lg:pt-36 pb-36 flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-orange-50/50 via-white to-white border-b border-primary/5">
         
-        {/* Soft, premium abstract background blobs */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/[0.03] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-rose-500/[0.03] rounded-full blur-[80px] translate-y-1/3 -translate-x-1/3 pointer-events-none" />
+        {/* Soft abstract background blobs */}
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-amber-500/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none z-0" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-rose-500/[0.03] rounded-full blur-[80px] translate-y-1/3 -translate-x-1/3 pointer-events-none z-0" />
 
-        <div className="relative z-10 max-w-5xl mx-auto px-6 w-full flex flex-col items-center text-center">
+        {/* Akshata Animation Layer */}
+        <AkshataAnimation />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8">
           
-          {/* Animated, Enlarged Brand Logo */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.8 }} 
-            animate={{ opacity: 1, scale: 1 }} 
-            transition={{ duration: 0.8, ease: "easeOut" }} 
-            className="mb-8 relative"
-          >
-            {/* Outer rotating glowing ring */}
-            <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-primary/30 via-rose-300/30 to-amber-300/30 blur-md animate-[spin_8s_linear_infinite]" />
-            <div className="absolute -inset-6 rounded-full bg-primary/10 blur-xl animate-pulse" />
+          {/* Left Column: Text & Logo */}
+          <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left pt-8">
             
-            {/* Main Logo Container */}
-            <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full bg-white shadow-[0_20px_60px_-15px_rgba(184,0,53,0.15)] p-5 border border-primary/10 flex items-center justify-center z-10 overflow-hidden group">
+            {/* Small Ganesha Icon */}
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ duration: 1 }}
+              className="mb-8"
+            >
+              <div className="w-16 h-16 rounded-full bg-white/80 backdrop-blur-sm shadow-md border border-orange-100 p-2.5 flex items-center justify-center mx-auto lg:mx-0">
+                <img 
+                  src="https://cdn-icons-png.flaticon.com/512/3595/3595995.png" 
+                  alt="Lord Ganesha" 
+                  className="w-full h-full object-contain drop-shadow-sm opacity-90"
+                />
+              </div>
+            </motion.div>
+
+            {/* Animated Brand Logo */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }} 
+              animate={{ opacity: 1, scale: 1 }} 
+              transition={{ duration: 0.8, ease: "easeOut" }} 
+              className="mb-8 relative mx-auto lg:mx-0"
+            >
+              {/* Outer rotating glowing ring */}
+              <div className="absolute -inset-3 rounded-full bg-gradient-to-tr from-primary/30 via-rose-300/30 to-amber-300/30 blur-md animate-[spin_8s_linear_infinite]" />
+              <div className="absolute -inset-5 rounded-full bg-primary/10 blur-xl animate-pulse" />
+              
+              {/* Main Logo Container */}
+              <div className="relative w-36 h-36 md:w-44 md:h-44 rounded-full bg-white shadow-[0_20px_60px_-15px_rgba(184,0,53,0.2)] p-4 border border-primary/10 flex items-center justify-center z-10 overflow-hidden group">
+                <img 
+                  src="/logo.png" 
+                  alt="Vivahvedh Matrimony" 
+                  className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" 
+                />
+              </div>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+              <span className="inline-block px-4 py-1.5 rounded-full bg-primary/5 text-primary text-[11px] font-bold tracking-[0.2em] uppercase mb-5 border border-primary/10 shadow-sm">
+                श्री गणेशाय नमः • महाराष्ट्राची हक्काची विवाह संस्था
+              </span>
+            </motion.div>
+
+            {/* Headline - Elegant Scale */}
+            <motion.h1 
+              initial={{ opacity: 0, y: 15 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: 0.3 }} 
+              className="text-4xl md:text-5xl lg:text-[52px] font-display font-black leading-[1.15] text-slate-900 mb-6 tracking-tight max-w-xl mx-auto lg:mx-0"
+            >
+              मराठी परंपरांचा आदर करत,<br/> 
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-500">योग्य जोडीदाराचा शोध घ्या.</span>
+            </motion.h1>
+
+            <motion.p 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              transition={{ delay: 0.4 }} 
+              className="text-slate-600 text-sm md:text-base max-w-lg mx-auto lg:mx-0 leading-relaxed mb-10 font-medium"
+            >
+              Join thousands of Marathi families who found their perfect match. 
+              Experience 100% verified profiles, strict privacy controls, and traditional values in a modern platform.
+            </motion.p>
+            
+            <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="flex flex-wrap gap-4 justify-center lg:justify-start">
+              <Link to="/register" className="h-14 px-8 bg-primary hover:bg-rose-700 text-white rounded-xl font-bold text-sm flex items-center gap-2 transition-all shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5">
+                Create Free Profile <ArrowRight size={16} />
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* Right Column: Premium Couple Photo Arched Frame */}
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }} 
+            animate={{ opacity: 1, x: 0 }} 
+            transition={{ duration: 1, delay: 0.4 }}
+            className="flex-1 w-full max-w-md hidden lg:block relative"
+          >
+            {/* Decorative background elements behind photo */}
+            <div className="absolute top-10 -right-8 w-64 h-64 bg-amber-400/20 rounded-full blur-3xl z-0" />
+            <div className="absolute -bottom-10 -left-8 w-64 h-64 bg-rose-500/20 rounded-full blur-3xl z-0" />
+            
+            {/* The Arched Frame */}
+            <div className="relative z-10 w-full aspect-[3/4] rounded-t-full rounded-b-[40px] border-4 border-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden group">
               <img 
-                src="/logo.png" 
-                alt="Vivahvedh Matrimony" 
-                className="w-full h-full object-contain mix-blend-multiply transition-transform duration-700 group-hover:scale-110" 
+                src="https://images.unsplash.com/photo-1583089892943-e02e5b017b6a?q=80&w=1000&auto=format&fit=crop" 
+                alt="Traditional Marathi Couple" 
+                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
               />
+              {/* Subtle inner gradient to make it pop */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 opacity-60" />
             </div>
+
+            {/* Floating verification badge */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2 }}
+              className="absolute bottom-12 -left-12 bg-white/95 backdrop-blur rounded-2xl p-4 shadow-xl border border-slate-100 flex items-center gap-4 z-20"
+            >
+              <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-green-600">
+                <ShieldCheck size={24} />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">100% Secure</p>
+                <p className="text-sm font-black text-slate-800">Verified Profiles</p>
+              </div>
+            </motion.div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/5 text-primary text-xs font-bold tracking-[0.2em] uppercase mb-6">
-              महाराष्ट्राची हक्काची विवाह संस्था
-            </span>
-          </motion.div>
-
-          {/* Headline - Scaled Down for Elegance */}
-          <motion.h1 
-            initial={{ opacity: 0, y: 15 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.3 }} 
-            className="text-3xl md:text-5xl lg:text-[52px] font-display font-black leading-[1.2] text-slate-900 mb-6 tracking-tight max-w-3xl"
-          >
-            मराठी परंपरांचा आदर करत,<br className="hidden md:block"/> 
-            <span className="text-primary">योग्य जोडीदाराचा शोध घ्या.</span>
-          </motion.h1>
-
-          <motion.p 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            transition={{ delay: 0.4 }} 
-            className="text-slate-500 text-sm md:text-base max-w-2xl mx-auto leading-relaxed mb-10 font-medium"
-          >
-            Join thousands of Marathi families who found their perfect match. 
-            Experience 100% verified profiles, strict privacy controls, and traditional values in a modern platform.
-          </motion.p>
-          
-          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="flex flex-wrap gap-4 justify-center">
-            <Link to="/register" className="h-14 px-8 bg-primary hover:bg-rose-700 text-white rounded-xl font-bold text-sm flex items-center gap-2 transition-all shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5">
-              Create Free Profile <ArrowRight size={16} />
-            </Link>
-          </motion.div>
         </div>
       </section>
 
@@ -151,7 +259,7 @@ export default function Home() {
               <input type="text" value={searchLocation} onChange={e => setSearchLocation(e.target.value)} placeholder="E.g. Pune, Mumbai" className="w-full h-[68px] pt-6 pb-2 px-4 bg-transparent text-slate-800 font-semibold text-sm outline-none placeholder:text-slate-400/70" />
             </div>
 
-            <button onClick={handleQuickSearch} className="h-[68px] px-8 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 flex-shrink-0">
+            <button onClick={handleQuickSearch} className="h-[68px] px-8 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 flex-shrink-0 shadow-lg shadow-slate-900/20">
               <Search size={18} />
               <span>Search</span>
             </button>
@@ -186,7 +294,7 @@ export default function Home() {
       <section className="w-full py-24 bg-white border-y border-slate-100">
         <div className="max-w-6xl mx-auto px-6">
           <Reveal className="text-center mb-16">
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary bg-primary/5 px-3 py-1 rounded-full">प्रक्रिया</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary bg-primary/5 px-3 py-1 rounded-full border border-primary/10">प्रक्रिया</span>
             <h2 className="text-3xl md:text-4xl font-display font-black text-slate-900 mt-4 mb-4">How It Works</h2>
             <p className="text-slate-500 text-sm max-w-md mx-auto">Your journey to finding the perfect life partner is just four simple steps away.</p>
           </Reveal>
@@ -274,7 +382,7 @@ export default function Home() {
       )}
 
       {/* ═══════════════════════════════════════════════════
-          WHY CHOOSE US — Modern UI Features List
+          WHY CHOOSE US
       ═══════════════════════════════════════════════════ */}
       <section className="w-full py-24 bg-white border-y border-slate-100">
         <div className="max-w-6xl mx-auto px-6">
@@ -310,7 +418,7 @@ export default function Home() {
               </Link>
             </Reveal>
 
-            <Reveal delay={0.2} className="relative">
+            <Reveal delay={0.2} className="relative hidden lg:block">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-amber-100/50 rounded-3xl transform rotate-3" />
               <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=800&auto=format&fit=crop" className="relative z-10 rounded-3xl shadow-xl w-full aspect-[4/3] object-cover" alt="Maharashtrian Wedding" />
             </Reveal>
