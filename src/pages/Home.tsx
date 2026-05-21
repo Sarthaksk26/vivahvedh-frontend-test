@@ -27,9 +27,9 @@ function Reveal({ children, className = '', delay = 0 }: { children: React.React
   return (
     <motion.div 
       ref={ref} 
-      initial={{ opacity: 0, y: 24 }} 
+      initial={{ opacity: 0, y: 28 }} 
       animate={inView ? { opacity: 1, y: 0 } : {}} 
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay }} 
+      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay }} 
       className={className}
     >
       {children}
@@ -37,135 +37,211 @@ function Reveal({ children, className = '', delay = 0 }: { children: React.React
   );
 }
 
-// --- Luxury Traditional Garland Visual Divider ---
+// --- Luxury Traditional Garland Visual Divider (झेंडूची माळ) ---
 const GarlandDivider = () => (
-  <div className="flex items-center justify-center gap-2 my-12 opacity-80 select-none">
-    <div className="h-[1px] w-28 bg-gradient-to-r from-transparent via-amber-300/60 to-amber-400" />
-    <div className="flex items-center gap-1.5">
-      <div className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.5)] animate-pulse" />
-      <div className="w-3.5 h-3.5 rounded-full bg-orange-500 shadow-[0_0_10px_rgba(234,88,12,0.6)]" />
-      <svg viewBox="0 0 24 24" className="w-5 h-5 text-amber-500 fill-none" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v18M3 12h18M5.22 5.22l13.56 13.56M18.78 5.22L5.22 19.12" />
-      </svg>
-      <div className="w-3.5 h-3.5 rounded-full bg-orange-500 shadow-[0_0_10px_rgba(234,88,12,0.6)]" />
-      <div className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.5)] animate-pulse" />
-    </div>
-    <div className="h-[1px] w-28 bg-gradient-to-l from-transparent via-amber-300/60 to-amber-400" />
+  <div className="flex flex-col items-center justify-center my-16 select-none opacity-90 scale-90 md:scale-100">
+    <svg viewBox="0 0 400 30" className="w-full max-w-lg text-amber-500 fill-none" stroke="currentColor">
+      <defs>
+        <linearGradient id="marigoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#F59E0B" />
+          <stop offset="50%" stopColor="#EA580C" />
+          <stop offset="100%" stopColor="#D97706" />
+        </linearGradient>
+        <linearGradient id="leafGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#15803D" />
+          <stop offset="100%" stopColor="#166534" />
+        </linearGradient>
+      </defs>
+      
+      {/* Golden String */}
+      <path d="M 10 10 Q 100 25 200 10 Q 300 25 390 10" stroke="#F59E0B" strokeWidth="1.5" strokeDasharray="3 3" />
+      
+      {/* Leaf & Flower elements */}
+      <circle cx="10" cy="10" r="3" fill="#D97706" />
+      
+      <path d="M 60 14 Q 50 35 60 40 Q 70 35 60 14" fill="url(#leafGrad)" stroke="none" />
+      <circle cx="60" cy="13" r="7" fill="url(#marigoldGrad)" stroke="#F59E0B" strokeWidth="1" />
+      <circle cx="60" cy="13" r="3" fill="#EF4444" />
+
+      <circle cx="110" cy="17" r="7" fill="url(#marigoldGrad)" stroke="#F59E0B" strokeWidth="1" />
+      <circle cx="110" cy="17" r="3" fill="#EF4444" />
+      
+      <path d="M 150 18 Q 140 38 150 45 Q 160 38 150 18" fill="url(#leafGrad)" stroke="none" />
+      <circle cx="150" cy="17" r="7" fill="url(#marigoldGrad)" stroke="#F59E0B" strokeWidth="1" />
+      
+      <g transform="translate(200, 18)">
+        <circle cx="0" cy="0" r="10" fill="url(#marigoldGrad)" className="animate-pulse" />
+        <circle cx="0" cy="0" r="6" fill="#EA580C" />
+        <circle cx="0" cy="0" r="3" fill="#EF4444" />
+        <path d="M -3 10 L 3 10 L 4 15 L -4 15 Z" fill="#D4AF37" />
+        <circle cx="0" cy="17" r="1.5" fill="#D4AF37" />
+      </g>
+
+      <path d="M 250 18 Q 240 38 250 45 Q 260 38 250 18" fill="url(#leafGrad)" stroke="none" />
+      <circle cx="250" cy="17" r="7" fill="url(#marigoldGrad)" stroke="#F59E0B" strokeWidth="1" />
+      
+      <circle cx="290" cy="17" r="7" fill="url(#marigoldGrad)" stroke="#F59E0B" strokeWidth="1" />
+      <circle cx="290" cy="17" r="3" fill="#EF4444" />
+      
+      <path d="M 340 14 Q 330 35 340 40 Q 350 35 340 14" fill="url(#leafGrad)" stroke="none" />
+      <circle cx="340" cy="13" r="7" fill="url(#marigoldGrad)" stroke="#F59E0B" strokeWidth="1" />
+      <circle cx="340" cy="13" r="3" fill="#EF4444" />
+      
+      <circle cx="390" cy="10" r="3" fill="#D97706" />
+    </svg>
+    <div className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-2 shadow-[0_0_10px_rgba(245,158,11,0.6)] animate-ping" />
   </div>
 );
 
-// --- Lord Ganesha Breathtaking Radial SVG Medallion ---
+// --- Lord Ganesha Breathtaking Metallic SVG Medallion ---
 const GaneshaIcon = () => (
   <svg 
     viewBox="0 0 120 120" 
-    className="w-full h-full text-orange-600 drop-shadow-[0_2px_8px_rgba(234,88,12,0.2)]" 
+    className="w-full h-full text-orange-600 drop-shadow-[0_4px_12px_rgba(212,175,55,0.25)]" 
     xmlns="http://www.w3.org/2000/svg"
   >
     <defs>
-      <linearGradient id="ganeshaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#EA580C" /> {/* orange-600 */}
-        <stop offset="40%" stopColor="#F59E0B" /> {/* amber-500 */}
-        <stop offset="100%" stopColor="#BE123C" /> {/* rose-700 */}
+      <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#AA7C11" />
+        <stop offset="30%" stopColor="#D4AF37" />
+        <stop offset="50%" stopColor="#FFDF00" />
+        <stop offset="70%" stopColor="#D4AF37" />
+        <stop offset="100%" stopColor="#AA7C11" />
       </linearGradient>
-      <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-        <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.15" />
-      </filter>
+      <linearGradient id="saffronGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#EF4444" />
+        <stop offset="50%" stopColor="#F97316" />
+        <stop offset="100%" stopColor="#F59E0B" />
+      </linearGradient>
     </defs>
+    
+    {/* Concentric Halo Circles */}
+    <circle cx="60" cy="60" r="54" stroke="url(#goldGrad)" strokeWidth="0.75" strokeDasharray="4 4" fill="none" opacity="0.6" />
+    <circle cx="60" cy="60" r="50" stroke="url(#goldGrad)" strokeWidth="1.5" fill="none" opacity="0.8" />
+    <circle cx="60" cy="60" r="46" stroke="url(#goldGrad)" strokeWidth="0.5" fill="none" opacity="0.4" />
     
     {/* Auspicious Ears */}
     <path 
-      d="M35 52 C20 52, 12 72, 28 82 C30 84, 38 84, 40 76" 
+      d="M36 52 C22 50, 14 70, 29 80 C32 82, 38 82, 40 74" 
       fill="none" 
-      stroke="url(#ganeshaGrad)" 
-      strokeWidth="3.5" 
+      stroke="url(#goldGrad)" 
+      strokeWidth="3" 
       strokeLinecap="round" 
     />
     <path 
-      d="M85 52 C100 52, 108 72, 92 82 C90 84, 82 84, 80 76" 
+      d="M84 52 C98 50, 106 70, 91 80 C88 82, 82 82, 80 74" 
       fill="none" 
-      stroke="url(#ganeshaGrad)" 
-      strokeWidth="3.5" 
+      stroke="url(#goldGrad)" 
+      strokeWidth="3" 
       strokeLinecap="round" 
     />
     
     {/* Elegant Crown (Mukut) */}
     <path 
-      d="M50 32 L60 8 L70 32 Z" 
+      d="M50 32 L60 6 L70 32 Z" 
       fill="none" 
-      stroke="url(#ganeshaGrad)" 
-      strokeWidth="3.5" 
+      stroke="url(#goldGrad)" 
+      strokeWidth="3.2" 
       strokeLinejoin="round" 
       strokeLinecap="round" 
     />
     <path 
-      d="M53 26 L60 14 L67 26" 
+      d="M53 26 L60 12 L67 26" 
       fill="none" 
-      stroke="url(#ganeshaGrad)" 
-      strokeWidth="2.5" 
+      stroke="url(#goldGrad)" 
+      strokeWidth="2" 
       strokeLinecap="round" 
     />
-    <circle cx="60" cy="5" r="2" fill="#F59E0B" />
+    <circle cx="60" cy="4" r="2" fill="#D4AF37" />
 
-    {/* Head Silhouette */}
+    {/* Head/Face Contour */}
     <path 
-      d="M48 42 C48 30, 72 30, 72 42 C72 52, 48 52, 48 42 Z" 
+      d="M48 42 C48 28, 72 28, 72 42 C72 52, 48 52, 48 42 Z" 
       fill="none" 
-      stroke="url(#ganeshaGrad)" 
-      strokeWidth="3.5" 
+      stroke="url(#goldGrad)" 
+      strokeWidth="3" 
       strokeLinecap="round" 
     />
     
-    {/* Royal Trunk curving left (Vamavarti) */}
+    {/* Sacred Left-curving Trunk (Vamavarti) */}
     <path 
-      d="M60 48 C60 68, 44 76, 44 86 C44 93, 56 96, 61 96 C70 96, 74 88, 69 82 C66 78, 58 78, 55 83" 
+      d="M60 46 C60 66, 44 74, 44 84 C44 92, 55 95, 60 95 C69 95, 73 87, 68 81 C65 77, 58 77, 55 82" 
       fill="none" 
-      stroke="url(#ganeshaGrad)" 
-      strokeWidth="3.5" 
+      stroke="url(#goldGrad)" 
+      strokeWidth="3.2" 
       strokeLinecap="round" 
     />
     
     {/* Single Tusk */}
     <path 
-      d="M49 58 L42 60" 
+      d="M49 57 L43 59" 
       fill="none" 
-      stroke="url(#ganeshaGrad)" 
-      strokeWidth="2.5" 
+      stroke="url(#goldGrad)" 
+      strokeWidth="2" 
       strokeLinecap="round" 
     />
     
     {/* Red Tilak of Auspiciousness */}
     <path 
-      d="M57 30 L63 30 M60 30 L60 38" 
+      d="M57 28 L63 28 M60 28 L60 36" 
       fill="none" 
-      stroke="#BE123C" 
-      strokeWidth="4" 
+      stroke="url(#saffronGrad)" 
+      strokeWidth="3.5" 
       strokeLinecap="round" 
     />
-    <circle cx="60" cy="24" r="3" fill="#BE123C" />
+    <circle cx="60" cy="22" r="2.5" fill="url(#saffronGrad)" />
   </svg>
 );
 
-// --- Premium Akshata falling animation (High-fidelity particles) ---
+// --- 3D Akshata Particle System with Depth of Field ---
 const AkshataAnimation = () => {
-  const [grains, setGrains] = useState<{ id: number, x: number, delay: number, duration: number, scale: number, color: string, rotation: number }[]>([]);
+  const [grains, setGrains] = useState<{ 
+    id: number, 
+    x: number, 
+    delay: number, 
+    duration: number, 
+    scale: number, 
+    color: string, 
+    rotation: number,
+    blur: string,
+    wind: number
+  }[]>([]);
 
   useEffect(() => {
-    // Elegant combination of Haldi, Kumkum, and sacred rice grains
+    // Haldi (saffron/gold), Kumkum (deep crimson/rose), and raw sacred rice (silver-white)
     const colors = [
-      'bg-gradient-to-b from-amber-300 to-amber-500 shadow-[0_2px_6px_rgba(245,158,11,0.4)]', // Haldi
-      'bg-gradient-to-b from-rose-500 to-rose-700 shadow-[0_2px_6px_rgba(190,18,60,0.4)]',   // Kumkum
-      'bg-white shadow-[0_2px_4px_rgba(0,0,0,0.06)]' // Rice
+      'bg-gradient-to-b from-amber-300 to-amber-500 shadow-[0_2px_8px_rgba(245,158,11,0.4)] border border-amber-200/30', 
+      'bg-gradient-to-b from-rose-500 to-rose-700 shadow-[0_2px_8px_rgba(190,18,60,0.4)] border border-rose-400/20',   
+      'bg-gradient-to-b from-slate-50 to-white shadow-[0_2px_6px_rgba(0,0,0,0.05)] border border-slate-100/50'       
     ];
     
-    const newGrains = Array.from({ length: 65 }).map((_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      delay: Math.random() * 8, 
-      duration: 5 + Math.random() * 6, // slower fall speed for a mesmerizing, dreamy effect
-      scale: 0.6 + Math.random() * 0.7,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      rotation: Math.random() * 360,
-    }));
+    const newGrains = Array.from({ length: 70 }).map((_, i) => {
+      const sizeRandom = Math.random();
+      let scale = 0.5 + Math.random() * 0.6; 
+      let blur = 'blur-none';
+      
+      if (sizeRandom > 0.8) {
+        // Foreground bokeh particles (large, blurry, faster)
+        scale = 1.3 + Math.random() * 0.7;
+        blur = 'blur-[1.5px]';
+      } else if (sizeRandom < 0.2) {
+        // Deep background particles (tiny, transparent, slow)
+        scale = 0.3 + Math.random() * 0.3;
+        blur = 'blur-[0.5px]';
+      }
+
+      return {
+        id: i,
+        x: Math.random() * 100,
+        delay: Math.random() * 8, 
+        duration: 9 + Math.random() * 9 - (scale * 2), 
+        scale: scale,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        blur: blur,
+        wind: 15 + Math.random() * 25 
+      };
+    });
     setGrains(newGrains);
   }, []);
 
@@ -174,16 +250,17 @@ const AkshataAnimation = () => {
       {grains.map((grain) => (
         <motion.div
           key={grain.id}
-          className={`absolute top-[-20px] w-1.5 h-3 rounded-full ${grain.color} opacity-75 backdrop-blur-[0.5px]`}
+          className={`absolute top-[-25px] w-2 h-4 rounded-full ${grain.color} ${grain.blur}`}
           style={{ 
             left: `${grain.x}%`,
-            transform: `scale(${grain.scale})`
+            transform: `scale(${grain.scale})`,
+            transformOrigin: 'center'
           }}
-          initial={{ y: 0, x: 0, rotate: grain.rotation, opacity: 0 }}
+          initial={{ y: -50, x: 0, rotate: grain.rotation, opacity: 0 }}
           animate={{ 
-            y: ['0vh', '105vh'], 
-            x: [0, Math.random() * 30 - 15, Math.random() * 30 - 15], 
-            rotate: grain.rotation + (Math.random() > 0.5 ? 540 : -540),
+            y: ['0vh', '110vh'], 
+            x: [0, grain.wind, grain.wind * 1.5], 
+            rotate: grain.rotation + (Math.random() > 0.5 ? 720 : -720),
             opacity: [0, 0.9, 0.9, 0]
           }}
           transition={{
@@ -219,7 +296,7 @@ export default function Home() {
       location: "Pune",
       date: "Nov 2025",
       img: "/happy_couple.png",
-      quote: "Vivahvedh values our cultural roots while offering a modern UI. Finding someone with the exact same moral fabric felt completely organic. Highly recommended platform!"
+      quote: "Finding someone with the exact same moral fabric felt completely organic on Vivahvedh. The platform respects traditional Marathi culture while delivering an incredibly gorgeous, elite-level interface. A absolute masterpiece!"
     },
     {
       couple: "अमित आणि प्रियांका देशमुख",
@@ -227,7 +304,7 @@ export default function Home() {
       location: "Mumbai",
       date: "Jan 2026",
       img: "/wedding_hero.png",
-      quote: "The manual profile screening and focus on security took away all our online safety anxiety. Excellent personal assistance and direct family interaction."
+      quote: "The manual profile screening, background verification and focus on privacy took away all our safety anxieties. It is designed for elite families seeking real relationships rather than casual messaging."
     },
     {
       couple: "विक्रम आणि अदिती जोशी",
@@ -235,7 +312,7 @@ export default function Home() {
       location: "Nashik",
       date: "April 2026",
       img: "/happy_couple.png",
-      quote: "A genuinely elite portal designed for traditional Maharashtrian families. Seamless filtering, secure photo visibility, and an absolutely stunning interface."
+      quote: "A genuinely editorial-level experience for elite traditional Marathi families. The filters are extremely granular, and the premium gold matchmaking assistance is truly dedicated and helpful."
     }
   ];
 
@@ -269,21 +346,21 @@ export default function Home() {
   };
 
   return (
-    <div className="flex-1 w-full flex flex-col items-center bg-[#FDFBF9] overflow-x-hidden font-sans">
+    <div className="flex-1 w-full flex flex-col items-center bg-[#FAF8F5] overflow-x-hidden font-sans">
       
       {/* ═══════════════════════════════════════════════════
-          CINEMATIC HERO SECTION
+          CINEMATIC HERO SECTION (Luxury Editorial)
       ═══════════════════════════════════════════════════ */}
-      <section className="relative w-full pt-36 lg:pt-40 pb-44 flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#FFF9F3] via-[#FDFBF7] to-white border-b border-amber-100/30">
+      <section className="relative w-full pt-36 lg:pt-40 pb-44 flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#FFF9F2] via-[#FCFAF7] to-white border-b border-amber-200/10">
         
         {/* Soft abstract glowing mesh */}
-        <div className="absolute top-0 right-0 w-[900px] h-[900px] bg-gradient-to-tr from-amber-400/[0.04] to-rose-400/[0.02] rounded-full blur-[130px] -translate-y-1/2 translate-x-1/3 pointer-events-none z-0 animate-pulse" />
-        <div className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-gradient-to-br from-rose-500/[0.03] to-amber-500/[0.03] rounded-full blur-[110px] translate-y-1/3 -translate-x-1/3 pointer-events-none z-0" />
+        <div className="absolute top-0 right-0 w-[950px] h-[950px] bg-gradient-to-tr from-amber-400/[0.05] to-rose-400/[0.03] rounded-full blur-[140px] -translate-y-1/2 translate-x-1/3 pointer-events-none z-0 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-gradient-to-br from-rose-500/[0.04] to-amber-500/[0.03] rounded-full blur-[120px] translate-y-1/3 -translate-x-1/3 pointer-events-none z-0" />
         
-        {/* Sacred Akshata Animation Layer */}
+        {/* 3D Akshata Particle System */}
         <AkshataAnimation />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-10">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-8">
           
           {/* Left Column: Brand, Divine Intro & Headings */}
           <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left pt-6">
@@ -295,22 +372,22 @@ export default function Home() {
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               className="mb-8 relative"
             >
-              {/* Outer spinning gold frame */}
-              <div className="absolute -inset-2 rounded-full border border-dashed border-amber-300/40 animate-[spin_30s_linear_infinite]" />
-              <div className="w-20 h-20 rounded-full bg-white shadow-[0_12px_30px_rgba(245,158,11,0.08)] border border-amber-100/60 p-3 flex items-center justify-center">
+              {/* Outer spinning gold dash frame */}
+              <div className="absolute -inset-3 rounded-full border border-dashed border-amber-400/30 animate-[spin_40s_linear_infinite]" />
+              <div className="w-22 h-22 rounded-full bg-white shadow-[0_16px_40px_rgba(212,175,55,0.12)] border border-amber-200/50 p-3 flex items-center justify-center relative z-10">
                 <GaneshaIcon />
               </div>
             </motion.div>
 
-            {/* Cultural Intro tag */}
+            {/* Sacred Sanskrit Welcomer Badge */}
             <motion.div 
               initial={{ opacity: 0, y: 12 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.2 }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/[0.04] border border-amber-500/10 text-amber-600 text-xs font-bold tracking-[0.15em] uppercase mb-6 shadow-sm">
-                <Sparkles size={12} className="text-amber-500" />
-                <span>श्री गणेशाय नमः • शोध नव्या नात्यांचा</span>
+              <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500/[0.03] via-rose-500/[0.03] to-amber-500/[0.03] border border-amber-500/15 text-amber-700 text-xs font-bold tracking-[0.2em] uppercase mb-8 shadow-[0_4px_12px_rgba(245,158,11,0.03)] backdrop-blur-sm">
+                <Sparkles size={11} className="text-amber-500 animate-pulse" />
+                <span>॥ श्री गणेशाय नमः • शोध नव्या नात्यांचा ॥</span>
               </div>
             </motion.div>
 
@@ -319,10 +396,15 @@ export default function Home() {
               initial={{ opacity: 0, y: 18 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.3, duration: 0.8 }} 
-              className="text-4xl md:text-5xl lg:text-[56px] font-display font-black leading-[1.12] text-slate-900 mb-6 tracking-tight max-w-xl mx-auto lg:mx-0"
+              className="text-4xl md:text-5xl lg:text-[58px] font-display font-black leading-[1.15] text-slate-900 mb-6 tracking-tight max-w-xl mx-auto lg:mx-0"
             >
               मराठी परंपरांचा आदर,<br/>
-              <span className="font-serif italic font-normal text-primary">उत्कृष्ट</span> जोडीदाराचा शोध.
+              <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-primary via-rose-600 to-amber-600 relative inline-block">
+                उत्कृष्ट
+                <svg className="absolute left-0 -bottom-1 w-full h-[6px] text-amber-400" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  <path d="M0,5 Q50,9 100,5" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                </svg>
+              </span> जोडीदाराचा शोध.
             </motion.h1>
 
             {/* Sub-description */}
@@ -330,9 +412,9 @@ export default function Home() {
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
               transition={{ delay: 0.4 }} 
-              className="text-slate-600 text-sm md:text-[15px] max-w-md mx-auto lg:mx-0 leading-relaxed mb-10 font-medium"
+              className="text-slate-600 text-sm md:text-[15px] max-w-md mx-auto lg:mx-0 leading-relaxed mb-10 font-medium font-sans"
             >
-              Welcome to the elite matrimony circle for Marathi families. Discover handcrafted profiles, secure photo controls, and verified listings honoring traditional values.
+              Welcome to the elite matrimony circle for Marathi families. Discover handcrafted profiles, secure photo controls, and verified listings honoring traditional family values.
             </motion.p>
             
             {/* Premium CTA Buttons */}
@@ -342,64 +424,73 @@ export default function Home() {
               transition={{ delay: 0.5 }} 
               className="flex flex-wrap gap-4 justify-center lg:justify-start"
             >
-              <Link to="/register" className="h-14 px-10 bg-primary hover:bg-rose-700 text-white rounded-2xl font-bold text-sm tracking-wider flex items-center gap-3 transition-all shadow-[0_20px_40px_-8px_rgba(184,0,53,0.3)] hover:shadow-[0_20px_40px_-4px_rgba(184,0,53,0.45)] hover:-translate-y-0.5">
-                Register Free Profile <ArrowRight size={16} />
+              <Link to="/register" className="h-14 px-10 bg-gradient-to-r from-primary to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center gap-3 transition-all duration-300 shadow-[0_20px_40px_-8px_rgba(184,0,53,0.3)] hover:shadow-[0_20px_40px_-4px_rgba(184,0,53,0.45)] hover:-translate-y-0.5 active:scale-95">
+                Register Free Profile <ArrowRight size={14} />
               </Link>
             </motion.div>
           </div>
 
           {/* Right Column: Layered Artistic Collage */}
           <motion.div 
-            initial={{ opacity: 0, x: 40 }} 
-            animate={{ opacity: 1, x: 0 }} 
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
-            className="flex-1 w-full max-w-lg hidden lg:block relative"
+            initial={{ opacity: 0, scale: 0.95 }} 
+            animate={{ opacity: 1, scale: 1 }} 
+            transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+            className="flex-1 w-full max-w-lg hidden lg:block relative h-[560px]"
           >
-            {/* Background luxury gradient circles */}
-            <div className="absolute top-10 -right-10 w-72 h-72 bg-gradient-to-tr from-amber-300/30 to-amber-400/5 rounded-full blur-3xl z-0" />
-            <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-gradient-to-br from-rose-400/20 to-rose-600/5 rounded-full blur-3xl z-0" />
+            {/* Abstract Glowing Luxury Backdrop Orbs */}
+            <div className="absolute top-20 -right-20 w-80 h-80 bg-gradient-to-tr from-amber-200/40 to-rose-200/10 rounded-full blur-3xl opacity-60 z-0 animate-pulse" />
+            <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-gradient-to-br from-rose-300/30 to-amber-300/10 rounded-full blur-3xl opacity-50 z-0" />
             
-            {/* The Majestic Arch Frame (Main Image) */}
-            <div className="relative z-10 w-[78%] ml-auto aspect-[3/4.2] rounded-t-[180px] rounded-b-[48px] p-2 bg-gradient-to-br from-amber-300/40 via-white to-rose-300/40 shadow-premium">
-              <div className="w-full h-full rounded-t-[172px] rounded-b-[40px] overflow-hidden bg-slate-100 group border-2 border-white">
+            {/* Elegant Ornamental Floral Leaf SVG Behind Frames */}
+            <div className="absolute -top-6 -right-6 w-32 h-32 opacity-25 pointer-events-none text-amber-400 z-0">
+              <svg viewBox="0 0 100 100" fill="currentColor">
+                <path d="M30 80 C30 50, 50 30, 80 30 C50 30, 30 50, 30 80 Z" />
+                <path d="M10 90 C10 70, 30 50, 60 50 C30 50, 10 70, 10 90 Z" />
+                <path d="M50 60 C50 40, 70 20, 90 20 C70 20, 50 40, 50 60 Z" />
+              </svg>
+            </div>
+
+            {/* Majestic Palace Arch Frame (Main Image) */}
+            <div className="absolute right-4 top-0 z-10 w-[76%] aspect-[3/4.2] rounded-t-[200px] rounded-b-[48px] p-2 bg-gradient-to-br from-amber-400/40 via-white to-rose-400/40 shadow-[0_32px_80px_rgba(184,0,53,0.12)]">
+              <div className="w-full h-full rounded-t-[192px] rounded-b-[40px] overflow-hidden bg-slate-50 group border-2 border-white relative">
                 <img 
                   src="/happy_couple.png" 
                   alt="Traditional Marathi Couple" 
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-40" />
+                <div className="absolute inset-0 bg-gradient-to-t from-amber-950/20 via-transparent to-transparent" />
               </div>
             </div>
 
-            {/* Elegant Overlapping Circular Sub-Frame */}
+            {/* Overlapping Floating Petal/Circular Card */}
             <motion.div 
-              animate={{ y: [0, -12, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -bottom-6 left-0 w-48 h-48 rounded-full p-1.5 bg-gradient-to-tr from-amber-400 to-amber-200 shadow-2xl z-20"
+              animate={{ y: [0, -15, 0], rotate: [0, 2, 0] }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute bottom-6 left-0 w-48 h-48 rounded-full p-2 bg-gradient-to-tr from-amber-400 via-rose-300 to-amber-200 shadow-2xl z-20"
             >
-              <div className="w-full h-full rounded-full overflow-hidden bg-slate-100 border-4 border-white">
+              <div className="w-full h-full rounded-full overflow-hidden bg-slate-50 border-4 border-white relative group">
                 <img 
                   src="/wedding_hero.png" 
                   alt="Maharashtrian Wedding Traditional" 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30" />
               </div>
             </motion.div>
 
-            {/* Floating verification badge */}
+            {/* Luxury Glassmorphic Shield Medallion */}
             <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.4 }}
-              className="absolute top-24 -left-8 bg-white/80 backdrop-blur-xl rounded-3xl p-5 shadow-[0_24px_50px_rgba(0,0,0,0.06)] border border-white/50 flex items-center gap-4 z-20 animate-bounce"
-              style={{ animationDuration: '3s' }}
+              initial={{ opacity: 0, scale: 0.8, x: -20 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              transition={{ delay: 1.2, duration: 0.8 }}
+              className="absolute top-28 -left-6 bg-white/70 backdrop-blur-2xl rounded-3xl p-5 shadow-[0_24px_50px_rgba(0,0,0,0.06)] border border-white/80 flex items-center gap-4.5 z-20"
             >
-              <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 shadow-inner">
-                <ShieldCheck size={26} />
+              <div className="w-12 h-12 bg-gradient-to-br from-amber-100 to-amber-200 rounded-2xl flex items-center justify-center text-amber-700 shadow-[inset_0_2px_4px_rgba(255,255,255,0.6)]">
+                <ShieldCheck size={26} className="animate-pulse" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-0.5">Verified</p>
-                <p className="text-sm font-extrabold text-slate-800">100% Secure Matches</p>
+                <p className="text-[10px] font-black text-amber-600 uppercase tracking-[0.2em] mb-0.5">100% Verified</p>
+                <p className="text-sm font-black text-slate-800 tracking-tight">Elite Marathi Families</p>
               </div>
             </motion.div>
           </motion.div>
@@ -408,21 +499,27 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          GLASSMORPHIC SEARCH DASHBOARD WIDGET
+          GLASSMORPHIC SEARCH DASHBOARD CONSOLE
       ═══════════════════════════════════════════════════ */}
       <section className="w-full relative z-20 -mt-16 px-4">
-        <div className="max-w-5xl mx-auto bg-white/70 backdrop-blur-2xl rounded-[32px] shadow-[0_32px_60px_-16px_rgba(184,0,53,0.06)] border border-white/80 p-3 md:p-4">
-          <div className="flex flex-col lg:flex-row gap-3">
+        <div className="max-w-5xl mx-auto bg-white/75 backdrop-blur-3xl rounded-[36px] shadow-[0_32px_80px_-16px_rgba(184,0,53,0.08)] border border-white/90 p-4 relative overflow-hidden group">
+          
+          {/* Fine inner glowing border effect */}
+          <div className="absolute inset-0 border border-amber-300/10 rounded-[36px] pointer-events-none" />
+
+          <div className="flex flex-col lg:flex-row gap-4">
             
             {/* Field: Looking For */}
-            <div className="flex-1 relative bg-gradient-to-b from-[#FDFBF9] to-white border border-amber-100/50 rounded-2xl p-4 transition-all hover:border-amber-300 focus-within:border-amber-400 group">
-              <span className="absolute top-3 left-4 text-[9px] font-black uppercase tracking-widest text-amber-500/80">Looking For</span>
-              <div className="flex items-center gap-3 mt-4">
-                <Heart size={18} className="text-primary/70 group-hover:scale-110 transition-transform" />
+            <div className="flex-1 relative bg-gradient-to-b from-[#FDFBF9] to-white border border-amber-100/50 rounded-2xl p-4 transition-all duration-300 hover:border-amber-300/80 focus-within:border-amber-400 focus-within:shadow-[0_0_15px_rgba(245,158,11,0.06)] group">
+              <span className="absolute top-3 left-4 text-[9px] font-black uppercase tracking-[0.2em] text-amber-500/90">Looking For</span>
+              <div className="flex items-center gap-3.5 mt-4">
+                <div className="p-1.5 rounded-lg bg-rose-50 text-primary/80 group-focus-within:bg-primary group-focus-within:text-white transition-all duration-300">
+                  <Heart size={16} className="group-hover:scale-110 transition-transform" />
+                </div>
                 <select 
                   value={searchGender} 
                   onChange={e => setSearchGender(e.target.value)} 
-                  className="w-full bg-transparent text-slate-800 font-bold text-sm outline-none cursor-pointer appearance-none"
+                  className="w-full bg-transparent text-slate-800 font-extrabold text-sm outline-none cursor-pointer appearance-none"
                 >
                   <option value="">Any Gender</option>
                   <option value="MALE">Groom (वर)</option>
@@ -432,14 +529,16 @@ export default function Home() {
             </div>
             
             {/* Field: Age Range */}
-            <div className="flex-1 relative bg-gradient-to-b from-[#FDFBF9] to-white border border-amber-100/50 rounded-2xl p-4 transition-all hover:border-amber-300 focus-within:border-amber-400 group">
-              <span className="absolute top-3 left-4 text-[9px] font-black uppercase tracking-widest text-amber-500/80">Age Group</span>
-              <div className="flex items-center gap-3 mt-4">
-                <Compass size={18} className="text-primary/70 group-hover:scale-110 transition-transform" />
+            <div className="flex-1 relative bg-gradient-to-b from-[#FDFBF9] to-white border border-amber-100/50 rounded-2xl p-4 transition-all duration-300 hover:border-amber-300/80 focus-within:border-amber-400 focus-within:shadow-[0_0_15px_rgba(245,158,11,0.06)] group">
+              <span className="absolute top-3 left-4 text-[9px] font-black uppercase tracking-[0.2em] text-amber-500/90">Age Group</span>
+              <div className="flex items-center gap-3.5 mt-4">
+                <div className="p-1.5 rounded-lg bg-amber-50 text-amber-600/80 group-focus-within:bg-amber-500 group-focus-within:text-white transition-all duration-300">
+                  <Compass size={16} className="group-hover:scale-110 transition-transform" />
+                </div>
                 <select 
                   value={searchAge} 
                   onChange={e => setSearchAge(e.target.value)} 
-                  className="w-full bg-transparent text-slate-800 font-bold text-sm outline-none cursor-pointer appearance-none"
+                  className="w-full bg-transparent text-slate-800 font-extrabold text-sm outline-none cursor-pointer appearance-none"
                 >
                   <option value="">Any Age</option>
                   <option value="18-25">18 – 25 years</option>
@@ -452,16 +551,18 @@ export default function Home() {
             </div>
             
             {/* Field: Location */}
-            <div className="flex-1 relative bg-gradient-to-b from-[#FDFBF9] to-white border border-amber-100/50 rounded-2xl p-4 transition-all hover:border-amber-300 focus-within:border-amber-400 group">
-              <span className="absolute top-3 left-4 text-[9px] font-black uppercase tracking-widest text-amber-500/80">Location</span>
-              <div className="flex items-center gap-3 mt-4">
-                <MapPin size={18} className="text-primary/70 group-hover:scale-110 transition-transform" />
+            <div className="flex-1 relative bg-gradient-to-b from-[#FDFBF9] to-white border border-amber-100/50 rounded-2xl p-4 transition-all duration-300 hover:border-amber-300/80 focus-within:border-amber-400 focus-within:shadow-[0_0_15px_rgba(245,158,11,0.06)] group">
+              <span className="absolute top-3 left-4 text-[9px] font-black uppercase tracking-[0.2em] text-amber-500/90">Location</span>
+              <div className="flex items-center gap-3.5 mt-4">
+                <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600/80 group-focus-within:bg-emerald-600 group-focus-within:text-white transition-all duration-300">
+                  <MapPin size={16} className="group-hover:scale-110 transition-transform" />
+                </div>
                 <input 
                   type="text" 
                   value={searchLocation} 
                   onChange={e => setSearchLocation(e.target.value)} 
                   placeholder="E.g. Pune, Mumbai" 
-                  className="w-full bg-transparent text-slate-800 font-bold text-sm outline-none placeholder:text-slate-400" 
+                  className="w-full bg-transparent text-slate-800 font-extrabold text-sm outline-none placeholder:text-slate-400 font-sans" 
                 />
               </div>
             </div>
@@ -469,9 +570,10 @@ export default function Home() {
             {/* Ultimate Premium Search Button */}
             <button 
               onClick={handleQuickSearch} 
-              className="lg:w-44 h-16 bg-primary hover:bg-rose-700 text-white rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-3 flex-shrink-0 shadow-[0_12px_24px_rgba(184,0,53,0.25)] hover:shadow-[0_12px_24px_rgba(184,0,53,0.4)] hover:-translate-y-0.5 active:scale-95"
+              className="lg:w-48 h-16 bg-gradient-to-r from-primary to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-3.5 flex-shrink-0 shadow-[0_12px_28px_rgba(184,0,53,0.25)] hover:shadow-[0_16px_36px_rgba(184,0,53,0.4)] hover:-translate-y-0.5 active:scale-95 group relative overflow-hidden"
             >
-              <Search size={18} />
+              <div className="absolute inset-0 w-1/2 h-full bg-white/20 transform -skew-x-12 -translate-x-full group-hover:animate-[shimmer_1s_ease-out]" />
+              <Search size={16} />
               <span>Find Matches</span>
             </button>
           </div>
@@ -483,7 +585,7 @@ export default function Home() {
       ═══════════════════════════════════════════════════ */}
       <section className="w-full py-20 bg-white">
         <div className="max-w-6xl mx-auto px-6">
-          <Reveal className="grid grid-cols-2 md:grid-cols-4 gap-12 divide-y md:divide-y-0 md:divide-x divide-amber-100/60">
+          <Reveal className="grid grid-cols-2 md:grid-cols-4 gap-12 divide-y md:divide-y-0 md:divide-x divide-amber-200/20">
             {[
               { val: '2.5k+', label: 'Verified Profiles' },
               { val: '100%', label: 'Mobile Verified' },
@@ -504,30 +606,30 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════
           HOW TO FIND YOUR MATCH — Refined Bento Grid
       ═══════════════════════════════════════════════════ */}
-      <section className="w-full py-20 bg-[#FDFBF7]">
+      <section className="w-full py-20 bg-[#FCFAF7]">
         <div className="max-w-6xl mx-auto px-6">
           <Reveal className="text-center mb-16">
-            <span className="text-[9px] font-black uppercase tracking-[0.25em] text-amber-500 bg-amber-500/[0.05] px-3.5 py-1.5 rounded-full border border-amber-300/20">मंगलाष्टक</span>
-            <h2 className="text-3xl md:text-4xl font-display font-black text-slate-900 mt-4 mb-4">Four Simple Steps</h2>
-            <p className="text-slate-500 text-sm max-w-md mx-auto">Your journey to finding the perfect Maharashtrian partner is designed for ease and respect.</p>
+            <span className="text-[9px] font-black uppercase tracking-[0.25em] text-amber-600 bg-amber-500/[0.05] px-4 py-2 rounded-full border border-amber-300/20">मंगलाष्टक</span>
+            <h2 className="text-3xl md:text-5xl font-serif font-black text-slate-900 mt-5 mb-4 leading-tight">Four Steps to Union</h2>
+            <p className="text-slate-500 text-sm max-w-md mx-auto leading-relaxed">Your journey to finding the perfect Maharashtrian partner is designed with ultimate security and respect.</p>
           </Reveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: <Users size={22} />, title: 'Create Profile', sub: 'नोंदणी करा', desc: 'Register for free and describe your lifestyle, family background, and interests.' },
-              { icon: <ShieldCheck size={22} />, title: 'Get Verified', sub: 'पडताळणी', desc: 'Secure the trusted "Verified Badge" by uploading genuine government IDs.' },
-              { icon: <Compass size={22} />, title: 'Search Matches', sub: 'स्थळे शोधा', desc: 'Narrow down compatible prospects using precise educational and demographic filters.' },
-              { icon: <Heart size={22} />, title: 'Connect & Meet', sub: 'संवाद सुरू करा', desc: 'Express mutual interests, unlock strict photo access, and meet with family consent.' },
+              { icon: <Users size={22} />, title: 'Create Profile', sub: 'नोंदणी करा', desc: 'Register for free and describe your traditional background, lineage, and lifestyle.' },
+              { icon: <ShieldCheck size={22} />, title: 'Get Verified', sub: 'पडताळणी', desc: 'Secure the prestigious "Verified Badge" by uploading government ID credentials.' },
+              { icon: <Compass size={22} />, title: 'Search Matches', sub: 'स्थळे शोधा', desc: 'Discover prospects using precise cast, educational, and astrological matches.' },
+              { icon: <Heart size={22} />, title: 'Connect & Meet', sub: 'संवाद सुरू करा', desc: 'Initiate interaction, request strict photo visibility, and align families.' },
             ].map((step, i) => (
               <Reveal key={i} delay={i * 0.15}>
-                <div className="bg-white hover:bg-gradient-to-b hover:from-white hover:to-amber-500/[0.02] rounded-3xl p-8 border border-amber-200/30 hover:border-amber-300 shadow-[0_8px_30px_rgba(0,0,0,0.02)] hover:shadow-lg hover:-translate-y-1 transition-all duration-500 h-full flex flex-col justify-between group">
+                <div className="bg-white hover:bg-gradient-to-b hover:from-white hover:to-amber-500/[0.02] rounded-[32px] p-8 border border-amber-200/20 hover:border-amber-300/60 shadow-[0_8px_30px_rgba(0,0,0,0.01)] hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 h-full flex flex-col justify-between group">
                   <div>
-                    <div className="w-12 h-12 rounded-2xl bg-[#FFF9F3] border border-amber-100 flex items-center justify-center text-primary mb-8 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                    <div className="w-12 h-12 rounded-2xl bg-[#FFF9F2] border border-amber-100 flex items-center justify-center text-primary mb-8 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-rose-600 group-hover:text-white transition-all duration-500">
                       {step.icon}
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-1">{step.title}</h3>
-                    <p className="text-[11px] font-bold text-amber-500 tracking-wider mb-4">{step.sub}</p>
-                    <p className="text-sm text-slate-600 leading-relaxed font-medium">{step.desc}</p>
+                    <h3 className="text-lg font-black text-slate-800 mb-1">{step.title}</h3>
+                    <p className="text-[11px] font-black text-amber-500 tracking-widest mb-4 uppercase">{step.sub}</p>
+                    <p className="text-sm text-slate-600 leading-relaxed font-medium font-sans">{step.desc}</p>
                   </div>
                 </div>
               </Reveal>
@@ -537,19 +639,19 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          FEATURED PREMIUM PROFILES
+          FEATURED PREMIUM PROFILES (Polaroid Invite Grid)
       ═══════════════════════════════════════════════════ */}
       {featuredProfiles.length > 0 && (
         <section className="w-full py-24 bg-white">
           <div className="max-w-7xl mx-auto px-6">
             <Reveal className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
               <div>
-                <span className="text-[9px] font-black uppercase tracking-[0.25em] text-amber-500 bg-amber-500/[0.05] px-3.5 py-1.5 rounded-full border border-amber-300/20">नवे सभासद</span>
-                <h2 className="text-3xl md:text-4xl font-display font-black text-slate-900 mt-4 mb-2">Recently Joined Members</h2>
+                <span className="text-[9px] font-black uppercase tracking-[0.25em] text-amber-600 bg-amber-500/[0.05] px-4 py-2 rounded-full border border-amber-300/20">नवे सभासद</span>
+                <h2 className="text-3xl md:text-5xl font-serif font-black text-slate-900 mt-5 mb-3 leading-tight">Recently Joined Members</h2>
                 <p className="text-slate-500 text-sm">Discover verified elite profiles who recently entered the community.</p>
               </div>
-              <Link to="/search" className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:text-rose-700 transition-colors">
-                View All Matches <ArrowRight size={16} />
+              <Link to="/search" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-primary hover:text-rose-700 transition-colors">
+                View All Matches <ArrowRight size={14} />
               </Link>
             </Reveal>
 
@@ -559,32 +661,48 @@ export default function Home() {
                 const initial = user.profile?.firstName?.[0] || 'V';
                 return (
                   <Reveal key={user.id} delay={i * 0.08}>
-                    <div onClick={() => navigate(`/profile/${user.id}`)} className="bg-[#FFFDFB] rounded-[24px] overflow-hidden border border-amber-100/50 hover:border-amber-300/70 hover:shadow-[0_20px_40px_rgba(184,0,53,0.04)] hover:-translate-y-1.5 transition-all duration-500 cursor-pointer group">
-                      <div className="aspect-[4/5] relative bg-slate-50 overflow-hidden">
+                    <div 
+                      onClick={() => navigate(`/profile/${user.id}`)} 
+                      className="bg-[#FAF8F5] rounded-[28px] overflow-hidden border border-amber-200/30 hover:border-amber-400/60 hover:shadow-[0_24px_50px_rgba(184,0,53,0.06)] hover:-translate-y-2 transition-all duration-500 cursor-pointer group p-3.5"
+                    >
+                      {/* Polaroid Picture Frame */}
+                      <div className="aspect-[4/5] relative bg-slate-100 rounded-[20px] overflow-hidden border border-white shadow-inner">
                         {imgUrl ? (
-                          <img src={resolveImageUrl(imgUrl)} alt="Profile" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+                          <img 
+                            src={resolveImageUrl(imgUrl)} 
+                            alt="Profile" 
+                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" 
+                          />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-50/40 to-rose-50/30">
-                            <span className="text-5xl font-display font-black text-slate-300">{initial}</span>
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-50/50 to-rose-50/40">
+                            <span className="text-5xl font-display font-black text-slate-300/80">{initial}</span>
                           </div>
                         )}
+
+                        {/* Saffron Gradient Overlay on hover */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-amber-950/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        
+                        {/* Dynamic tags inside image */}
                         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
                           {user.kycVerified && (
-                            <span className="bg-white/90 backdrop-blur-md text-slate-800 text-[9px] px-2.5 py-1.5 rounded-lg font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm border border-emerald-100">
-                              <ShieldCheck size={11} className="text-green-600"/> Verified
+                            <span className="bg-white/95 backdrop-blur-md text-amber-700 text-[9px] px-2.5 py-1.5 rounded-lg font-black uppercase tracking-wider flex items-center gap-1 shadow-sm border border-amber-100">
+                              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Verified
                             </span>
                           )}
                         </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
                         <div className="absolute bottom-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                          <span className="text-[10px] font-bold text-white/90 bg-black/40 backdrop-blur px-2 py-1 rounded-md">{user.regId}</span>
+                          <span className="text-[10px] font-black text-white bg-black/40 backdrop-blur px-2.5 py-1 rounded-md tracking-wider">{user.regId}</span>
                         </div>
                       </div>
                       
-                      <div className="p-5">
-                        <h3 className="text-base font-extrabold text-slate-900 truncate mb-2">{user.profile?.firstName} {user.profile?.lastName}</h3>
-                        <div className="flex flex-col gap-1.5 text-[11px] text-slate-500 font-medium">
-                          <span className="flex items-center gap-2"><Briefcase size={12} className="text-amber-500/80"/> {user.education?.jobBusiness || 'Professional'}</span>
+                      {/* Polaroid Caption Info */}
+                      <div className="pt-5 pb-2 px-1 text-center">
+                        <h3 className="text-base font-extrabold text-slate-800 truncate mb-2 group-hover:text-primary transition-colors">
+                          {user.profile?.firstName} {user.profile?.lastName}
+                        </h3>
+                        <div className="flex flex-col items-center gap-1.5 text-[11px] text-slate-500 font-medium">
+                          <span className="flex items-center gap-2 truncate max-w-full"><Briefcase size={12} className="text-amber-500/80"/> {user.education?.jobBusiness || 'Professional'}</span>
                           {user.addresses?.[0]?.city && <span className="flex items-center gap-2"><MapPin size={12} className="text-amber-500/80"/> {user.addresses[0].city}</span>}
                         </div>
                       </div>
@@ -600,20 +718,24 @@ export default function Home() {
       <GarlandDivider />
 
       {/* ═══════════════════════════════════════════════════
-          SUCCESS STORIES (कथा यशस्वितेच्या) - Luxury Slider
+          SUCCESS STORIES (कथा यशस्वितेच्या) - Luxury Double-Page Ledger
       ═══════════════════════════════════════════════════ */}
-      <section className="w-full py-24 bg-gradient-to-b from-white to-[#FDFBF7] overflow-hidden">
+      <section className="w-full py-24 bg-gradient-to-b from-white via-[#FCFAF7] to-white overflow-hidden">
         <div className="max-w-5xl mx-auto px-6">
-          <Reveal className="text-center mb-16">
-            <span className="text-[9px] font-black uppercase tracking-[0.25em] text-primary bg-rose-50 px-3.5 py-1.5 rounded-full border border-rose-300/20">कथा यशस्वितेच्या</span>
-            <h2 className="text-3xl md:text-4xl font-serif font-black text-slate-900 mt-4 mb-2">Our Successful Couples</h2>
-            <p className="text-slate-500 text-sm">Read the heartwarming journeys of Marathi souls who found each other here.</p>
+          <Reveal className="text-center mb-20">
+            <span className="text-[9px] font-black uppercase tracking-[0.25em] text-primary bg-rose-50 px-4 py-2 rounded-full border border-rose-300/20">कथा यशस्वितेच्या</span>
+            <h2 className="text-3xl md:text-5xl font-serif font-black text-slate-900 mt-5 mb-3 leading-tight">Stories of Eternal Bond</h2>
+            <p className="text-slate-500 text-sm max-w-md mx-auto leading-relaxed">Read the heartwarming journeys of Marathi souls who found each other here.</p>
           </Reveal>
 
-          <div className="relative bg-white rounded-[40px] shadow-[0_30px_60px_-15px_rgba(184,0,53,0.04)] border border-amber-200/20 p-8 md:p-14 flex flex-col md:flex-row gap-10 items-center">
+          {/* The Ledger Book container */}
+          <div className="relative bg-[#FAF6F0] rounded-[48px] shadow-[0_32px_80px_rgba(0,0,0,0.04)] border border-amber-200/30 p-8 md:p-16 flex flex-col md:flex-row gap-12 items-center">
             
-            {/* Slider Image arched top */}
-            <div className="w-48 h-64 md:w-60 md:h-80 rounded-t-full rounded-b-[24px] overflow-hidden bg-slate-100 border-4 border-[#FFF9F3] shadow-md flex-shrink-0 relative">
+            {/* Decorative vertical binding line in center for book look */}
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-amber-200/40 to-transparent" />
+            
+            {/* Left Page (Visual Frame) */}
+            <div className="w-56 h-76 md:w-68 md:h-90 rounded-t-[140px] rounded-b-[36px] overflow-hidden bg-slate-50 border-[6px] border-white shadow-xl flex-shrink-0 relative">
               <AnimatePresence mode="wait">
                 <motion.img 
                   key={currentStory}
@@ -626,13 +748,19 @@ export default function Home() {
                   className="w-full h-full object-cover" 
                 />
               </AnimatePresence>
+              {/* Ivory warm overlay for editorial feel */}
+              <div className="absolute inset-0 bg-[#FAF6F0]/5 mix-blend-multiply pointer-events-none" />
             </div>
 
-            {/* Slider Content */}
-            <div className="flex-1 flex flex-col justify-between h-full pt-4">
+            {/* Right Page (Typography Ledger) */}
+            <div className="flex-1 flex flex-col justify-between h-full pt-4 md:pl-6">
               <div>
-                <Quote size={44} className="text-amber-300/40 -ml-4 mb-2" />
-                <div className="min-h-[140px] relative">
+                <div className="flex items-center gap-2 mb-6">
+                  <Quote size={40} className="text-amber-500/20" />
+                  <div className="h-[1px] flex-1 bg-gradient-to-r from-amber-200/40 to-transparent" />
+                </div>
+                
+                <div className="min-h-[160px] relative">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentStory}
@@ -641,7 +769,7 @@ export default function Home() {
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.4 }}
                     >
-                      <p className="text-slate-700 text-sm md:text-base italic font-serif leading-relaxed mb-6 font-medium">
+                      <p className="text-slate-700 text-sm md:text-[17px] italic font-serif leading-relaxed mb-8 font-medium">
                         "{successStories[currentStory].quote}"
                       </p>
                     </motion.div>
@@ -649,18 +777,26 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="flex items-end justify-between border-t border-amber-100/50 pt-6">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between border-t border-amber-200/40 pt-6 gap-6">
                 <div>
-                  <h4 className="text-lg font-extrabold text-slate-900">{successStories[currentStory].couple}</h4>
-                  <p className="text-xs font-bold text-slate-400 mt-1">{successStories[currentStory].location} • Married {successStories[currentStory].date}</p>
+                  <h4 className="text-lg font-black text-slate-800 tracking-tight">{successStories[currentStory].couple}</h4>
+                  <p className="text-xs font-black text-amber-600 uppercase tracking-widest mt-1.5">
+                    {successStories[currentStory].location} • Married {successStories[currentStory].date}
+                  </p>
                 </div>
 
-                {/* Slider Controls */}
-                <div className="flex gap-2">
-                  <button onClick={prevStory} className="w-10 h-10 rounded-full border border-amber-200/60 hover:bg-amber-50/50 flex items-center justify-center text-slate-700 active:scale-95 transition-all">
+                {/* Luxury gold navigation keys */}
+                <div className="flex gap-3">
+                  <button 
+                    onClick={prevStory} 
+                    className="w-11 h-11 rounded-full border border-amber-300/40 bg-white hover:bg-amber-500/5 hover:border-amber-400 flex items-center justify-center text-slate-700 active:scale-95 transition-all shadow-sm"
+                  >
                     <ChevronLeft size={20} />
                   </button>
-                  <button onClick={nextStory} className="w-10 h-10 rounded-full border border-amber-200/60 hover:bg-amber-50/50 flex items-center justify-center text-slate-700 active:scale-95 transition-all">
+                  <button 
+                    onClick={nextStory} 
+                    className="w-11 h-11 rounded-full border border-amber-300/40 bg-white hover:bg-amber-500/5 hover:border-amber-400 flex items-center justify-center text-slate-700 active:scale-95 transition-all shadow-sm"
+                  >
                     <ChevronRight size={20} />
                   </button>
                 </div>
@@ -674,17 +810,17 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════
           WHY CHOOSE US - Editorial Layout
       ═══════════════════════════════════════════════════ */}
-      <section className="w-full py-24 bg-white border-y border-amber-100/30">
+      <section className="w-full py-24 bg-white border-y border-amber-200/10">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             
             <Reveal>
-              <span className="text-[9px] font-black uppercase tracking-[0.25em] text-primary bg-rose-50 px-3.5 py-1.5 rounded-full border border-rose-300/20">गुणवत्ता</span>
-              <h2 className="text-3xl md:text-4xl font-serif font-black text-slate-900 mt-5 mb-6 leading-tight">
-                Why trust <span className="text-primary">Vivahvedh</span> for your family?
+              <span className="text-[9px] font-black uppercase tracking-[0.25em] text-primary bg-rose-50 px-4 py-2 rounded-full border border-rose-300/20">गुणवत्ता</span>
+              <h2 className="text-3xl md:text-5xl font-serif font-black text-slate-900 mt-5 mb-6 leading-tight">
+                Why trust <span className="text-primary font-serif italic font-normal">Vivahvedh</span> for your family?
               </h2>
               <p className="text-slate-500 text-sm leading-relaxed mb-10 font-medium">
-                We blend respected Maharashtrian family values with strict privacy settings. No generic indexing or unverified entries.
+                We blend highly respected Maharashtrian family values with strict privacy settings. No generic indexing or unverified entries.
               </p>
 
               <div className="space-y-8 mb-10">
@@ -694,12 +830,12 @@ export default function Home() {
                   { title: 'Granular Search Filters', desc: 'Filter strictly by education, cast, sub-caste, and job locations.' }
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-4 group">
-                    <div className="w-10 h-10 rounded-full bg-[#FFF9F3] border border-amber-100 flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                      <Check size={18} className="text-primary group-hover:text-white" />
+                    <div className="w-10 h-10 rounded-full bg-[#FFF9F2] border border-amber-100 flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                      <Check size={16} className="text-primary group-hover:text-white" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-slate-900 mb-1">{item.title}</h4>
-                      <p className="text-xs text-slate-500 leading-relaxed font-medium">{item.desc}</p>
+                      <h4 className="text-sm font-black text-slate-900 mb-1">{item.title}</h4>
+                      <p className="text-xs text-slate-500 leading-relaxed font-medium font-sans">{item.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -709,7 +845,7 @@ export default function Home() {
             {/* Layered collage visual for Trust Section */}
             <Reveal delay={0.25} className="relative hidden lg:block">
               <div className="absolute inset-0 bg-gradient-to-tr from-amber-200/10 to-rose-200/10 rounded-[32px] transform rotate-3" />
-              <div className="relative z-10 rounded-[32px] overflow-hidden shadow-xl border-4 border-white aspect-[4/3]">
+              <div className="relative z-10 rounded-[32px] overflow-hidden shadow-2xl border-4 border-white aspect-[4/3]">
                 <img 
                   src="/wedding_hero.png" 
                   className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105" 
@@ -723,44 +859,78 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          SIMPLE & PREMIUM PRICING
+          SIMPLE & PREMIUM PRICING ( लग्नपत्रिका / Invitations )
       ═══════════════════════════════════════════════════ */}
-      <section className="w-full py-24 bg-[#FDFBF7]">
+      <section className="w-full py-24 bg-[#FCFAF7]">
         <div className="max-w-5xl mx-auto px-6">
-          <Reveal className="text-center mb-16">
-            <span className="text-[9px] font-black uppercase tracking-[0.25em] text-amber-500 bg-amber-500/[0.05] px-3.5 py-1.5 rounded-full border border-amber-300/20">सदस्यत्व शुल्क</span>
-            <h2 className="text-3xl md:text-4xl font-display font-black text-slate-900 mt-4 mb-4">Transparent Subscriptions</h2>
-            <p className="text-slate-500 text-sm">Find your life partner with transparent, fixed pricing plans.</p>
+          <Reveal className="text-center mb-20">
+            <span className="text-[9px] font-black uppercase tracking-[0.25em] text-amber-500 bg-amber-500/[0.05] px-4 py-2 rounded-full border border-amber-300/20">सदस्यत्व शुल्क</span>
+            <h2 className="text-3xl md:text-5xl font-serif font-black text-slate-900 mt-5 mb-4 leading-tight">Transparent Subscriptions</h2>
+            <p className="text-slate-500 text-sm max-w-sm mx-auto leading-relaxed">Find your life partner with transparent, fixed pricing plans.</p>
           </Reveal>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { name: 'Free', price: '0', period: 'Lifetime', amount: 0, cta: 'Register Free', bg: 'bg-white', border: 'border-amber-200/20', text: 'text-slate-900', features: ['Create Profile', 'Basic Search', 'Receive Interests'] },
-              { name: 'Silver', price: '2,000', period: '1 Year Validity', amount: 2000, cta: 'Choose Silver Plan', bg: 'bg-white shadow-[0_20px_40px_rgba(0,0,0,0.03)] scale-100 md:scale-105 z-10 border-primary/20', border: 'border-primary/20', text: 'text-slate-900', features: ['Send 5 Interests/day', 'View Contact Info', 'Full Photo Gallery', 'Advanced Filters'] },
-              { name: 'Gold', price: '5,000', period: '1 Year Validity', amount: 5000, cta: 'Choose Gold Plan', bg: 'bg-slate-900 shadow-xl', border: 'border-slate-800', text: 'text-white', features: ['Unlimited Interests', 'Priority Listing', 'Verified Badge', 'Personal Assistance'] }
+              { 
+                name: 'Free', 
+                price: '0', 
+                period: 'Lifetime', 
+                amount: 0, 
+                cta: 'Register Free', 
+                bg: 'bg-white border-amber-200/30', 
+                textClass: 'text-slate-900', 
+                subText: 'text-slate-500',
+                tag: null, 
+                features: ['Create Profile', 'Basic Search', 'Receive Interests'] 
+              },
+              { 
+                name: 'Silver', 
+                price: '2,000', 
+                period: '1 Year Validity', 
+                amount: 2000, 
+                cta: 'Choose Silver Plan', 
+                bg: 'bg-gradient-to-b from-[#FFFDF9] to-white border-primary/20 shadow-[0_24px_50px_rgba(184,0,53,0.04)] md:scale-105 z-10', 
+                textClass: 'text-slate-900', 
+                subText: 'text-slate-500',
+                tag: 'Most Popular', 
+                features: ['Send 5 Interests/day', 'View Contact Info', 'Full Photo Gallery', 'Advanced Filters'] 
+              },
+              { 
+                name: 'Gold', 
+                price: '5,000', 
+                period: '1 Year Validity', 
+                amount: 5000, 
+                cta: 'Choose Gold Plan', 
+                bg: 'bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border-amber-400/20 shadow-2xl', 
+                textClass: 'text-white', 
+                subText: 'text-slate-400',
+                tag: 'Royal Choice', 
+                features: ['Unlimited Interests', 'Priority Listing', 'Verified Badge', 'Personal Assistance'] 
+              }
             ].map((plan, i) => (
               <Reveal key={i} delay={i * 0.12}>
-                <div className={`rounded-3xl p-8 border ${plan.bg} ${plan.border} flex flex-col h-full transition-all duration-300 hover:shadow-lg relative overflow-hidden`}>
-                  {plan.name === 'Silver' && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md">
-                      Most Popular
+                <div className={`rounded-[32px] p-8 border ${plan.bg} flex flex-col h-full transition-all duration-300 hover:shadow-2xl relative overflow-hidden group`}>
+                  
+                  {plan.tag && (
+                    <span className={`absolute top-4 right-4 text-[9px] font-black uppercase tracking-[0.15em] px-3.5 py-1.5 rounded-full shadow-sm ${plan.name === 'Gold' ? 'bg-amber-400 text-slate-900' : 'bg-primary text-white'}`}>
+                      {plan.tag}
                     </span>
                   )}
                   
-                  <h3 className={`text-xl font-extrabold mb-3 ${plan.text}`}>{plan.name} Plan</h3>
-                  <div className={`flex items-baseline gap-1.5 mb-2 ${plan.text}`}>
-                    <span className="text-lg font-bold">₹</span>
-                    <span className="text-4xl font-serif font-black">{plan.price}</span>
+                  <h3 className={`text-xl font-black mb-3 ${plan.textClass}`}>{plan.name} Plan</h3>
+                  <div className={`flex items-baseline gap-1.5 mb-2.5 ${plan.textClass}`}>
+                    <span className="text-lg font-extrabold text-amber-500">₹</span>
+                    <span className={`text-4xl font-serif font-black ${plan.name === 'Gold' ? 'text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-300' : 'text-slate-900'}`}>{plan.price}</span>
                   </div>
-                  <p className={`text-xs font-semibold mb-8 ${plan.name === 'Gold' ? 'text-slate-400' : 'text-slate-500'}`}>{plan.period}</p>
+                  <p className={`text-xs font-bold mb-8 uppercase tracking-widest ${plan.subText}`}>{plan.period}</p>
 
                   <ul className="space-y-4 mb-10 flex-1">
                     {plan.features.map((f, j) => (
                       <li key={j} className="flex items-center gap-3">
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.name === 'Gold' ? 'bg-primary/20 text-primary' : 'bg-emerald-50 text-emerald-600'}`}>
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.name === 'Gold' ? 'bg-amber-400/20 text-amber-400' : 'bg-emerald-50 text-emerald-600'}`}>
                           <Check size={12} strokeWidth={3} />
                         </div>
-                        <span className={`text-sm ${plan.name === 'Gold' ? 'text-slate-300' : 'text-slate-600'} font-medium`}>{f}</span>
+                        <span className={`text-sm font-medium ${plan.name === 'Gold' ? 'text-slate-300' : 'text-slate-600'}`}>{f}</span>
                       </li>
                     ))}
                   </ul>
@@ -768,14 +938,14 @@ export default function Home() {
                   {plan.amount > 0 ? (
                     <button 
                       onClick={() => { setSelectedPlan({ type: plan.name as 'SILVER'|'GOLD', price: plan.amount }); setIsPaymentModalOpen(true); }} 
-                      className={`w-full py-4 rounded-xl font-bold text-sm tracking-wider transition-all ${plan.name === 'Gold' ? 'bg-white text-slate-900 hover:bg-slate-100' : 'bg-primary text-white hover:bg-rose-700 shadow-md shadow-primary/20'}`}
+                      className={`w-full py-4 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-300 ${plan.name === 'Gold' ? 'bg-gradient-to-r from-amber-400 to-amber-300 text-slate-950 hover:opacity-90 shadow-lg shadow-amber-500/10' : 'bg-primary text-white hover:bg-rose-700 shadow-md shadow-primary/20'}`}
                     >
                       {plan.cta}
                     </button>
                   ) : (
                     <Link 
                       to="/register" 
-                      className="block w-full py-4 text-center rounded-xl font-bold text-sm tracking-wider bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all font-medium"
+                      className="block w-full py-4 text-center rounded-xl font-black text-xs uppercase tracking-[0.2em] bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all"
                     >
                       {plan.cta}
                     </Link>
@@ -788,15 +958,16 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          FINAL CTA - High-end Invitation
+          FINAL CTA - High-end Invitation scroll
       ═══════════════════════════════════════════════════ */}
-      <section className="w-full py-28 bg-white text-center border-t border-amber-100/30">
-        <Reveal className="max-w-3xl mx-auto px-6">
+      <section className="w-full py-32 bg-white text-center border-t border-amber-200/10 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-tr from-amber-400/[0.02] to-transparent rounded-full blur-[100px] pointer-events-none" />
+        <Reveal className="max-w-3xl mx-auto px-6 relative z-10">
           <h2 className="text-3xl md:text-5xl font-serif font-black text-slate-900 leading-tight mb-6">
-            Ready to find your <span className="text-primary font-serif italic font-normal">perfect match?</span>
+            Ready to find your <span className="text-primary font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-600">perfect match?</span>
           </h2>
           <p className="text-slate-500 text-sm max-w-sm mx-auto leading-relaxed mb-10 font-medium">Create your secure profile in under 2 minutes and initiate your matrimonial search.</p>
-          <Link to="/register" className="h-14 px-10 inline-flex items-center justify-center bg-primary hover:bg-rose-700 text-white rounded-2xl font-bold text-sm tracking-wider transition-all shadow-[0_20px_40px_rgba(184,0,53,0.18)] hover:-translate-y-1">
+          <Link to="/register" className="h-14 px-10 inline-flex items-center justify-center bg-gradient-to-r from-primary to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-[0_20px_40px_rgba(184,0,53,0.18)] hover:-translate-y-1 active:scale-95">
             Create Profile Free
           </Link>
         </Reveal>
