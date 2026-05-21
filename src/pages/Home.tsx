@@ -361,22 +361,38 @@ export default function Home() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-8">
           
-          {/* Left Column: Brand, Slogan & Headings */}
+          {/* Left Column: Brand & Slogan */}
           <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left pt-6">
             
-            {/* Elegant Website Logo with subtle animations (Bigger, Zoom effects) */}
+            {/* Elegant Website Logo & Ganesha Blessing Row (Bigger, Zoom effects) */}
             <motion.div 
               initial={{ opacity: 0, y: -12 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
-              className="mb-8 relative"
+              className="mb-8 flex flex-col sm:flex-row items-center gap-4 md:gap-6 relative"
             >
-              <div className="w-64 md:w-80 h-24 flex items-center justify-center lg:justify-start relative group">
+              <div className="w-72 md:w-96 h-28 flex items-center justify-center lg:justify-start relative group">
                 <img 
                   src="/logo.png" 
                   alt="Vivahvedh Logo" 
                   className="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105" 
                 />
+              </div>
+              
+              {/* Premium Ganesha Photo/Emblem Beside Logo */}
+              <div className="flex items-center gap-3">
+                <div className="w-1.5 h-12 bg-gradient-to-b from-amber-300 via-rose-500 to-amber-300 rounded-full opacity-60 hidden sm:block" />
+                <motion.div 
+                  animate={{ y: [0, -4, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="w-20 h-20 md:w-24 md:h-24 rounded-2xl p-1 bg-white shadow-[0_10px_30px_rgba(245,158,11,0.15)] border border-amber-200/50 flex items-center justify-center overflow-hidden"
+                >
+                  <img 
+                    src="/ganesha_emblem.png" 
+                    alt="Ganesha Blessing" 
+                    className="w-full h-full object-cover rounded-xl"
+                  />
+                </motion.div>
               </div>
             </motion.div>
 
@@ -392,31 +408,13 @@ export default function Home() {
               </div>
             </motion.div>
 
-            {/* Editorial Headline with robust line height to prevent Devanagari cropping */}
-            <motion.h1 
-              initial={{ opacity: 0, y: 18 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ delay: 0.3, duration: 0.8 }} 
-              className="text-4xl md:text-5xl lg:text-[52px] font-display font-black leading-[1.3] text-slate-900 mb-6 tracking-tight max-w-xl mx-auto lg:mx-0 py-1"
-            >
-              मराठी परंपरांचा आदर,<br/>
-              <span className="font-serif italic font-normal text-primary relative inline-block">
-                उत्कृष्ट
-                <svg className="absolute left-0 -bottom-1 w-full h-[6px] text-amber-400" viewBox="0 0 100 10" preserveAspectRatio="none">
-                  <path d="M0,5 Q50,9 100,5" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-                </svg>
-              </span> जोडीदाराचा शोध.
-            </motion.h1>
-
-            {/* Sub-description */}
-            <motion.p 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              transition={{ delay: 0.4 }} 
-              className="text-slate-600 text-sm md:text-[15px] max-w-md mx-auto lg:mx-0 leading-relaxed mb-10 font-medium font-sans"
-            >
-              Welcome to the elite matrimony circle for Marathi families. Discover handcrafted profiles, secure photo controls, and verified listings honoring traditional family values.
-            </motion.p>
+            {/* Simple Elegant Divider Line (Replacing Headings and Description text) */}
+            <motion.div 
+              initial={{ opacity: 0, scaleX: 0 }} 
+              animate={{ opacity: 1, scaleX: 1 }} 
+              transition={{ delay: 0.3, duration: 1.2 }}
+              className="w-48 sm:w-64 h-[1.5px] bg-gradient-to-r from-amber-400 via-rose-500 to-amber-400 my-8 origin-left"
+            />
             
             {/* Premium CTA Buttons */}
             <motion.div 
@@ -471,22 +469,6 @@ export default function Home() {
                 </motion.div>
               </div>
             </div>
-
-            {/* Luxury Glassmorphic Shield Medallion */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8, x: -20 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              transition={{ delay: 1.2, duration: 0.8 }}
-              className="absolute top-28 -left-6 bg-white/70 backdrop-blur-2xl rounded-3xl p-5 shadow-[0_24px_50px_rgba(0,0,0,0.06)] border border-white/80 flex items-center gap-4.5 z-20"
-            >
-              <div className="w-12 h-12 bg-gradient-to-br from-amber-100 to-amber-200 rounded-2xl flex items-center justify-center text-amber-700 shadow-[inset_0_2px_4px_rgba(255,255,255,0.6)]">
-                <ShieldCheck size={26} className="animate-pulse" />
-              </div>
-              <div>
-                <p className="text-[10px] font-black text-amber-600 uppercase tracking-[0.2em] mb-0.5 leading-none">100% Verified</p>
-                <p className="text-sm font-black text-slate-800 tracking-tight mt-1">Elite Marathi Families</p>
-              </div>
-            </motion.div>
           </motion.div>
 
         </div>
