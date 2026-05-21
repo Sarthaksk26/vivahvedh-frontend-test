@@ -6,7 +6,7 @@ import { authStorage } from '../../lib/authStorage';
 
 describe('ProtectedRoute', () => {
   afterEach(() => {
-    authStorage.clearToken();
+    authStorage.clearSession();
     authStorage.setForcePasswordChange(false);
   });
 
@@ -26,7 +26,7 @@ describe('ProtectedRoute', () => {
   });
 
   it('renders protected content for authenticated users', () => {
-    authStorage.setToken('header.eyJyb2xlIjoiVVNFUiJ9.signature');
+    authStorage.setUser({ id: '1', email: 'test@example.com', role: 'USER', registrationStatus: 'COMPLETED', accountStatus: 'ACTIVE' });
     render(
       <MemoryRouter initialEntries={['/dashboard']}>
         <Routes>

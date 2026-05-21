@@ -93,104 +93,7 @@ const GarlandDivider = () => (
   </div>
 );
 
-// --- Lord Ganesha Elegant Auspicious Gold SVG Medallion ---
-const GaneshaIcon = () => (
-  <svg 
-    viewBox="0 0 120 120" 
-    className="w-full h-full text-orange-600 drop-shadow-[0_2px_6px_rgba(212,175,55,0.2)]" 
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <defs>
-      <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#AA7C11" />
-        <stop offset="30%" stopColor="#D4AF37" />
-        <stop offset="50%" stopColor="#FFDF00" />
-        <stop offset="70%" stopColor="#D4AF37" />
-        <stop offset="100%" stopColor="#AA7C11" />
-      </linearGradient>
-      <linearGradient id="saffronGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#EF4444" />
-        <stop offset="50%" stopColor="#F97316" />
-        <stop offset="100%" stopColor="#F59E0B" />
-      </linearGradient>
-    </defs>
-    
-    {/* Concentric Halo Circles */}
-    <circle cx="60" cy="60" r="54" stroke="url(#goldGrad)" strokeWidth="0.75" strokeDasharray="3 3" fill="none" opacity="0.6" />
-    <circle cx="60" cy="60" r="50" stroke="url(#goldGrad)" strokeWidth="1.2" fill="none" opacity="0.8" />
-    
-    {/* Auspicious Ears */}
-    <path 
-      d="M36 52 C22 50, 14 70, 29 80 C32 82, 38 82, 40 74" 
-      fill="none" 
-      stroke="url(#goldGrad)" 
-      strokeWidth="2.5" 
-      strokeLinecap="round" 
-    />
-    <path 
-      d="M84 52 C98 50, 106 70, 91 80 C88 82, 82 82, 80 74" 
-      fill="none" 
-      stroke="url(#goldGrad)" 
-      strokeWidth="2.5" 
-      strokeLinecap="round" 
-    />
-    
-    {/* Elegant Crown (Mukut) */}
-    <path 
-      d="M50 32 L60 6 L70 32 Z" 
-      fill="none" 
-      stroke="url(#goldGrad)" 
-      strokeWidth="2.8" 
-      strokeLinejoin="round" 
-      strokeLinecap="round" 
-    />
-    <path 
-      d="M53 26 L60 12 L67 26" 
-      fill="none" 
-      stroke="url(#goldGrad)" 
-      strokeWidth="1.8" 
-      strokeLinecap="round" 
-    />
-    <circle cx="60" cy="4" r="1.5" fill="#D4AF37" />
 
-    {/* Head/Face Contour */}
-    <path 
-      d="M48 42 C48 28, 72 28, 72 42 C72 52, 48 52, 48 42 Z" 
-      fill="none" 
-      stroke="url(#goldGrad)" 
-      strokeWidth="2.5" 
-      strokeLinecap="round" 
-    />
-    
-    {/* Sacred Left-curving Trunk (Vamavarti) */}
-    <path 
-      d="M60 46 C60 66, 44 74, 44 84 C44 92, 55 95, 60 95 C69 95, 73 87, 68 81 C65 77, 58 77, 55 82" 
-      fill="none" 
-      stroke="url(#goldGrad)" 
-      strokeWidth="2.8" 
-      strokeLinecap="round" 
-    />
-    
-    {/* Single Tusk */}
-    <path 
-      d="M49 57 L43 59" 
-      fill="none" 
-      stroke="url(#goldGrad)" 
-      strokeWidth="1.8" 
-      strokeLinecap="round" 
-    />
-    
-    {/* Red Tilak of Auspiciousness */}
-    <path 
-      d="M57 28 L63 28 M60 28 L60 36" 
-      fill="none" 
-      stroke="url(#saffronGrad)" 
-      strokeWidth="3" 
-      strokeLinecap="round" 
-    />
-    <circle cx="60" cy="22" r="2" fill="url(#saffronGrad)" />
-  </svg>
-);
 
 // --- 3D Akshata Particle System with Depth of Field ---
 const AkshataAnimation = () => {
@@ -350,7 +253,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════
           CINEMATIC HERO SECTION (Luxury Editorial)
       ═══════════════════════════════════════════════════ */}
-      <section className="relative w-full pt-36 lg:pt-40 pb-44 flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#FFF9F2] via-[#FCFAF7] to-white border-b border-amber-200/10">
+      <section className="relative w-full pt-16 sm:pt-20 lg:pt-24 pb-14 lg:pb-16 flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#FFF9F2] via-[#FCFAF7] to-white border-b border-amber-200/10">
         
         {/* Soft abstract glowing mesh */}
         <div className="absolute top-0 right-0 w-[950px] h-[950px] bg-gradient-to-tr from-amber-400/[0.05] to-rose-400/[0.03] rounded-full blur-[140px] -translate-y-1/2 translate-x-1/3 pointer-events-none z-0 animate-pulse" />
@@ -359,19 +262,19 @@ export default function Home() {
         {/* 3D Akshata Particle System */}
         <AkshataAnimation />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-8">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-8">
           
           {/* Left Column: Brand & Slogan */}
-          <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left pt-6">
+          <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left pt-2">
             
             {/* Elegant Website Logo & Ganesha Blessing Row (Bigger, Zoom effects) */}
             <motion.div 
               initial={{ opacity: 0, y: -12 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
-              className="mb-8 flex flex-col sm:flex-row items-center gap-4 md:gap-6 relative"
+              className="mb-4 flex flex-row flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 relative"
             >
-              <div className="w-72 md:w-96 h-28 flex items-center justify-center lg:justify-start relative group">
+              <div className="w-[300px] sm:w-[380px] md:w-[480px] h-22 sm:h-26 md:h-30 flex items-center justify-center lg:justify-start relative group">
                 <img 
                   src="/logo.png" 
                   alt="Vivahvedh Logo" 
@@ -379,16 +282,16 @@ export default function Home() {
                 />
               </div>
               
-              {/* Premium Ganesha Photo/Emblem Beside Logo */}
+              {/* Premium Proper Ganesha Painting Beside Logo */}
               <div className="flex items-center gap-3">
                 <div className="w-1.5 h-12 bg-gradient-to-b from-amber-300 via-rose-500 to-amber-300 rounded-full opacity-60 hidden sm:block" />
                 <motion.div 
                   animate={{ y: [0, -4, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="w-20 h-20 md:w-24 md:h-24 rounded-2xl p-1 bg-white shadow-[0_10px_30px_rgba(245,158,11,0.15)] border border-amber-200/50 flex items-center justify-center overflow-hidden"
+                  className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl p-1 bg-white shadow-[0_10px_30px_rgba(245,158,11,0.15)] border-2 border-amber-300/80 flex items-center justify-center overflow-hidden"
                 >
                   <img 
-                    src="/ganesha_emblem.png" 
+                    src="/proper_ganesha.png" 
                     alt="Ganesha Blessing" 
                     className="w-full h-full object-cover rounded-xl"
                   />
@@ -402,7 +305,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.2 }}
             >
-              <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500/[0.03] via-rose-500/[0.03] to-amber-500/[0.03] border border-amber-500/15 text-amber-700 text-xs font-bold tracking-[0.2em] uppercase mb-8 shadow-[0_4px_12px_rgba(245,158,11,0.03)] backdrop-blur-sm">
+              <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500/[0.03] via-rose-500/[0.03] to-amber-500/[0.03] border border-amber-500/15 text-amber-700 text-xs font-bold tracking-[0.2em] uppercase mb-4 shadow-[0_4px_12px_rgba(245,158,11,0.03)] backdrop-blur-sm">
                 <Sparkles size={11} className="text-amber-500 animate-pulse" />
                 <span>॥ शोध नव्या नात्यांचा ॥</span>
               </div>
@@ -413,7 +316,7 @@ export default function Home() {
               initial={{ opacity: 0, scaleX: 0 }} 
               animate={{ opacity: 1, scaleX: 1 }} 
               transition={{ delay: 0.3, duration: 1.2 }}
-              className="w-48 sm:w-64 h-[1.5px] bg-gradient-to-r from-amber-400 via-rose-500 to-amber-400 my-8 origin-left"
+              className="w-48 sm:w-64 h-[1.5px] bg-gradient-to-r from-amber-400 via-rose-500 to-amber-400 my-4 lg:origin-left origin-center"
             />
             
             {/* Premium CTA Buttons */}
@@ -421,7 +324,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 15 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.5 }} 
-              className="flex flex-wrap gap-4 justify-center lg:justify-start"
+              className="flex flex-wrap gap-4 justify-center lg:justify-start mb-6 lg:mb-0"
             >
               <Link to="/register" className="h-14 px-10 bg-gradient-to-r from-primary to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center gap-3 transition-all duration-300 shadow-[0_20px_40px_-8px_rgba(184,0,53,0.3)] hover:shadow-[0_20px_40px_-4px_rgba(184,0,53,0.45)] hover:-translate-y-0.5 active:scale-95">
                 Register Free Profile <ArrowRight size={14} />
@@ -429,19 +332,19 @@ export default function Home() {
             </motion.div>
           </div>
 
-          {/* Right Column: Clean Couple Collage (No AI images) */}
+          {/* Right Column: Clean Couple Collage (Responsive for Mobile too) */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }} 
             animate={{ opacity: 1, scale: 1 }} 
             transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
-            className="flex-1 w-full max-w-lg hidden lg:block relative h-[560px]"
+            className="flex-1 w-full max-w-sm sm:max-w-md lg:max-w-lg relative mt-6 lg:mt-0 flex justify-center items-center"
           >
             {/* Abstract Glowing Luxury Backdrop Orbs */}
             <div className="absolute top-20 -right-20 w-80 h-80 bg-gradient-to-tr from-amber-200/40 to-rose-200/10 rounded-full blur-3xl opacity-60 z-0 animate-pulse" />
             <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-gradient-to-br from-rose-300/30 to-amber-300/10 rounded-full blur-3xl opacity-50 z-0" />
             
             {/* Elegant Ornamental Floral Leaf SVG Behind Frames */}
-            <div className="absolute -top-6 -right-6 w-32 h-32 opacity-25 pointer-events-none text-amber-400 z-0">
+            <div className="absolute -top-6 -right-6 w-32 h-32 opacity-25 pointer-events-none text-amber-400 z-0 hidden lg:block">
               <svg viewBox="0 0 100 100" fill="currentColor">
                 <path d="M30 80 C30 50, 50 30, 80 30 C50 30, 30 50, 30 80 Z" />
                 <path d="M10 90 C10 70, 30 50, 60 50 C30 50, 10 70, 10 90 Z" />
@@ -450,7 +353,7 @@ export default function Home() {
             </div>
 
             {/* Majestic Palace Arch Frame (Main Image - Keeping Couple photo) */}
-            <div className="absolute right-4 top-0 z-10 w-[84%] aspect-[3/4.2] rounded-t-[200px] rounded-b-[48px] p-2 bg-gradient-to-br from-amber-400/40 via-white to-rose-400/40 shadow-[0_32px_80px_rgba(184,0,53,0.12)]">
+            <div className="z-10 w-[84%] aspect-[3/4.2] rounded-t-[200px] rounded-b-[48px] p-2 bg-gradient-to-br from-amber-400/40 via-white to-rose-400/40 shadow-[0_32px_80px_rgba(184,0,53,0.12)]">
               <div className="w-full h-full rounded-t-[192px] rounded-b-[40px] overflow-hidden bg-slate-50 group border-2 border-white relative">
                 <img 
                   src="/happy_couple.png" 
@@ -463,9 +366,13 @@ export default function Home() {
                 <motion.div 
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute top-4 left-4 w-14 h-14 rounded-full p-1.5 bg-white shadow-xl border border-amber-200 z-30 flex items-center justify-center"
+                  className="absolute top-4 left-4 w-12 h-12 rounded-full p-1 bg-white shadow-xl border border-amber-200 z-30 flex items-center justify-center overflow-hidden"
                 >
-                  <GaneshaIcon />
+                  <img 
+                    src="/proper_ganesha.png" 
+                    alt="Ganesha Blessing" 
+                    className="w-full h-full object-cover rounded-full"
+                  />
                 </motion.div>
               </div>
             </div>
@@ -847,7 +754,7 @@ export default function Home() {
                 period: 'Lifetime', 
                 amount: 0, 
                 cta: 'Register Free', 
-                bg: 'bg-white border-amber-200/30', 
+                bg: 'bg-white border-amber-200/30 shadow-[0_12px_36px_rgba(0,0,0,0.02)]', 
                 textClass: 'text-slate-900', 
                 subText: 'text-slate-500',
                 tag: null, 
@@ -871,9 +778,9 @@ export default function Home() {
                 period: '1 Year Validity', 
                 amount: 5000, 
                 cta: 'Choose Gold Plan', 
-                bg: 'bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border-amber-400/20 shadow-2xl', 
-                textClass: 'text-white', 
-                subText: 'text-slate-400',
+                bg: 'bg-gradient-to-b from-[#FFFDF8] via-white to-[#FFF5E6] border-amber-400 shadow-[0_24px_60px_rgba(217,119,6,0.08)] md:scale-105 z-10 border-2', 
+                textClass: 'text-slate-900', 
+                subText: 'text-amber-800 font-bold',
                 tag: 'Royal Choice', 
                 features: ['Unlimited Interests', 'Priority Listing', 'Verified Badge', 'Personal Assistance'] 
               }
@@ -882,7 +789,7 @@ export default function Home() {
                 <div className={`rounded-[32px] p-8 border ${plan.bg} flex flex-col h-full transition-all duration-300 hover:shadow-2xl relative overflow-hidden group`}>
                   
                   {plan.tag && (
-                    <span className={`absolute top-4 right-4 text-[9px] font-black uppercase tracking-[0.15em] px-3.5 py-1.5 rounded-full shadow-sm ${plan.name === 'Gold' ? 'bg-amber-400 text-slate-900' : 'bg-primary text-white'}`}>
+                    <span className={`absolute top-4 right-4 text-[9px] font-black uppercase tracking-[0.15em] px-3.5 py-1.5 rounded-full shadow-sm ${plan.name === 'Gold' ? 'bg-amber-400 text-slate-900 font-black' : 'bg-primary text-white'}`}>
                       {plan.tag}
                     </span>
                   )}
@@ -890,17 +797,17 @@ export default function Home() {
                   <h3 className={`text-xl font-black mb-3 ${plan.textClass} leading-snug`}>{plan.name} Plan</h3>
                   <div className={`flex items-baseline gap-1.5 mb-2.5 ${plan.textClass}`}>
                     <span className="text-lg font-extrabold text-amber-500">₹</span>
-                    <span className={`text-4xl font-serif font-black ${plan.name === 'Gold' ? 'text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-300' : 'text-slate-900'}`}>{plan.price}</span>
+                    <span className={`text-4xl font-serif font-black ${plan.name === 'Gold' ? 'text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-amber-800' : 'text-slate-900'}`}>{plan.price}</span>
                   </div>
                   <p className={`text-xs font-bold mb-8 uppercase tracking-widest ${plan.subText}`}>{plan.period}</p>
 
                   <ul className="space-y-4 mb-10 flex-1">
                     {plan.features.map((f, j) => (
                       <li key={j} className="flex items-center gap-3">
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.name === 'Gold' ? 'bg-amber-400/20 text-amber-400' : 'bg-emerald-50 text-emerald-600'}`}>
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.name === 'Gold' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-50 text-emerald-600'}`}>
                           <Check size={12} strokeWidth={3} />
                         </div>
-                        <span className={`text-sm font-medium ${plan.name === 'Gold' ? 'text-slate-300' : 'text-slate-600'}`}>{f}</span>
+                        <span className={`text-sm font-medium ${plan.name === 'Gold' ? 'text-slate-800' : 'text-slate-600'}`}>{f}</span>
                       </li>
                     ))}
                   </ul>
@@ -908,7 +815,7 @@ export default function Home() {
                   {plan.amount > 0 ? (
                     <button 
                       onClick={() => { setSelectedPlan({ type: plan.name as 'SILVER'|'GOLD', price: plan.amount }); setIsPaymentModalOpen(true); }} 
-                      className={`w-full py-4 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-300 ${plan.name === 'Gold' ? 'bg-gradient-to-r from-amber-400 to-amber-300 text-slate-950 hover:opacity-90 shadow-lg shadow-amber-500/10' : 'bg-primary text-white hover:bg-rose-700 shadow-md shadow-primary/20'}`}
+                      className={`w-full py-4 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-300 ${plan.name === 'Gold' ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 hover:opacity-90 shadow-lg shadow-amber-500/20' : 'bg-primary text-white hover:bg-rose-700 shadow-md shadow-primary/20'}`}
                     >
                       {plan.cta}
                     </button>
