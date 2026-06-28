@@ -24,7 +24,7 @@ const registerSchema = z.object({
     return age >= 18;
   }, { message: 'You must be at least 18 years old.' }),
   profileCreatedBy: z.enum(['Self', 'Father', 'Mother', 'Sibling', 'Relative', 'Friend', 'Marriage Bureau']).optional(),
-  password: z.string().min(6, "Password must be 6+ characters"),
+  password: z.string().min(8, "Password must be 8+ characters"),
   confirmPassword: z.string().min(1, "Please confirm your password"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",

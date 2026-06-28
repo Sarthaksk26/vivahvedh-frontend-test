@@ -1,7 +1,11 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { authStorage } from '../../lib/authStorage';
 
-export default function ProtectedRoute() {
+interface ProtectedRouteProps {
+  adminOnly?: boolean;
+}
+
+export default function ProtectedRoute({ adminOnly = false }: ProtectedRouteProps) {
   const isAuth = authStorage.isAuthenticated();
   const location = useLocation();
   
@@ -15,9 +19,15 @@ export default function ProtectedRoute() {
     return <Navigate to="/dashboard" replace />;
   }
 
-  // Redirect admin away from user dashboard
   const user = authStorage.getUser();
-  if (user?.role === 'ADMIN' && location.pathname === '/dashboard') {
+
+  // Redirect non-admin users trying to access admin routes
+  if (adminOnly && user?.role !== 'ADMIN') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  // Redirect admin away from user dashboard
+  if (!adminOnly && user?.role === 'ADMIN' && location.pathname === '/dashboard') {
     return <Navigate to="/admin" replace />;
   }
 

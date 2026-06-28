@@ -79,6 +79,10 @@ function App() {
                 {/* Private Logged-In Routes */}
                 <Route element={<ProtectedRoute />}>
                   <Route path="/dashboard" element={<Dashboard />} />
+                </Route>
+
+                {/* Admin Routes */}
+                <Route element={<ProtectedRoute adminOnly />}>
                   <Route path="/admin" element={<AdminPanel />} />
                 </Route>
 
@@ -88,7 +92,7 @@ function App() {
             </Routes>
           </Suspense>
         </BrowserRouter>
-        <ReactQueryDevtools initialIsOpen={false} />
+        {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
       </QueryClientProvider>
     </ErrorBoundary>
   );
