@@ -47,7 +47,9 @@ export default function Register() {
 
   const onSubmit = async (data: RegisterForm) => {
     try {
-      const response = await apiClient.post('/auth/register', data);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { confirmPassword: _confirmPassword, ...payload } = data;
+      const response = await apiClient.post('/auth/register', payload);
       toast.success(() => (
         <span className="flex flex-col">
           <b className="text-sm">🎉 नोंदणी यशस्वी!</b>
