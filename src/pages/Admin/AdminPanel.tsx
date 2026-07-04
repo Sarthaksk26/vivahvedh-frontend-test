@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import apiClient from '../../lib/apiClient';
 import { Mail, X as CloseIcon, TrendingUp } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { formatApiError } from '../../lib/errorUtils';
 import type { AdminTab, AdminUser, Enquiry, PaymentRecord, AdminNotifications } from './adminTypes';
 
 // Extracted Components
@@ -19,14 +20,40 @@ import { FilterBar } from './components/FilterBar';
 import { AdminProfilePreviewModal } from './components/AdminProfilePreviewModal';
 import { AdminUserEditModal } from './components/AdminUserEditModal';
 
+interface Story {
+  id: string;
+  groomName: string;
+  brideName: string;
+  message: string;
+  photoUrl?: string;
+}
+
+interface BirthdayUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  regId: string;
+  birthDate: string;
+  daysUntil: number;
+}
+
+interface ConnectionLog {
+  id: string;
+  sender: AdminUser;
+  receiver: AdminUser;
+  status: string;
+  createdAt: string;
+}
+
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<AdminTab>('pending');
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [pagination, setPagination] = useState({ total: 0, page: 1, totalPages: 1 });
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
-  const [stories, setStories] = useState<any[]>([]);
+  const [stories, setStories] = useState<Story[]>([]);
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
-  const [birthdays, setBirthdays] = useState<any[]>([]);
-  const [connections, setConnections] = useState<any[]>([]);
+  const [birthdays, setBirthdays] = useState<BirthdayUser[]>([]);
+  const [connections, setConnections] = useState<ConnectionLog[]>([]);
   const [profitData, setProfitData] = useState<Record<string, any> | null>(null);
   const [notifications, setNotifications] = useState<AdminNotifications | null>(null);
   const [stats, setStats] = useState<Record<string, number> | null>(null);
@@ -35,7 +62,7 @@ export default function AdminPanel() {
   // Filters
   const [paymentFilter, setPaymentFilter] = useState('PENDING');
   const [connectionFilter, setConnectionFilter] = useState('ALL');
-  const [allUsersFilters, setAllUsersFilters] = useState({ q: '', gender: '', ageMin: '', ageMax: '', accountStatus: '' });
+  const [allUsersFilters, setAllUsersFilters] = useState({ q: '', gender: '', ageMin: '', ageMax: '', accountStatus: '', page: 1 });
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Enquiry Reply State
@@ -62,7 +89,7 @@ export default function AdminPanel() {
     try {
       const response = await apiClient.get('/admin/stats');
       setStats(response.data);
-    } catch (e) { console.error("Stats Fetch Error", e); }
+    } catch (e: unknown) { console.error("Stats Fetch Error", e); }
   }, []);
 
   const fetchData = useCallback(async () => {
@@ -97,23 +124,29 @@ export default function AdminPanel() {
         if (allUsersFilters.ageMin) params.append('ageMin', allUsersFilters.ageMin);
         if (allUsersFilters.ageMax) params.append('ageMax', allUsersFilters.ageMax);
         if (allUsersFilters.accountStatus) params.append('accountStatus', allUsersFilters.accountStatus);
+        params.append('page', allUsersFilters.page.toString());
         const response = await apiClient.get(`/admin/all-users?${params.toString()}`);
-        setUsers(response.data);
+        setUsers(response.data.users);
+        setPagination(response.data.pagination);
       }
-    } catch (error: any) {
-      if (error.response?.status === 403) toast.error("ACCESS DENIED");
+    } catch (error: unknown) {
+      if ((error as { response?: { status?: number } })?.response?.status === 403) toast.error("ACCESS DENIED");
       console.error(error);
     } finally {
       setLoading(false);
     }
   }, [activeTab, paymentFilter, connectionFilter, allUsersFilters]);
 
+  const handleAllUsersFiltersChange = useCallback((filters: typeof allUsersFilters) => {
+    setAllUsersFilters({ ...filters, page: 1 });
+  }, []);
+
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
         const res = await apiClient.get('/admin/notifications');
         setNotifications(res.data);
-      } catch (e) { console.error(e); }
+      } catch (e: unknown) { console.error(e); }
     };
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 60000);
@@ -146,8 +179,8 @@ export default function AdminPanel() {
       setEnquiries(prev => prev.map(e => e.id === replyModal.enquiryId ? { ...e, isResolved: true } : e));
       setReplyModal({ isOpen: false, enquiryId: null, email: '', message: '' });
       setReplyText('');
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || "Failed to send reply.");
+    } catch (error: unknown) {
+      toast.error(formatApiError(error, "Failed to send reply."));
     } finally {
       setReplying(false);
     }
@@ -159,7 +192,7 @@ export default function AdminPanel() {
     try {
       await apiClient.patch('/admin/enquiries/resolve', { enquiryId, isResolved });
       toast.success(isResolved ? "Marked as resolved" : "Marked as unresolved");
-    } catch (error) {
+    } catch (error: unknown) {
       // Revert on failure
       setEnquiries(prev => prev.map(e => e.id === enquiryId ? { ...e, isResolved: !isResolved } : e));
       console.error(error);
@@ -174,10 +207,10 @@ export default function AdminPanel() {
       await apiClient.patch(`/payments/admin/verify/${paymentId}`, { status });
       toast.success(`Payment ${status.toLowerCase()} successfully.`);
       fetchStats();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Revert on failure
       setPayments(prev => prev.map(p => p.id === paymentId ? { ...p, status: 'PENDING' } : p));
-      toast.error(error.response?.data?.error || "Failed to verify payment.");
+      toast.error(formatApiError(error, "Failed to verify payment."));
     }
   };
 
@@ -194,7 +227,7 @@ export default function AdminPanel() {
             setConfirmModal(prev => ({ ...prev, isOpen: false }));
             fetchData();
             fetchStats();
-          } catch (e: any) { toast.error(e.response?.data?.error || "Delete failed"); }
+          } catch (e: unknown) { toast.error(formatApiError(e, "Delete failed")); }
         }
       });
       return;
@@ -212,8 +245,8 @@ export default function AdminPanel() {
             setConfirmModal(prev => ({ ...prev, isOpen: false }));
             fetchData();
             fetchStats();
-          } catch (e: any) {
-            toast.error(e.response?.data?.error || 'Approval failed');
+          } catch (e: unknown) {
+            toast.error(formatApiError(e, 'Approval failed'));
           }
         }
       });
@@ -226,8 +259,8 @@ export default function AdminPanel() {
       toast.success(`Action "${action}" completed successfully.`);
       fetchData();
       fetchStats();
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || `Failed to ${action} user.`);
+    } catch (error: unknown) {
+      toast.error(formatApiError(error, `Failed to ${action} user.`));
     }
   }, [fetchData, fetchStats]);
 
@@ -240,7 +273,7 @@ export default function AdminPanel() {
       toast.success(`Plan updated to ${planType} (12 months)`);
       fetchData();
       fetchStats();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
       toast.error("Failed to update plan");
     }
@@ -263,8 +296,8 @@ export default function AdminPanel() {
         email: offlineForm.email
       });
       setOfflineForm({ firstName: '', lastName: '', mobile: '', email: '', gender: '', maritalStatus: '', profileCreatedBy: 'Marriage Bureau' });
-    } catch (error: any) {
-      const msg = error.response?.data?.error;
+    } catch (error: unknown) {
+      const msg = (error as { response?: { data?: { error?: unknown } } })?.response?.data?.error;
       setOfflineError(typeof msg === 'string' ? msg : 'Failed to create user. Please check all fields.');
     } finally {
       setOfflineSubmitting(false);
@@ -290,7 +323,7 @@ export default function AdminPanel() {
                 try {
                   await apiClient.post('/admin/test-email', { email });
                   toast.success('Test email sent!');
-                } catch (err: any) { toast.error('Email test failed'); }
+                } catch (err: unknown) { toast.error('Email test failed'); }
               }}
               className="px-4 py-2 text-xs font-bold border border-black/10 rounded-xl hover:bg-muted transition text-foreground/60"
             >
@@ -407,15 +440,36 @@ export default function AdminPanel() {
                     )}
                     {(activeTab === 'pending' || activeTab === 'all') && (
                       <>
-                        {activeTab === 'all' && <FilterBar filters={allUsersFilters} setFilters={setAllUsersFilters} />}
-                        <UserTable 
-                          users={users} 
-                          loading={loading} 
-                          handleAction={handleAction} 
-                          handleSetPlan={handleSetPlan} 
+                        {activeTab === 'all' && <FilterBar filters={allUsersFilters} setFilters={handleAllUsersFiltersChange} />}
+                        <UserTable
+                          users={users}
+                          loading={loading}
+                          handleAction={handleAction}
+                          handleSetPlan={handleSetPlan}
                           setEditModal={setEditModal}
                           onView={(u) => setPreviewUser(u)}
                         />
+                        {activeTab === 'all' && pagination.totalPages > 1 && (
+                          <div className="flex items-center justify-center gap-6 px-10 py-6 border-t border-black/5">
+                            <button
+                              onClick={() => setAllUsersFilters(prev => ({ ...prev, page: prev.page - 1 }))}
+                              disabled={allUsersFilters.page <= 1}
+                              className="px-6 h-10 rounded-xl border border-black/10 text-xs font-black uppercase tracking-widest text-foreground/60 hover:bg-black/5 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                            >
+                              Previous
+                            </button>
+                            <span className="text-xs font-bold text-foreground/40 tracking-wider">
+                              Page {pagination.page} of {pagination.totalPages}
+                            </span>
+                            <button
+                              onClick={() => setAllUsersFilters(prev => ({ ...prev, page: prev.page + 1 }))}
+                              disabled={allUsersFilters.page >= pagination.totalPages}
+                              className="px-6 h-10 rounded-xl border border-black/10 text-xs font-black uppercase tracking-widest text-foreground/60 hover:bg-black/5 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                            >
+                              Next
+                            </button>
+                          </div>
+                        )}
                       </>
                     )}
                   </>

@@ -97,14 +97,15 @@ const GarlandDivider = () => (
 
 // --- 3D Akshata Particle System with Depth of Field ---
 const AkshataAnimation = () => {
-  const [grains, setGrains] = useState<{ 
-    id: number, 
-    x: number, 
-    delay: number, 
-    duration: number, 
-    scale: number, 
-    color: string, 
+  const [grains, setGrains] = useState<{
+    id: number,
+    x: number,
+    delay: number,
+    duration: number,
+    scale: number,
+    color: string,
     rotation: number,
+    dir: number,
     blur: string,
     wind: number
   }[]>([]);
@@ -112,14 +113,14 @@ const AkshataAnimation = () => {
   useEffect(() => {
     // Haldi (saffron/gold), Kumkum (deep crimson/rose), and raw sacred rice (silver-white)
     const colors = [
-      'bg-gradient-to-b from-amber-300 to-amber-500 shadow-[0_2px_8px_rgba(245,158,11,0.4)] border border-amber-200/30', 
-      'bg-gradient-to-b from-rose-500 to-rose-700 shadow-[0_2px_8px_rgba(190,18,60,0.4)] border border-rose-400/20',   
-      'bg-gradient-to-b from-slate-50 to-white shadow-[0_2px_6px_rgba(0,0,0,0.05)] border border-slate-100/50'       
+      'bg-gradient-to-b from-amber-300 to-amber-500 shadow-[0_2px_8px_rgba(245,158,11,0.4)] border border-amber-200/30',
+      'bg-gradient-to-b from-rose-500 to-rose-700 shadow-[0_2px_8px_rgba(190,18,60,0.4)] border border-rose-400/20',
+      'bg-gradient-to-b from-slate-50 to-white shadow-[0_2px_6px_rgba(0,0,0,0.05)] border border-slate-100/50'
     ];
-    
+
     const newGrains = Array.from({ length: 70 }).map((_, i) => {
       const sizeRandom = Math.random();
-      let scale = 0.5 + Math.random() * 0.6; 
+      let scale = 0.5 + Math.random() * 0.6;
       let blur = 'blur-none';
       
       if (sizeRandom > 0.8) {
@@ -140,10 +141,12 @@ const AkshataAnimation = () => {
         scale: scale,
         color: colors[Math.floor(Math.random() * colors.length)],
         rotation: Math.random() * 360,
+        dir: Math.random() > 0.5 ? 1 : -1,
         blur: blur,
         wind: 15 + Math.random() * 25 
       };
     });
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     setGrains(newGrains);
   }, []);
 
@@ -162,7 +165,7 @@ const AkshataAnimation = () => {
           animate={{ 
             y: ['0vh', '110vh'], 
             x: [0, grain.wind, grain.wind * 1.5], 
-            rotate: grain.rotation + (Math.random() > 0.5 ? 720 : -720),
+            rotate: grain.rotation + grain.dir * 720,
             opacity: [0, 0.9, 0.9, 0]
           }}
           transition={{

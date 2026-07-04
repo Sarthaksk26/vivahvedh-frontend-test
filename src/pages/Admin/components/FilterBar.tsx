@@ -6,6 +6,7 @@ interface FilterState {
   ageMin: string;
   ageMax: string;
   accountStatus: string;
+  page: number;
 }
 
 interface FilterBarProps {

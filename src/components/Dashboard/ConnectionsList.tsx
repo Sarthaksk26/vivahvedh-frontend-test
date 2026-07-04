@@ -3,10 +3,36 @@ import { Link } from 'react-router-dom';
 import apiClient from '../../lib/apiClient';
 import { resolveImageUrl } from '../../lib/url';
 import toast from 'react-hot-toast';
+import { formatApiError } from '../../lib/errorUtils';
+
+interface ConnectionRequest {
+  id: string;
+  status: string;
+  sender: {
+    id: string;
+    regId: string;
+    mobile?: string;
+    images?: { url: string }[];
+    profile?: {
+      firstName?: string;
+      lastName?: string;
+    };
+  };
+  receiver: {
+    id: string;
+    regId: string;
+    mobile?: string;
+    images?: { url: string }[];
+    profile?: {
+      firstName?: string;
+      lastName?: string;
+    };
+  };
+}
 
 export default function ConnectionsList() {
-  const [incoming, setIncoming] = useState<any[]>([]);
-  const [outgoing, setOutgoing] = useState<any[]>([]);
+  const [incoming, setIncoming] = useState<ConnectionRequest[]>([]);
+  const [outgoing, setOutgoing] = useState<ConnectionRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchConnections = async () => {
@@ -15,7 +41,7 @@ export default function ConnectionsList() {
       const { data } = await apiClient.get('/connections/my-connections');
       setIncoming(data.incoming);
       setOutgoing(data.outgoing);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Failed to load connections", error);
     } finally {
       setLoading(false);
@@ -36,7 +62,7 @@ export default function ConnectionsList() {
         toast.success('Match Request Rejected.');
       }
       fetchConnections();
-    } catch (error) {
+    } catch (error: unknown) {
       toast.error(`Failed to ${action} request.`);
     }
   };
@@ -133,8 +159,8 @@ export default function ConnectionsList() {
                           await apiClient.post('/connections/withdraw', { requestId: req.id });
                           toast.success('Proposal withdrawn.');
                           fetchConnections();
-                        } catch (err: any) {
-                          toast.error(err.response?.data?.error || 'Failed to withdraw.');
+                        } catch (err: unknown) {
+                          toast.error(formatApiError(err, 'Failed to withdraw.'));
                         }
                       }}
                       className="px-4 py-2 border border-amber-200 text-amber-600 rounded-md text-sm font-bold hover:bg-amber-50 transition"
