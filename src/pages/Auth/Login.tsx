@@ -128,6 +128,12 @@ export default function Login() {
                 </button>
               </div>
               {errors.password && <p className="text-red-500 text-xs font-medium">{errors.password.message}</p>}
+              
+              <div className="flex justify-end mt-1">
+                <Link to="/forgot-password" className="text-xs font-bold text-primary hover:underline">
+                  Forgot Password?
+                </Link>
+              </div>
             </div>
 
             <button

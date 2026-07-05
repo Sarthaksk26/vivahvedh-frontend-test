@@ -11,6 +11,8 @@ import ErrorBoundary from './components/ErrorBoundary';
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Auth/Login'));
 const Register = lazy(() => import('./pages/Auth/Register'));
+const ForgotPassword = lazy(() => import('./pages/Auth/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/Auth/ResetPassword'));
 const Dashboard = lazy(() => import('./pages/Dashboard/Dashboard'));
 const Search = lazy(() => import('./pages/Search/Search'));
 const PublicProfile = lazy(() => import('./pages/Search/PublicProfile'));
@@ -69,6 +71,8 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/rules" element={<Rules />} />
                 <Route path="/about" element={<About />} />
