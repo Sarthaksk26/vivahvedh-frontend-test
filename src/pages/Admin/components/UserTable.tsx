@@ -29,7 +29,7 @@ export const UserTable: React.FC<UserTableProps> = React.memo(({
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left">
-        <thead className="bg-[#F2F4F6] text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">
+        <thead className="bg-[#F2F4F6] text-xs font-semibold text-foreground/50 border-b border-black/5">
           <tr>
             <th className="px-10 py-5">Profile</th>
             <th className="px-8 py-5">Status</th>
@@ -55,18 +55,18 @@ export const UserTable: React.FC<UserTableProps> = React.memo(({
                       {user.profile?.firstName} {user.profile?.middleName ? `${user.profile.middleName} ` : ''}{user.profile?.lastName}
                       <button 
                         onClick={() => onView(user)} 
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-black uppercase tracking-widest text-primary ml-2 hover:underline"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-xs font-semibold text-primary ml-2 hover:underline"
                         title="View Full Profile"
                       >
                         View Profile
                       </button>
                     </div>
-                    <div className="text-[10px] font-bold text-primary uppercase tracking-widest">{user.regId}</div>
+                    <div className="text-xs font-semibold text-primary mt-1">{user.regId}</div>
                   </div>
                 </div>
               </td>
               <td className="px-8 py-6">
-                <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest
+                <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold
                   ${user.accountStatus === 'ACTIVE' ? 'bg-green-50 text-green-700' : 
                     user.accountStatus === 'SUSPENDED' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'}`}>
                   {user.accountStatus}
@@ -76,7 +76,7 @@ export const UserTable: React.FC<UserTableProps> = React.memo(({
                 <select 
                   value={user.planType} 
                   onChange={(e) => handleSetPlan(user.id, e.target.value)}
-                  className="bg-transparent border-none text-[10px] font-black uppercase tracking-widest text-foreground/40 cursor-pointer focus:ring-0 p-0"
+                  className="bg-transparent border-none text-xs font-semibold text-foreground/60 cursor-pointer focus:ring-0 p-0"
                 >
                   <option value="FREE">Basic</option>
                   <option value="SILVER">Silver</option>

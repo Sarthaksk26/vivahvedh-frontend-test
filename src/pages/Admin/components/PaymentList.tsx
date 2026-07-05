@@ -23,7 +23,7 @@ export const PaymentList: React.FC<PaymentListProps> = ({
           <button
             key={f}
             onClick={() => setPaymentFilter(f)}
-            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all
               ${paymentFilter === f ? 'bg-primary text-white shadow-md' : 'bg-black/5 text-foreground/40 hover:bg-black/10'}`}
           >
             {f}
@@ -53,11 +53,11 @@ export const PaymentList: React.FC<PaymentListProps> = ({
                   </div>
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="p-4 bg-white rounded-2xl border border-black/5 shadow-premium">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Plan Requested</p>
+                      <p className="text-xs font-semibold text-foreground/50 mb-1">Plan Requested</p>
                       <p className="text-sm font-bold text-foreground">{pay.planType} <span className="text-primary text-xs">(₹{pay.amount} claimed)</span></p>
                     </div>
                     <div className="p-4 bg-white rounded-2xl border border-black/5 shadow-premium">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Transaction ID</p>
+                      <p className="text-xs font-semibold text-foreground/50 mb-1">Transaction ID</p>
                       <p className="text-sm font-bold text-foreground font-mono">{pay.transactionId}</p>
                     </div>
                   </div>

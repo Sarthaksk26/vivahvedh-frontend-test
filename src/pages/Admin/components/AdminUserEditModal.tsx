@@ -216,7 +216,7 @@ export const AdminUserEditModal: React.FC<AdminUserEditModalProps> = ({ user, on
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-black/5 bg-[#F7F9FB] shrink-0">
           <div>
-            <h2 className="text-lg font-black uppercase tracking-widest text-foreground">Edit User — {user.regId}</h2>
+            <h2 className="text-lg font-semibold text-foreground">Edit User — {user.regId}</h2>
             <p className="text-xs text-foreground/50">{user.profile?.firstName} {user.profile?.middleName} {user.profile?.lastName}</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-black/5 rounded-xl transition-colors">
@@ -411,14 +411,14 @@ export const AdminUserEditModal: React.FC<AdminUserEditModalProps> = ({ user, on
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-foreground/50 hover:bg-black/5 transition-colors"
+              className="px-6 py-3 rounded-xl text-sm font-semibold text-foreground/70 hover:bg-black/5 transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={loading}
-              className="px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest bg-primary text-white hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+              className="px-6 py-3 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
             >
               {loading ? 'Saving...' : <><Save size={16} /> Save All Changes</>}
             </button>

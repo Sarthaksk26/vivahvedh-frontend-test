@@ -27,7 +27,7 @@ export const ConnectionList: React.FC<ConnectionListProps> = ({
           <button
             key={f}
             onClick={() => setConnectionFilter(f)}
-            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all
               ${connectionFilter === f ? 'bg-primary text-white shadow-md' : 'bg-black/5 text-foreground/40 hover:bg-black/10'}`}
           >
             {f}
@@ -36,7 +36,7 @@ export const ConnectionList: React.FC<ConnectionListProps> = ({
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left">
-          <thead className="bg-[#F2F4F6] text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">
+          <thead className="bg-[#F2F4F6] text-xs font-semibold text-foreground/50 border-b border-black/5">
             <tr>
               <th className="px-10 py-5">Sender</th>
               <th className="px-8 py-5">Receiver</th>
@@ -67,7 +67,7 @@ export const ConnectionList: React.FC<ConnectionListProps> = ({
                     <div className="text-[10px] font-medium text-foreground/30 uppercase">{c.receiver?.regId}</div>
                   </td>
                   <td className="px-8 py-6">
-                    <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest
+                    <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold
                       ${c.status === 'ACCEPTED' ? 'bg-green-50 text-green-700' : c.status === 'REJECTED' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'}`}>
                       {c.status}
                     </span>

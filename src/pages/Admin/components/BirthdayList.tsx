@@ -97,13 +97,13 @@ export const BirthdayList: React.FC<BirthdayListProps> = React.memo(({ birthdays
       <div className="px-10 py-6 border-b border-black/5 flex gap-8">
         <button 
           onClick={() => setView('upcoming')}
-          className={`pb-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all border-b-2 ${view === 'upcoming' ? 'text-primary border-primary' : 'text-foreground/30 border-transparent hover:text-foreground/60'}`}
+          className={`pb-2 text-sm font-semibold transition-all border-b-2 ${view === 'upcoming' ? 'text-primary border-primary' : 'text-foreground/50 border-transparent hover:text-foreground/80'}`}
         >
           Upcoming Birthdays
         </button>
         <button 
           onClick={() => setView('history')}
-          className={`pb-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all border-b-2 ${view === 'history' ? 'text-primary border-primary' : 'text-foreground/30 border-transparent hover:text-foreground/60'}`}
+          className={`pb-2 text-sm font-semibold transition-all border-b-2 ${view === 'history' ? 'text-primary border-primary' : 'text-foreground/50 border-transparent hover:text-foreground/80'}`}
         >
           Sent History
         </button>
@@ -112,7 +112,7 @@ export const BirthdayList: React.FC<BirthdayListProps> = React.memo(({ birthdays
       <div className="overflow-x-auto">
         {view === 'upcoming' ? (
           <table className="w-full text-left">
-            <thead className="bg-[#F2F4F6] text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">
+            <thead className="bg-[#F2F4F6] text-xs font-semibold text-foreground/50 border-b border-black/5">
               <tr>
                 <th className="px-10 py-5">Member</th>
                 <th className="px-8 py-5">Birth Date</th>
@@ -132,7 +132,7 @@ export const BirthdayList: React.FC<BirthdayListProps> = React.memo(({ birthdays
                     </td>
                     <td className="px-8 py-6 text-sm font-medium text-foreground/60">{new Date(b.birthDate).toLocaleDateString()}</td>
                     <td className="px-8 py-6">
-                      <span className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase ${b.daysUntil === 0 ? 'bg-rose-500 text-white animate-pulse' : 'bg-amber-100 text-amber-700'}`}>
+                      <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${b.daysUntil === 0 ? 'bg-rose-500 text-white animate-pulse' : 'bg-amber-100 text-amber-700'}`}>
                         {b.daysUntil === 0 ? 'TODAY!' : `In ${b.daysUntil} Days`}
                       </span>
                     </td>
@@ -153,7 +153,7 @@ export const BirthdayList: React.FC<BirthdayListProps> = React.memo(({ birthdays
           </table>
         ) : (
           <table className="w-full text-left">
-            <thead className="bg-[#F2F4F6] text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">
+            <thead className="bg-[#F2F4F6] text-xs font-semibold text-foreground/50 border-b border-black/5">
               <tr>
                 <th className="px-10 py-5">Recipient</th>
                 <th className="px-8 py-5">Email</th>
@@ -208,7 +208,7 @@ export const BirthdayList: React.FC<BirthdayListProps> = React.memo(({ birthdays
             </div>
 
             <div className="space-y-6">
-              <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary bg-primary/5 w-fit px-4 py-2 rounded-full">
+              <div className="flex items-center gap-2 text-sm font-semibold text-primary bg-primary/5 w-fit px-4 py-2 rounded-full">
                 <Mail size={12} /> Sending to: {previewModal.email}
               </div>
 

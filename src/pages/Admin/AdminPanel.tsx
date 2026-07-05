@@ -311,7 +311,7 @@ export default function AdminPanel() {
         {/* Header Block */}
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6 pt-8">
           <div className="max-w-xl">
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-3 block">Command Center</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary mb-3 block">Admin Dashboard</span>
             <h1 className="display-md text-foreground">Admin Dashboard.</h1>
             <p className="text-foreground/60 mt-4 font-medium leading-relaxed">Oversee the platform's integrity, manage premium members, and respond to community enquiries.</p>
           </div>
@@ -331,7 +331,7 @@ export default function AdminPanel() {
             </button>
             <div className="px-6 py-3 bg-white shadow-ambient rounded-2xl flex items-center gap-3 border border-black/5">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-xs font-black uppercase tracking-widest text-foreground/60 font-display">Systems Active</span>
+              <span className="text-xs font-medium uppercase tracking-wide text-foreground/60">System Status Active</span>
             </div>
           </div>
         </div>
@@ -363,7 +363,7 @@ export default function AdminPanel() {
                 {loading && activeTab !== 'addProfile' ? (
                   <div className="p-20 flex flex-col items-center justify-center grayscale opacity-20">
                      <div className="w-12 h-12 border-4 border-primary/10 border-t-primary rounded-full animate-spin mb-6" />
-                     <p className="font-display font-black uppercase text-xs tracking-widest text-foreground">Syncing Repository</p>
+                     <p className="font-semibold text-xs tracking-wide text-foreground">Loading Data...</p>
                   </div>
                 ) : (
                   <>
@@ -424,15 +424,15 @@ export default function AdminPanel() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                           <div className="p-6 bg-[#F7F9FB] rounded-3xl border border-black/5">
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30 mb-2">Total Revenue</p>
+                            <p className="text-xs font-medium text-foreground/50 mb-1">Total Revenue</p>
                             <p className="text-3xl font-display font-black text-foreground">₹{profitData?.totalRevenue || 0}</p>
                           </div>
                           <div className="p-6 bg-[#F7F9FB] rounded-3xl border border-black/5">
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30 mb-2">Subscriptions</p>
+                            <p className="text-xs font-medium text-foreground/50 mb-1">Subscriptions</p>
                             <p className="text-3xl font-display font-black text-foreground">{profitData?.subscriptionCount || 0}</p>
                           </div>
                           <div className="p-6 bg-[#F7F9FB] rounded-3xl border border-black/5">
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30 mb-2">Avg Order</p>
+                            <p className="text-xs font-medium text-foreground/50 mb-1">Avg Order</p>
                             <p className="text-3xl font-display font-black text-foreground">₹{Math.round(profitData?.avgOrderValue || 0)}</p>
                           </div>
                         </div>
@@ -454,7 +454,7 @@ export default function AdminPanel() {
                             <button
                               onClick={() => setAllUsersFilters(prev => ({ ...prev, page: prev.page - 1 }))}
                               disabled={allUsersFilters.page <= 1}
-                              className="px-6 h-10 rounded-xl border border-black/10 text-xs font-black uppercase tracking-widest text-foreground/60 hover:bg-black/5 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                              className="px-6 h-10 rounded-xl border border-black/10 text-xs font-semibold text-foreground/70 hover:bg-black/5 disabled:opacity-30 disabled:pointer-events-none transition-all"
                             >
                               Previous
                             </button>
@@ -464,7 +464,7 @@ export default function AdminPanel() {
                             <button
                               onClick={() => setAllUsersFilters(prev => ({ ...prev, page: prev.page + 1 }))}
                               disabled={allUsersFilters.page >= pagination.totalPages}
-                              className="px-6 h-10 rounded-xl border border-black/10 text-xs font-black uppercase tracking-widest text-foreground/60 hover:bg-black/5 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                              className="px-6 h-10 rounded-xl border border-black/10 text-xs font-semibold text-foreground/70 hover:bg-black/5 disabled:opacity-30 disabled:pointer-events-none transition-all"
                             >
                               Next
                             </button>

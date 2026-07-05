@@ -20,11 +20,11 @@ export const EnquiryList: React.FC<EnquiryListProps> = ({ enquiries, setReplyMod
             <div>
               <div className="flex items-center gap-3 mb-1">
                 <h3 className="text-xl font-display font-black text-foreground">{enq.firstName} {enq.lastName}</h3>
-                {enq.isResolved && <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-black uppercase rounded-full">Resolved</span>}
+                {enq.isResolved && <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Resolved</span>}
               </div>
               <p className="text-xs font-bold text-primary tracking-widest uppercase">{enq.email} • {enq.mobile}</p>
             </div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-foreground/20">{new Date(enq.createdAt).toLocaleDateString()}</span>
+            <span className="text-xs font-semibold text-foreground/40">{new Date(enq.createdAt).toLocaleDateString()}</span>
           </div>
           <div className="p-8 bg-white rounded-3xl border border-black/5 shadow-premium text-foreground/60 leading-relaxed font-medium mb-4">
             {enq.message}

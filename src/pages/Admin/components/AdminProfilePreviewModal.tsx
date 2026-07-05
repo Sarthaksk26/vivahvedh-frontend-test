@@ -16,7 +16,7 @@ const Section = ({ title, icon: Icon, children }: { title: string, icon: any, ch
       <div className="w-8 h-8 rounded-xl bg-primary/5 text-primary flex items-center justify-center">
         <Icon size={16} />
       </div>
-      <h3 className="text-sm font-black uppercase tracking-widest text-foreground/80">{title}</h3>
+      <h3 className="text-sm font-semibold text-foreground/70">{title}</h3>
     </div>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {children}
@@ -80,7 +80,7 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-primary uppercase tracking-widest">{user.regId}</span>
                 <span className="w-1 h-1 rounded-full bg-foreground/20" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{user.accountStatus}</span>
+                <span className="text-xs font-semibold text-foreground/50">{user.accountStatus}</span>
               </div>
             </div>
           </div>
@@ -97,7 +97,7 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
           {/* Quick Stats / Images */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1 space-y-4">
-               <h3 className="text-xs font-black uppercase tracking-widest text-foreground/30 px-2 flex items-center gap-2">
+               <h3 className="text-sm font-semibold text-foreground/60 px-2 flex items-center gap-2">
                  <ImageIcon size={14} /> Photo Gallery
                </h3>
                <div className="grid grid-cols-2 gap-3">
@@ -166,12 +166,12 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
             <div className="space-y-4 col-span-2">
               <div className="flex items-center justify-between p-4 bg-[#F7F9FB] rounded-2xl border border-black/5">
                 <div>
-                  <h4 className="text-sm font-black uppercase tracking-widest text-foreground">KYC Verification</h4>
+                  <h4 className="text-sm font-semibold text-foreground">KYC Verification</h4>
                   <p className="text-xs text-foreground/50 mt-1">Status: {user.kycVerified ? <span className="text-green-600 font-bold">Verified</span> : <span className="text-amber-600 font-bold">Unverified</span>}</p>
                 </div>
                 <button
                   onClick={handleToggleKyc}
-                  className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-colors ${
+                  className={`px-6 py-2 rounded-xl text-xs font-semibold transition-colors ${
                     user.kycVerified ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20' : 'bg-green-500/10 text-green-600 hover:bg-green-500/20'
                   }`}
                 >
