@@ -54,7 +54,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
           setError(true);
           setIsLoaded(true);
         }}
-        loading="lazy"
+        loading={props.fetchPriority === 'high' ? 'eager' : 'lazy'}
         {...props}
       />
     </div>

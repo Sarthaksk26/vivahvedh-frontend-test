@@ -239,7 +239,7 @@ export default function Dashboard() {
         {activeTab === 'profile' && (
           <div className="space-y-8">
             {/* Top Section: Photo Management */}
-            <div className="bg-card border shadow-sm rounded-3xl overflow-hidden">
+            <div className="premium-card overflow-hidden">
                <div className="p-8 border-b bg-rose-50/50">
                   <h2 className="text-xl font-bold">Photo Gallery</h2>
                   <p className="text-sm text-muted-foreground">Manage your profile visibility with high-quality photos.</p>
@@ -252,7 +252,7 @@ export default function Dashboard() {
             {/* Profile Content */}
             {!isEditing ? (
               <div className="space-y-8">
-                <div className="bg-card border shadow-sm rounded-3xl p-8">
+                <div className="premium-card p-8">
                   <div className="flex justify-between items-center mb-8">
                     <div>
                       <h1 className="text-2xl font-bold">Primary Details</h1>
@@ -293,7 +293,7 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <div className="bg-card border shadow-sm rounded-3xl p-8">
+                <div className="premium-card p-8">
                   <h2 className="text-xl font-bold mb-8">Personal & Astrology Details</h2>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
                     <div className="space-y-1">
@@ -355,7 +355,7 @@ export default function Dashboard() {
         )}
 
         {activeTab === 'shortlist' && (
-          <div className="bg-card border shadow-sm rounded-2xl overflow-hidden">
+          <div className="premium-card overflow-hidden">
             <div className="px-6 py-4 border-b bg-amber-50 flex justify-between items-center">
               <h2 className="font-bold text-lg text-amber-900">My Shortlisted Profiles</h2>
               <span className="px-3 py-1 bg-amber-200 text-amber-800 rounded-full text-xs font-bold">{shortlist.length}</span>
