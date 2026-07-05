@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Heart, Phone, Mail, MapPin, Globe, MessageCircle, Share2 } from 'lucide-react';
+import { SUPPORT_PHONE, SUPPORT_EMAIL } from '../../lib/constants';
 
 export default function Footer() {
   return (
@@ -64,7 +65,7 @@ export default function Footer() {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Call Us</span>
-                  <span className="text-lg font-bold text-foreground">+91 98765 43210</span>
+                  <span className="text-lg font-bold text-foreground">{SUPPORT_PHONE}</span>
                 </div>
               </div>
               <div className="flex gap-6 group">
@@ -73,7 +74,7 @@ export default function Footer() {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mb-1">Email Inquiry</span>
-                  <span className="text-lg font-bold text-foreground">hello@vivahvedh.com</span>
+                  <span className="text-lg font-bold text-foreground">{SUPPORT_EMAIL}</span>
                 </div>
               </div>
               <div className="flex gap-6 group">

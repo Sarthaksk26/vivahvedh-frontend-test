@@ -8,6 +8,8 @@ import apiClient from '../../lib/apiClient';
 import { UserPlus, Sparkles, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { formatApiError } from '../../lib/errorUtils';
+import { InfoModal } from '../../components/InfoModal';
+import { SUPPORT_PHONE } from '../../lib/constants';
 
 const registerSchema = z.object({
   firstName: z.string().min(2, "First Name is required"),
@@ -40,6 +42,7 @@ export default function Register() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
     defaultValues: { profileCreatedBy: 'Self' }
@@ -56,7 +59,7 @@ export default function Register() {
           <span className="text-[10px] opacity-60 mt-0.5">Please wait for admin approval to activate your account.</span>
         </span>
       ), { duration: 10000 });
-      navigate('/login');
+      setShowInfoModal(true);
     } catch (err: unknown) {
       toast.error(formatApiError(err, "Check your details and try again."));
       console.error(err);
@@ -66,7 +69,8 @@ export default function Register() {
   const inputClass = "flex h-12 w-full rounded-xl border border-input bg-background/80 px-4 text-sm placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all";
 
   return (
-    <div className="min-h-[85vh] py-12 flex items-center justify-center p-4 relative overflow-hidden">
+    <>
+      <div className="min-h-[85vh] py-12 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background */}
       <div className="absolute top-10 right-[10%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
       <div className="absolute bottom-10 left-[10%] w-[300px] h-[300px] bg-amber-300/10 rounded-full blur-[100px]" />
@@ -279,5 +283,18 @@ export default function Register() {
         </motion.div>
       </div>
     </div>
+
+    <InfoModal
+      isOpen={showInfoModal}
+      onClose={() => {
+        setShowInfoModal(false);
+        navigate('/login');
+      }}
+      title="Registration Submitted for Review"
+      message="Your profile has been submitted for review. Our team typically approves new profiles within 24 hours. Need help sooner?"
+      phoneNumber={SUPPORT_PHONE}
+      ctaLabel="OK, Got It"
+    />
+    </>
   );
 }

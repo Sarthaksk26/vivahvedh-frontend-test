@@ -105,56 +105,82 @@ export default function ProfileEditor({
     }
   };
 
-  const handleSaveSection = async (sectionId: string) => {
-    setSaving(true);
-    const payload = {
-      profile: { aboutMe: formData.aboutMe || null },
-      physical: {
-        height: formData.height ? String(formData.height) : null,
-        weight: parseInt(String(formData.weight)) || null,
-        disease: formData.disease || null,
-        bloodGroup: formData.bloodGroup || null,
-        complexion: formData.complexion || null,
-        diet: formData.diet || null,
-        smoke: formData.smoke === '' ? null : formData.smoke === 'true',
-        drink: formData.drink === '' ? null : formData.drink === 'true'
+  // Build payload for a single section (or all sections if 'all')
+  const buildSectionPayload = (sectionId: string): Record<string, any> => {
+    const sectionPayloads: Record<string, Record<string, any>> = {
+      basic: {
+        profile: { aboutMe: formData.aboutMe || null },
+      },
+      body: {
+        physical: {
+          height: formData.height ? String(formData.height) : null,
+          weight: parseInt(String(formData.weight)) || null,
+          disease: formData.disease || null,
+          bloodGroup: formData.bloodGroup || null,
+          complexion: formData.complexion || null,
+          diet: formData.diet || null,
+          smoke: formData.smoke === '' ? null : formData.smoke === 'true',
+          drink: formData.drink === '' ? null : formData.drink === 'true',
+        },
       },
       education: {
-        trade: formData.trade || null,
-        college: formData.college || null,
-        jobBusiness: formData.jobBusiness || null,
-        annualIncome: formData.annualIncome || null,
-        specialAchievement: formData.specialAchievement || null
+        education: {
+          trade: formData.trade || null,
+          college: formData.college || null,
+          jobBusiness: formData.jobBusiness || null,
+          annualIncome: formData.annualIncome || null,
+          specialAchievement: formData.specialAchievement || null,
+        },
       },
       family: {
-        fatherName: formData.fatherName || null,
-        fatherOccupation: formData.fatherOccupation || null,
-        motherName: formData.motherName || null,
-        motherOccupation: formData.motherOccupation || null,
-        motherHometown: formData.motherHometown || null,
-        maternalUncleName: formData.maternalUncleName || null,
-        brothers: parseInt(String(formData.brothers)) || 0,
-        marriedBrothers: parseInt(String(formData.marriedBrothers)) || 0,
-        sisters: parseInt(String(formData.sisters)) || 0,
-        marriedSisters: parseInt(String(formData.marriedSisters)) || 0,
-        familyWealth: formData.familyWealth || null
+        family: {
+          fatherName: formData.fatherName || null,
+          fatherOccupation: formData.fatherOccupation || null,
+          motherName: formData.motherName || null,
+          motherOccupation: formData.motherOccupation || null,
+          motherHometown: formData.motherHometown || null,
+          maternalUncleName: formData.maternalUncleName || null,
+          brothers: parseInt(String(formData.brothers)) || 0,
+          marriedBrothers: parseInt(String(formData.marriedBrothers)) || 0,
+          sisters: parseInt(String(formData.sisters)) || 0,
+          marriedSisters: parseInt(String(formData.marriedSisters)) || 0,
+          familyWealth: formData.familyWealth || null,
+        },
+      },
+      address: {
+        addresses: {
+          city: formData.city || null,
+          district: formData.district || null,
+          state: formData.state || null,
+        },
       },
       astrology: {
-        gothra: formData.gothra || null,
-        rashi: formData.rashi || null,
-        nakshatra: formData.nakshatra || null,
-        charan: formData.charan || null,
-        nadi: formData.nadi || null,
-        gan: formData.gan || null,
-        mangal: formData.mangal || null
+        astrology: {
+          gothra: formData.gothra || null,
+          rashi: formData.rashi || null,
+          nakshatra: formData.nakshatra || null,
+          charan: formData.charan || null,
+          nadi: formData.nadi || null,
+          gan: formData.gan || null,
+          mangal: formData.mangal || null,
+        },
       },
-      preferences: { expectations: formData.expectations || null },
-      addresses: {
-        city: formData.city || null,
-        district: formData.district || null,
-        state: formData.state || null
-      }
+      partner: {
+        preferences: { expectations: formData.expectations || null },
+      },
     };
+
+    if (sectionId === 'all') {
+      // Combine all section payloads for explicit bulk save
+      return Object.values(sectionPayloads).reduce((acc, p) => ({ ...acc, ...p }), {});
+    }
+
+    return sectionPayloads[sectionId] || {};
+  };
+
+  const handleSaveSection = async (sectionId: string) => {
+    setSaving(true);
+    const payload = buildSectionPayload(sectionId);
 
     try {
       await apiClient.patch('/user/update', payload);
@@ -517,9 +543,17 @@ export default function ProfileEditor({
           💡 <strong>Tip:</strong> You can save each section one by one. (प्रत्येक विभाग एक एक करून जतन करा)
         </p>
         <button
-          onClick={() => {
-            handleSaveSection('all');
-            onSaveSuccess();
+          onClick={async () => {
+            setSaving(true);
+            try {
+              await handleSaveSection('all');
+              onSaveSuccess();
+            } catch (err: any) {
+              toast.error('Failed to save all. Please try again. (पुन्हा प्रयत्न करा)');
+              console.error(err);
+            } finally {
+              setSaving(false);
+            }
           }}
           disabled={saving}
           className="px-8 py-4 bg-primary text-white text-lg font-bold rounded-2xl hover:bg-primary/90 transition-all disabled:opacity-50 shadow-lg active:scale-[0.98] flex items-center gap-3 whitespace-nowrap"

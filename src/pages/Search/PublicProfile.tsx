@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { authStorage } from '../../lib/authStorage';
 import OptimizedImage from '../../components/ui/OptimizedImage';
 import type { AxiosError } from 'axios';
-import type { ApiErrorResponse, FullUserProfile, UserImage, ShortlistItem, ConnectionStatus } from '../../types';
+import type { ApiErrorResponse, FullUserProfile, UserImage, ShortlistItem, ConnectionStatus, StoredUser } from '../../types';
 import { formatApiError } from '../../lib/errorUtils';
 
 export default function PublicProfile() {
@@ -21,10 +21,28 @@ export default function PublicProfile() {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('NONE');
   const [connectionRequestId, setConnectionRequestId] = useState<string | null>(null);
 
-  const currentUser = authStorage.getUser();
+  const [currentUser, setCurrentUser] = useState<StoredUser | null>(() => authStorage.getUser());
+  const [upgradePrompt, setUpgradePrompt] = useState(false);
   const isAuthenticated = authStorage.isAuthenticated();
   const isAdmin = currentUser?.role === 'ADMIN';
   const planType = currentUser?.planType || 'FREE';
+
+  // On-demand session refresh — used when a stale cached planType causes a
+  // PLAN_UPGRADE_REQUIRED 403 right after an admin-approved upgrade. Pulls a
+  // fresh StoredUser from /auth/refresh (which does a DB read server-side) so
+  // the UI reflects the new plan without waiting up to 15 min for rotation.
+  const refreshSession = async () => {
+    try {
+      const { data } = await apiClient.post<{ user: StoredUser; message: string }>('/auth/refresh');
+      if (data?.user) {
+        authStorage.setUser(data.user);
+        setCurrentUser(data.user);
+      }
+      setUpgradePrompt(false);
+    } catch {
+      setUpgradePrompt(false);
+    }
+  };
 
   const loadData = async (signal?: AbortSignal) => {
     setLoading(true);
@@ -60,9 +78,6 @@ export default function PublicProfile() {
     if (!isAuthenticated) {
       return navigate('/login');
     }
-    if (planType === 'FREE') {
-      return navigate('/rules');
-    }
     setActionLoading(true);
     try {
       await apiClient.post('/connections/send', { receiverId: id });
@@ -72,7 +87,9 @@ export default function PublicProfile() {
       const axiosError = error as AxiosError<ApiErrorResponse>;
       const code = axiosError.response?.data?.code;
       if (code === 'PLAN_UPGRADE_REQUIRED') {
-        toast.error('Upgrade plan to send proposals.');
+        // Don't pre-block on stale cached planType — surface a clear prompt so
+        // the user can refresh their session if they just upgraded.
+        setUpgradePrompt(true);
       } else {
         toast.error(formatApiError(error, 'Failed to send proposal.'));
       }
@@ -187,16 +204,40 @@ export default function PublicProfile() {
             {profile.profile?.aboutMe || "This member hasn't written a biography yet."}
           </p>
 
-          <div className="mt-10 flex flex-wrap items-center gap-4 border-t pt-8">
+          <div className="mt-10 flex flex-col gap-4 border-t pt-8">
+            {upgradePrompt && (
+              <div className="w-full p-4 rounded-2xl border border-amber-200 bg-amber-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="text-sm font-medium text-amber-800">
+                  Sending proposals requires a Silver or Gold plan. If you just upgraded, tap Refresh to sync your session.
+                </div>
+                <div className="flex gap-2 flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={refreshSession}
+                    disabled={actionLoading}
+                    className="px-4 py-2 bg-amber-500 text-white rounded-lg text-xs font-bold hover:bg-amber-600 transition disabled:opacity-50"
+                  >
+                    Refresh Session
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setUpgradePrompt(false); navigate('/rules'); }}
+                    className="px-4 py-2 border border-amber-300 text-amber-700 rounded-lg text-xs font-bold hover:bg-amber-100 transition"
+                  >
+                    View Plans
+                  </button>
+                </div>
+              </div>
+            )}
+            <div className="flex flex-wrap items-center gap-4">
             {!isAdmin && connectionStatus === 'NONE' && (
               <button
                 onClick={handleSendInterest}
                 disabled={actionLoading}
                 className="clay-button-primary px-10 py-4 text-xs uppercase tracking-[0.2em] disabled:opacity-50"
               >
-                {actionLoading ? 'Sending Request...' : 
+                {actionLoading ? 'Sending Request...' :
                  !isAuthenticated ? 'Login to Send Proposal' :
-                 planType === 'FREE' ? 'Upgrade to Send Proposal' : 
                  '💌 Send Match Proposal'}
               </button>
             )}
@@ -251,6 +292,7 @@ export default function PublicProfile() {
           </div>
         </div>
       </div>
+    </div>
 
       {/* Photo Gallery Section */}
       {hasImages && (

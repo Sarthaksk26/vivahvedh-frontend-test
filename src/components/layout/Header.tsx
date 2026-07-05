@@ -1,9 +1,191 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Star, LayoutDashboard, LogOut, ShieldCheck } from 'lucide-react';
+import { Menu, X, Star, LayoutDashboard, LogOut, ShieldCheck, Bell } from 'lucide-react';
 import { authStorage } from '../../lib/authStorage';
 import apiClient from '../../lib/apiClient';
+import { formatApiError } from '../../lib/errorUtils';
+
+// ═══════════════════════════════════════════════════════════════════
+//  Notification Bell (logged-in non-admin users)
+// ═══════════════════════════════════════════════════════════════════
+
+interface UserNotification {
+  id: string;
+  type: string;
+  message: string;
+  isRead: boolean;
+  relatedUserId: string | null;
+  createdAt: string;
+}
+
+function timeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  if (diff < 0) return 'just now';
+  const seconds = Math.floor(diff / 1000);
+  if (seconds < 60) return `${seconds}s ago`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
+function NotificationBell() {
+  const navigate = useNavigate();
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState<UserNotification[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const refreshUnreadCount = useCallback(async () => {
+    try {
+      const { data } = await apiClient.get('/notifications/unread-count');
+      setUnreadCount(data?.unreadCount ?? 0);
+    } catch {
+      // Silently ignore — badge just stays where it was
+    }
+  }, []);
+
+  const refreshList = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data } = await apiClient.get('/notifications', { params: { limit: 10 } });
+      setItems(Array.isArray(data?.notifications) ? data.notifications : []);
+    } catch {
+      // Keep existing items on error
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Poll unread-count every 60s while mounted (mounts only for logged-in users)
+  useEffect(() => {
+    refreshUnreadCount();
+    const id = window.setInterval(refreshUnreadCount, 60_000);
+    return () => window.clearInterval(id);
+  }, [refreshUnreadCount]);
+
+  // Fetch list + close-on-outside-click when dropdown is opened
+  useEffect(() => {
+    if (!open) return;
+    refreshList();
+    const onMouseDown = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', onMouseDown);
+    return () => document.removeEventListener('mousedown', onMouseDown);
+  }, [open, refreshList]);
+
+  const handleMarkAllRead = async () => {
+    try {
+      await apiClient.patch('/notifications/mark-all-read');
+      setItems((curr) => curr.map((n) => ({ ...n, isRead: true })));
+      setUnreadCount(0);
+    } catch (err) {
+      console.error('Mark all read failed:', formatApiError(err));
+    }
+  };
+
+  const handleClickItem = async (n: UserNotification) => {
+    if (!n.isRead) {
+      try {
+        await apiClient.patch(`/notifications/${n.id}/read`);
+        setItems((curr) => curr.map((x) => (x.id === n.id ? { ...x, isRead: true } : x)));
+        setUnreadCount((c) => Math.max(0, c - 1));
+      } catch (err) {
+        console.error('Mark read failed:', formatApiError(err));
+      }
+    }
+    setOpen(false);
+    if (n.relatedUserId) navigate(`/profile/${n.relatedUserId}`);
+  };
+
+  return (
+    <div className="relative" ref={wrapperRef}>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="relative p-2.5 bg-sky-50 text-sky-600 rounded-xl hover:bg-sky-100 transition-colors"
+        title="Notifications"
+        aria-label="Notifications"
+        aria-expanded={open}
+      >
+        <Bell size={20} />
+        {unreadCount > 0 && (
+          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-md ring-2 ring-white">
+            {unreadCount > 9 ? '9+' : unreadCount}
+         </span>
+        )}
+     </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.15 }}
+            className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-ambient border border-black/5 overflow-hidden z-[110]"
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-black/5">
+              <h4 className="font-display font-black text-xs uppercase tracking-widest text-foreground/60">
+                Notifications
+             </h4>
+              <button
+                onClick={handleMarkAllRead}
+                disabled={unreadCount === 0}
+                className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/80 disabled:text-foreground/30 disabled:cursor-not-allowed"
+              >
+                Mark all read
+             </button>
+           </div>
+            <div className="max-h-96 overflow-y-auto">
+              {loading && items.length === 0 ? (
+                <div className="px-4 py-8 text-center text-xs text-foreground/40">Loading…</div>
+              ) : items.length === 0 ? (
+                <div className="px-4 py-8 text-center text-xs text-foreground/40">No notifications yet</div>
+              ) : (
+                items.map((n) => (
+                  <button
+                    key={n.id}
+                    onClick={() => handleClickItem(n)}
+                    className={`w-full text-left px-4 py-3 flex gap-3 items-start border-b border-black/5 last:border-b-0 hover:bg-sky-50/40 transition-colors ${
+                      !n.isRead ? 'bg-sky-50/30' : ''
+                    }`}
+                  >
+                    <span
+                      className={`mt-1.5 flex-shrink-0 w-2 h-2 rounded-full ${
+                        n.isRead ? 'bg-transparent' : 'bg-red-500'
+                      }`}
+                      aria-hidden
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className={`text-sm leading-snug break-words ${
+                          n.isRead ? 'text-foreground/60' : 'text-foreground font-medium'
+                        }`}
+                      >
+                        {n.message}
+                     </p>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-foreground/40 mt-1">
+                        {timeAgo(n.createdAt)}
+                     </p>
+                   </div>
+                 </button>
+                ))
+              )}
+           </div>
+         </motion.div>
+        )}
+     </AnimatePresence>
+   </div>
+  );
+}
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -89,6 +271,7 @@ export default function Header() {
                     <ShieldCheck size={20} />
                   </Link>
                 )}
+                {!isAdmin && <NotificationBell />}
                 <Link to="/dashboard" className="p-2.5 bg-primary/5 text-primary rounded-xl hover:bg-primary/10 transition-colors" title="Dashboard">
                   <LayoutDashboard size={20} />
                 </Link>

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { motion } from 'framer-motion';
-import { X, Upload, CheckCircle, AlertCircle } from 'lucide-react';
+import { X, Upload, CheckCircle, AlertCircle, Phone } from 'lucide-react';
 import apiClient from '../lib/apiClient';
+import { SUPPORT_PHONE } from '../lib/constants';
 import toast from 'react-hot-toast';
 
 interface PaymentModalProps {
@@ -96,9 +97,24 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
               <CheckCircle className="w-12 h-12 text-primary" />
             </motion.div>
             <h3 className="text-2xl font-display font-black text-foreground mb-4">Submission Received</h3>
-            <p className="text-foreground/50 max-w-sm mx-auto font-medium leading-relaxed mb-10">
+            <p className="text-foreground/50 max-w-sm mx-auto font-medium leading-relaxed mb-8">
               Our curators are verifying your transaction. You will be notified once your premium status is active.
             </p>
+
+            {/* Phone CTA — matches InfoModal style */}
+            <a
+              href={`tel:${SUPPORT_PHONE.replace(/\s/g, '')}`}
+              className="flex items-center justify-center gap-4 px-8 py-5 bg-[#F7F9FB] rounded-2xl border border-black/5 hover:bg-primary/5 hover:border-primary/20 transition-all group mb-8 w-full max-w-xs"
+            >
+              <div className="w-12 h-12 rounded-xl bg-white shadow-ambient flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
+                <Phone size={20} className="text-primary" />
+              </div>
+              <div className="flex flex-col items-start">
+                <span className="text-[10px] font-black uppercase tracking-widest text-foreground/30">Call Us</span>
+                <span className="text-lg font-bold text-foreground">{SUPPORT_PHONE}</span>
+              </div>
+            </a>
+
             <button
               onClick={onClose}
               className="clay-button-primary px-12 py-4 text-xs uppercase tracking-widest"

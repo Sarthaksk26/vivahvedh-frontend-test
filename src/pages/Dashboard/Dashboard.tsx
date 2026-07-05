@@ -44,10 +44,21 @@ export default function Dashboard() {
       setProfile(res.data);
       
       const storedUser = authStorage.getUser();
-      if (storedUser && storedUser.status !== res.data.accountStatus) {
-        authStorage.setUser({ ...storedUser, status: res.data.accountStatus });
-        if (res.data.accountStatus === 'ACTIVE' && storedUser.status !== 'ACTIVE') {
+      if (storedUser) {
+        const statusChanged = storedUser.status !== res.data.accountStatus;
+        const planChanged = storedUser.planType !== res.data.planType;
+        if (statusChanged || planChanged) {
+          authStorage.setUser({
+            ...storedUser,
+            status: res.data.accountStatus,
+            planType: res.data.planType,
+          });
+        }
+        if (statusChanged && res.data.accountStatus === 'ACTIVE' && storedUser.status !== 'ACTIVE') {
           toast.success('Your account has been approved! You can now send match proposals.');
+        }
+        if (planChanged && storedUser.planType === 'FREE' && res.data.planType !== 'FREE') {
+          toast.success(`Congratulations! Your ${res.data.planType} plan is now active.`);
         }
       }
     } catch (error) {

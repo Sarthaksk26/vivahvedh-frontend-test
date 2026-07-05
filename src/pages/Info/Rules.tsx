@@ -9,7 +9,7 @@ const features = [
   { name: 'Browse & search profiles', free: true, silver: true, gold: true },
   { name: 'Search filters', free: 'Basic', silver: 'All', gold: 'All' },
   { name: "View other's photos", free: 'Primary only', silver: 'Full gallery', gold: 'Full gallery' },
-  { name: 'Send match proposals', free: false, silver: '5 per day', gold: 'Unlimited' },
+  { name: 'Send match proposals', free: false, silver: '4 per day', gold: 'Unlimited' },
   { name: 'Receive match proposals', free: true, silver: true, gold: true },
   { name: 'View contact info (mutual accept)', free: false, silver: true, gold: true },
   { name: 'Shortlist profiles', free: 'Up to 5', silver: 'Up to 50', gold: 'Unlimited' },
@@ -72,7 +72,7 @@ export default function Rules() {
           <p className="text-sm text-primary-foreground/70 font-medium mb-6">Valid for 1 Year</p>
           <ul className="space-y-3 mb-8 text-primary-foreground/90">
             <li className="flex items-center gap-3 text-sm"><Check size={16} className="flex-shrink-0" /> Everything in Free</li>
-            <li className="flex items-center gap-3 text-sm"><Check size={16} className="flex-shrink-0" /> Send 5 proposals per day</li>
+            <li className="flex items-center gap-3 text-sm"><Check size={16} className="flex-shrink-0" /> Send 4 proposals per day</li>
             <li className="flex items-center gap-3 text-sm"><Check size={16} className="flex-shrink-0" /> View contact on mutual accept</li>
             <li className="flex items-center gap-3 text-sm"><Check size={16} className="flex-shrink-0" /> Full photo gallery access</li>
             <li className="flex items-center gap-3 text-sm"><Check size={16} className="flex-shrink-0" /> Advanced search filters</li>
