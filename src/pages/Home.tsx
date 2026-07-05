@@ -310,7 +310,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.2 }}
             >
-              <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500/[0.03] via-rose-500/[0.03] to-amber-500/[0.03] border border-amber-500/15 text-amber-700 text-xs font-bold tracking-[0.2em] uppercase mb-4 shadow-[0_4px_12px_rgba(245,158,11,0.03)] backdrop-blur-sm">
+              <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500/[0.03] via-rose-500/[0.03] to-amber-500/[0.03] border border-amber-500/15 text-amber-800 text-sm font-semibold tracking-wide mb-4 shadow-[0_4px_12px_rgba(245,158,11,0.03)] backdrop-blur-sm">
                 <Sparkles size={11} className="text-amber-500 animate-pulse" />
                 <span>॥ शोध नव्या नात्यांचा ॥</span>
               </div>
@@ -331,7 +331,7 @@ export default function Home() {
               transition={{ delay: 0.5 }} 
               className="flex flex-wrap gap-4 justify-center lg:justify-start mb-6 lg:mb-0"
             >
-              <Link to="/register" className="h-14 px-10 bg-gradient-to-r from-primary to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center gap-3 transition-all duration-300 shadow-[0_20px_40px_-8px_rgba(184,0,53,0.3)] hover:shadow-[0_20px_40px_-4px_rgba(184,0,53,0.45)] hover:-translate-y-0.5 active:scale-95">
+              <Link to="/register" className="h-14 px-10 bg-gradient-to-r from-primary to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white rounded-2xl font-bold text-sm tracking-wide flex items-center gap-3 transition-all duration-300 shadow-[0_20px_40px_-8px_rgba(184,0,53,0.3)] hover:shadow-[0_20px_40px_-4px_rgba(184,0,53,0.45)] hover:-translate-y-0.5 active:scale-95">
                 Register Free Profile <ArrowRight size={14} />
               </Link>
             </motion.div>

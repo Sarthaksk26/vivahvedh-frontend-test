@@ -250,8 +250,8 @@ export default function Header() {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`text-[10px] font-black uppercase tracking-[0.25em] transition-all duration-300 relative group ${
-                  location.pathname === link.to ? 'text-primary' : 'text-foreground/50 hover:text-foreground'
+                className={`text-sm font-semibold tracking-wide transition-all duration-300 relative group ${
+                  location.pathname === link.to ? 'text-primary' : 'text-foreground/70 hover:text-foreground'
                 }`}
               >
                 {link.label}
@@ -280,7 +280,7 @@ export default function Header() {
                 </Link>
                 <button 
                   onClick={handleLogout}
-                  className="ml-2 text-[10px] font-black uppercase tracking-widest text-foreground/60 hover:text-red-500 transition-colors flex items-center gap-2"
+                  className="ml-2 text-sm font-semibold tracking-wide text-foreground/70 hover:text-red-500 transition-colors flex items-center gap-2"
                 >
                   <LogOut size={14} />
                   Sign Out
@@ -288,10 +288,10 @@ export default function Header() {
               </div>
             ) : (
               <div className="flex items-center gap-6">
-                <Link to="/login" className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 hover:text-primary transition-colors">
+                <Link to="/login" className="text-sm font-semibold tracking-wide text-foreground/70 hover:text-primary transition-colors">
                   Log In
                 </Link>
-                <Link to="/register" className="px-8 py-3.5 bg-primary text-white text-[10px] font-black uppercase tracking-[0.25em] rounded-xl shadow-[0_10px_20px_-5px_rgba(190,18,60,0.3)] hover:shadow-[0_15px_30px_-5px_rgba(190,18,60,0.4)] transition-all">
+                <Link to="/register" className="px-6 py-2.5 bg-primary text-white text-sm font-bold tracking-wide rounded-full shadow-[0_10px_20px_-5px_rgba(190,18,60,0.3)] hover:shadow-[0_15px_30px_-5px_rgba(190,18,60,0.4)] transition-all">
                   Join Free
                 </Link>
               </div>
