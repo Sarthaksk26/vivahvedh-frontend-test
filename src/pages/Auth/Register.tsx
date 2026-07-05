@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { formatApiError } from '../../lib/errorUtils';
 import { InfoModal } from '../../components/InfoModal';
 import { SUPPORT_PHONE } from '../../lib/constants';
+import { SEO } from '../../components/common/SEO';
 
 const registerSchema = z.object({
   firstName: z.string().min(2, "First Name is required"),
@@ -70,6 +71,10 @@ export default function Register() {
 
   return (
     <>
+      <SEO 
+        title="Register | Vivahvedh" 
+        description="Create your free Vivahvedh profile to start your search for the perfect Maharashtrian bride or groom."
+      />
       <div className="min-h-[85vh] py-12 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background */}
       <div className="absolute top-10 right-[10%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />

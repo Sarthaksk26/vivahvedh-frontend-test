@@ -19,6 +19,7 @@ import {
 import apiClient from '../lib/apiClient';
 import { resolveImageUrl } from '../lib/url';
 import { PaymentModal } from '../components/PaymentModal';
+import { SEO } from '../components/common/SEO';
 
 // --- Reusable Scroll Animation Wrapper ---
 function Reveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -252,6 +253,7 @@ export default function Home() {
 
   return (
     <div className="flex-1 w-full flex flex-col items-center bg-[#FAF8F5] overflow-x-hidden font-sans">
+      <SEO />
       
       {/* ═══════════════════════════════════════════════════
           CINEMATIC HERO SECTION (Luxury Editorial)

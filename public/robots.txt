@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /register
+Allow: /privacy-policy
+Allow: /terms-of-service
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /admin
+Disallow: /settings
+Disallow: /api/
+
+Sitemap: https://vivahvedh.com/sitemap.xml

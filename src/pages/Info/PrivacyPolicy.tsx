@@ -1,8 +1,13 @@
 import { Shield, Lock, FileText, Trash2, Eye } from 'lucide-react';
+import { SEO } from '../../components/common/SEO';
 
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-[#F7F9FB] pt-24 pb-12">
+      <SEO 
+        title="Privacy Policy | Vivahvedh" 
+        description="Learn how Vivahvedh protects your data. We take your privacy securely."
+      />
       <div className="max-w-4xl mx-auto px-4">
         
         <div className="bg-white rounded-3xl shadow-xl border border-black/5 overflow-hidden">

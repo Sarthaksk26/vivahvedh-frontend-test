@@ -10,6 +10,7 @@ import { LogIn, Sparkles, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import type { LoginResponse, ApiErrorResponse } from '../../types';
 import type { AxiosError } from 'axios';
+import { SEO } from '../../components/common/SEO';
 
 const loginSchema = z.object({
   identifier: z.string().min(3, "Username must be at least 3 characters"),
@@ -72,6 +73,10 @@ export default function Login() {
 
   return (
     <div className="min-h-[85vh] w-full flex items-center justify-center p-4 relative overflow-hidden">
+      <SEO 
+        title="Login | Vivahvedh" 
+        description="Sign in to your Vivahvedh account to continue your matchmaking journey."
+      />
       {/* Background decorations */}
       <div className="absolute top-10 left-[10%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
       <div className="absolute bottom-10 right-[10%] w-[300px] h-[300px] bg-amber-300/10 rounded-full blur-[100px]" />

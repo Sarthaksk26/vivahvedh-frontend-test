@@ -1,8 +1,13 @@
 import { Scale, Users, ShieldAlert, CheckCircle } from 'lucide-react';
+import { SEO } from '../../components/common/SEO';
 
 export default function TermsOfService() {
   return (
     <div className="min-h-screen bg-[#F7F9FB] pt-24 pb-12">
+      <SEO 
+        title="Terms of Service | Vivahvedh" 
+        description="Read our terms and conditions for using Vivahvedh matchmaking services."
+      />
       <div className="max-w-4xl mx-auto px-4">
         
         <div className="bg-white rounded-3xl shadow-xl border border-black/5 overflow-hidden">
