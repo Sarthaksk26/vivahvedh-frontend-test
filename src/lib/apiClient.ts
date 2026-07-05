@@ -4,9 +4,14 @@ import type { ApiErrorResponse } from '../types';
 
 let API_URL = import.meta.env.VITE_API_URL;
 if (!API_URL) {
-  API_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:5000/api' 
-    : 'https://vivahvedh-api.onrender.com/api';
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    API_URL = 'http://localhost:5000/api';
+  } else {
+    // In production builds, VITE_API_URL must be set at build time.
+    // No hardcoded fallback — prevents leaking infra details into the bundle.
+    console.error('[apiClient] VITE_API_URL is not set. API calls will fail.');
+    API_URL = '/api'; // relative fallback — will 404 but won't leak domains
+  }
 }
 
 if (API_URL && !API_URL.endsWith('/api')) {

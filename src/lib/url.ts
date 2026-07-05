@@ -22,7 +22,7 @@ const getApiBaseUrl = () => {
                     
     apiUri = isLocal 
       ? `http://${host}:5000/api` 
-      : 'https://vivahvedh-api.onrender.com/api';
+      : '/api'; // No hardcoded domain — VITE_API_URL must be set for production
   }
   return apiUri.replace(/\/api\/?$/, '');
 };
