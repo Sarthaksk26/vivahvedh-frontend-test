@@ -43,9 +43,9 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Poppins", "sans-serif"],
-        display: ["Mukta", "sans-serif"],
-        serif: ["'Playfair Display'", "serif"],
+        sans: ["'Plus Jakarta Sans'", "sans-serif"],
+        display: ["Outfit", "sans-serif"],
+        serif: ["Lora", "serif"],
       },
       boxShadow: {
         'ambient': '0 24px 40px -8px rgba(25, 28, 30, 0.08)',
