@@ -399,13 +399,13 @@ export default function Home() {
             
             {/* Field: Looking For */}
             <div className="flex-1 bg-gradient-to-b from-[#FDFBF9] to-white border border-amber-100/50 rounded-2xl p-4 transition-all duration-300 hover:border-amber-300/80 focus-within:border-amber-400 group flex flex-col justify-center min-h-[80px]">
-              <span className="text-[10px] font-black uppercase tracking-[0.15em] text-amber-600 block mb-1.5 leading-none">Looking For</span>
+              <span className="text-xs font-bold tracking-wide text-amber-700 uppercase block mb-1.5 leading-none">Looking For</span>
               <div className="flex items-center gap-2.5">
                 <Heart size={16} className="text-primary/70" />
                 <select 
                   value={searchGender} 
                   onChange={e => setSearchGender(e.target.value)} 
-                  className="w-full bg-transparent text-slate-800 font-extrabold text-sm outline-none cursor-pointer py-1"
+                  className="w-full bg-transparent text-slate-800 font-semibold text-sm outline-none cursor-pointer py-1"
                 >
                   <option value="">Any Gender</option>
                   <option value="MALE">Groom (वर)</option>
@@ -416,13 +416,13 @@ export default function Home() {
             
             {/* Field: Age Range */}
             <div className="flex-1 bg-gradient-to-b from-[#FDFBF9] to-white border border-amber-100/50 rounded-2xl p-4 transition-all duration-300 hover:border-amber-300/80 focus-within:border-amber-400 group flex flex-col justify-center min-h-[80px]">
-              <span className="text-[10px] font-black uppercase tracking-[0.15em] text-amber-600 block mb-1.5 leading-none">Age Group</span>
+              <span className="text-xs font-bold tracking-wide text-amber-700 uppercase block mb-1.5 leading-none">Age Group</span>
               <div className="flex items-center gap-2.5">
                 <Compass size={16} className="text-amber-600/70" />
                 <select 
                   value={searchAge} 
                   onChange={e => setSearchAge(e.target.value)} 
-                  className="w-full bg-transparent text-slate-800 font-extrabold text-sm outline-none cursor-pointer py-1"
+                  className="w-full bg-transparent text-slate-800 font-semibold text-sm outline-none cursor-pointer py-1"
                 >
                   <option value="">Any Age</option>
                   <option value="18-25">18 – 25 years</option>
@@ -436,7 +436,7 @@ export default function Home() {
             
             {/* Field: Location */}
             <div className="flex-1 bg-gradient-to-b from-[#FDFBF9] to-white border border-amber-100/50 rounded-2xl p-4 transition-all duration-300 hover:border-amber-300/80 focus-within:border-amber-400 group flex flex-col justify-center min-h-[80px]">
-              <span className="text-[10px] font-black uppercase tracking-[0.15em] text-amber-600 block mb-1.5 leading-none">Location</span>
+              <span className="text-xs font-bold tracking-wide text-amber-700 uppercase block mb-1.5 leading-none">Location</span>
               <div className="flex items-center gap-2.5">
                 <MapPin size={16} className="text-emerald-600/70" />
                 <input 
@@ -444,7 +444,7 @@ export default function Home() {
                   value={searchLocation} 
                   onChange={e => setSearchLocation(e.target.value)} 
                   placeholder="E.g. Pune, Mumbai" 
-                  className="w-full bg-transparent text-slate-800 font-extrabold text-sm outline-none placeholder:text-slate-400 py-1 font-sans" 
+                  className="w-full bg-transparent text-slate-800 font-semibold text-sm outline-none placeholder:text-slate-400 py-1"
                 />
               </div>
             </div>
@@ -452,7 +452,7 @@ export default function Home() {
             {/* Ultimate Premium Search Button */}
             <button 
               onClick={handleQuickSearch} 
-              className="lg:w-48 h-16 bg-gradient-to-r from-primary to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-3.5 flex-shrink-0 shadow-[0_12px_28px_rgba(184,0,53,0.25)] hover:shadow-[0_16px_36px_rgba(184,0,53,0.4)] hover:-translate-y-0.5 active:scale-95 group relative overflow-hidden"
+              className="lg:w-48 h-16 bg-gradient-to-r from-primary to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white rounded-2xl font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-3.5 flex-shrink-0 shadow-[0_12px_28px_rgba(184,0,53,0.25)] hover:shadow-[0_16px_36px_rgba(184,0,53,0.4)] hover:-translate-y-0.5 active:scale-95 group relative overflow-hidden"
             >
               <div className="absolute inset-0 w-1/2 h-full bg-white/20 transform -skew-x-12 -translate-x-full group-hover:animate-[shimmer_1s_ease-out]" />
               <Search size={16} />
