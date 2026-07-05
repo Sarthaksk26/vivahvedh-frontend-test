@@ -26,7 +26,13 @@ describe('ProtectedRoute', () => {
   });
 
   it('renders protected content for authenticated users', () => {
-    authStorage.setUser({ id: '1', email: 'test@example.com', role: 'USER', registrationStatus: 'COMPLETED', accountStatus: 'ACTIVE' });
+    authStorage.setUser({
+      regId: 'VIVAH12345',
+      role: 'USER',
+      status: 'ACTIVE',
+      planType: 'FREE',
+      requiresPasswordChange: false
+    });
     render(
       <MemoryRouter initialEntries={['/dashboard']}>
         <Routes>
