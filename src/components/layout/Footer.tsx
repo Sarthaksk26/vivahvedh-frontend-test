@@ -41,6 +41,8 @@ export default function Footer() {
                 { to: '/rules', label: 'Pricing Plans' },
                 { to: '/about', label: 'Our Story' },
                 { to: '/contact', label: 'Help & Support' },
+                { to: '/privacy-policy', label: 'Privacy Policy' },
+                { to: '/terms-of-service', label: 'Terms of Service' },
               ].map(link => (
                 <li key={link.to}>
                   <Link

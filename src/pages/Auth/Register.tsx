@@ -250,6 +250,19 @@ export default function Register() {
                 </div>
               </div>
 
+              <div className="pt-2">
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    required 
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary" 
+                  />
+                  <span className="text-xs text-muted-foreground leading-relaxed">
+                    I agree to the <Link to="/terms-of-service" className="text-primary hover:underline">Terms of Service</Link> and <Link to="/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>
+                  </span>
+                </label>
+              </div>
+
               <button
                 type="submit"
                 disabled={isSubmitting}

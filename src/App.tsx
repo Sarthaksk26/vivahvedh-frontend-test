@@ -20,6 +20,8 @@ const AdminPanel = lazy(() => import('./pages/Admin/AdminPanel'));
 const Contact = lazy(() => import('./pages/Info/Contact'));
 const Rules = lazy(() => import('./pages/Info/Rules'));
 const About = lazy(() => import('./pages/Info/About'));
+const PrivacyPolicy = lazy(() => import('./pages/Info/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/Info/TermsOfService'));
 const SuccessStories = lazy(() => import('./pages/Info/SuccessStories'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
@@ -76,6 +78,8 @@ function App() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/rules" element={<Rules />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/profile/:id" element={<PublicProfile />} />
                 <Route path="/success-stories" element={<SuccessStories />} />
