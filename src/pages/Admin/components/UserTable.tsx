@@ -8,6 +8,7 @@ interface UserTableProps {
   loading: boolean;
   handleAction: (action: 'approve' | 'ban' | 'unban' | 'delete', id: string) => void;
   handleSetPlan: (id: string, plan: string) => void;
+  handleToggleKyc: (id: string, currentStatus: boolean) => void;
   setEditModal: (modal: { isOpen: boolean; user: AdminUser }) => void;
   onView: (user: AdminUser) => void;
 }
@@ -17,6 +18,7 @@ export const UserTable: React.FC<UserTableProps> = React.memo(({
   loading, 
   handleAction, 
   handleSetPlan, 
+  handleToggleKyc,
   setEditModal,
   onView
 }) => {
@@ -33,6 +35,7 @@ export const UserTable: React.FC<UserTableProps> = React.memo(({
           <tr>
             <th className="px-10 py-5">Profile</th>
             <th className="px-8 py-5">Status</th>
+            <th className="px-8 py-5">KYC</th>
             <th className="px-8 py-5">Plan</th>
             <th className="px-10 py-5 text-right">Actions</th>
           </tr>
@@ -71,6 +74,17 @@ export const UserTable: React.FC<UserTableProps> = React.memo(({
                     user.accountStatus === 'SUSPENDED' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'}`}>
                   {user.accountStatus}
                 </span>
+              </td>
+              <td className="px-8 py-6">
+                <button
+                  onClick={() => handleToggleKyc(user.id, user.kycVerified)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                    user.kycVerified ? 'bg-green-500/10 text-green-700 hover:bg-green-500/20' : 'bg-amber-500/10 text-amber-700 hover:bg-amber-500/20'
+                  }`}
+                  title={user.kycVerified ? "Revoke KYC" : "Verify KYC"}
+                >
+                  {user.kycVerified ? 'Verified' : 'Pending'}
+                </button>
               </td>
               <td className="px-8 py-6">
                 <select 

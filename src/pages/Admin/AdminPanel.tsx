@@ -279,6 +279,16 @@ export default function AdminPanel() {
     }
   }, [fetchData, fetchStats]);
 
+  const handleToggleKyc = useCallback(async (userId: string, currentStatus: boolean) => {
+    try {
+      const response = await apiClient.patch(`/admin/users/${userId}/kyc`, { kycVerified: !currentStatus });
+      toast.success(response.data.message || 'KYC status updated.');
+      fetchData();
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Failed to update KYC status.');
+    }
+  }, [fetchData]);
+
   const handleOfflineFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setOfflineForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -446,6 +456,7 @@ export default function AdminPanel() {
                           loading={loading}
                           handleAction={handleAction}
                           handleSetPlan={handleSetPlan}
+                          handleToggleKyc={handleToggleKyc}
                           setEditModal={setEditModal}
                           onView={(u) => setPreviewUser(u)}
                         />
