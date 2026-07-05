@@ -45,6 +45,19 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
     }
   };
 
+  const handleViewDocument = async (type: 'kyc' | 'income' | 'medical') => {
+    try {
+      const res = await apiClient.get(`/documents/${type}?userId=${user.id}`);
+      if (res.data.url) {
+        window.open(res.data.url, '_blank');
+      }
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'Failed to view document');
+    }
+  };
+
+  if (!user) return null;
+
   return (
     <div className="fixed inset-0 z-[110] flex items-start justify-center bg-black/60 backdrop-blur-md p-4 overflow-y-auto">
       <div className="bg-[#F7F9FB] rounded-[40px] w-full max-w-4xl my-auto shadow-2xl border border-white/20">
@@ -170,7 +183,7 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
                 <div className="p-4 border border-black/5 rounded-2xl">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 mb-2">KYC Document</p>
                   {user.kycDocumentUrl ? (
-                    <a href={resolveImageUrl(user.kycDocumentUrl)} target="_blank" rel="noreferrer" className="text-primary text-xs font-bold hover:underline">View Document ({user.kycType || 'Unknown'})</a>
+                    <button onClick={() => handleViewDocument('kyc')} className="text-primary text-xs font-bold hover:underline">View Document ({user.kycType || 'Unknown'})</button>
                   ) : (
                     <p className="text-xs text-foreground/40">Not uploaded</p>
                   )}
@@ -178,7 +191,7 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
                 <div className="p-4 border border-black/5 rounded-2xl">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 mb-2">Income Proof</p>
                   {user.education?.incomeProofUrl ? (
-                    <a href={resolveImageUrl(user.education.incomeProofUrl)} target="_blank" rel="noreferrer" className="text-primary text-xs font-bold hover:underline">View Document</a>
+                    <button onClick={() => handleViewDocument('income')} className="text-primary text-xs font-bold hover:underline">View Document</button>
                   ) : (
                     <p className="text-xs text-foreground/40">Not uploaded</p>
                   )}
@@ -186,7 +199,7 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
                 <div className="p-4 border border-black/5 rounded-2xl">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 mb-2">Medical Report</p>
                   {user.physical?.medicalReportUrl ? (
-                    <a href={resolveImageUrl(user.physical.medicalReportUrl)} target="_blank" rel="noreferrer" className="text-primary text-xs font-bold hover:underline">View Document</a>
+                    <button onClick={() => handleViewDocument('medical')} className="text-primary text-xs font-bold hover:underline">View Document</button>
                   ) : (
                     <p className="text-xs text-foreground/40">Not uploaded</p>
                   )}

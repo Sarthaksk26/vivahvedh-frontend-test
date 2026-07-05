@@ -10,8 +10,19 @@ interface DocumentUploadProps {
 }
 
 export default function DocumentUpload({ profile, onUploadSuccess }: DocumentUploadProps) {
-  const [uploadingTarget, setUploadingTarget] = useState<string | null>(null);
+  const [uploadingTarget, setUploadingTarget] = useState<'kyc' | 'income' | 'medical' | null>(null);
   const [kycType, setKycType] = useState<'AADHAR' | 'PAN' | 'PASSPORT'>('AADHAR');
+
+  const handleViewDocument = async (type: 'kyc' | 'income' | 'medical') => {
+    try {
+      const res = await apiClient.get(`/documents/${type}`);
+      if (res.data.url) {
+        window.open(res.data.url, '_blank');
+      }
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'Failed to view document');
+    }
+  };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>, target: 'kyc' | 'income' | 'medical') => {
     const file = event.target.files?.[0];
@@ -103,22 +114,32 @@ export default function DocumentUpload({ profile, onUploadSuccess }: DocumentUpl
             {getStatusBadge(!!profile.kycDocumentUrl, profile.kycVerified)}
           </div>
 
-          <div className="relative">
-            <input 
-              type="file" 
-              accept="image/*,.pdf" 
-              onChange={(e) => handleFileUpload(e, 'kyc')}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-              disabled={uploadingTarget === 'kyc'}
-            />
-            <button 
-              disabled={uploadingTarget === 'kyc'}
-              className="px-6 py-3 bg-primary text-white font-bold rounded-xl flex items-center gap-2 hover:bg-primary/90 transition-all shadow-sm disabled:opacity-50"
-            >
-              <UploadCloud size={18} />
-              {uploadingTarget === 'kyc' ? 'Uploading...' : profile.kycDocumentUrl ? 'Update Document' : 'Upload Document'}
-            </button>
-          </div>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <input 
+                  type="file" 
+                  accept="image/*,.pdf" 
+                  onChange={(e) => handleFileUpload(e, 'kyc')}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                  disabled={uploadingTarget === 'kyc'}
+                />
+                <button 
+                  disabled={uploadingTarget === 'kyc'}
+                  className="w-full px-6 py-3 bg-primary text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 transition-all shadow-sm disabled:opacity-50"
+                >
+                  <UploadCloud size={18} />
+                  {uploadingTarget === 'kyc' ? 'Uploading...' : profile.kycDocumentUrl ? 'Update Document' : 'Upload Document'}
+                </button>
+              </div>
+              {profile.kycDocumentUrl && (
+                <button 
+                  onClick={() => handleViewDocument('kyc')}
+                  className="px-4 py-3 bg-white border-2 border-primary text-primary font-bold rounded-xl flex items-center justify-center hover:bg-primary/5 transition-all shadow-sm"
+                >
+                  View
+                </button>
+              )}
+            </div>
         </div>
       </div>
 
@@ -136,21 +157,31 @@ export default function DocumentUpload({ profile, onUploadSuccess }: DocumentUpl
               {getStatusBadge(!!profile.education?.incomeProofUrl)}
             </div>
 
-            <div className="relative">
-              <input 
-                type="file" 
-                accept="image/*,.pdf" 
-                onChange={(e) => handleFileUpload(e, 'income')}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-                disabled={uploadingTarget === 'income'}
-              />
-              <button 
-                disabled={uploadingTarget === 'income'}
-                className="px-6 py-3 bg-white border-2 border-primary text-primary font-bold rounded-xl flex items-center gap-2 hover:bg-primary/5 transition-all disabled:opacity-50"
-              >
-                <UploadCloud size={18} />
-                {uploadingTarget === 'income' ? 'Uploading...' : profile.education?.incomeProofUrl ? 'Update Proof' : 'Upload Proof'}
-              </button>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <input 
+                  type="file" 
+                  accept="image/*,.pdf" 
+                  onChange={(e) => handleFileUpload(e, 'income')}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                  disabled={uploadingTarget === 'income'}
+                />
+                <button 
+                  disabled={uploadingTarget === 'income'}
+                  className="w-full px-6 py-3 bg-white border-2 border-primary text-primary font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-primary/5 transition-all disabled:opacity-50"
+                >
+                  <UploadCloud size={18} />
+                  {uploadingTarget === 'income' ? 'Uploading...' : profile.education?.incomeProofUrl ? 'Update Proof' : 'Upload Proof'}
+                </button>
+              </div>
+              {profile.education?.incomeProofUrl && (
+                <button 
+                  onClick={() => handleViewDocument('income')}
+                  className="px-4 py-3 bg-white border-2 border-primary text-primary font-bold rounded-xl flex items-center justify-center hover:bg-primary/5 transition-all shadow-sm"
+                >
+                  View
+                </button>
+              )}
             </div>
           </div>
 
@@ -161,21 +192,31 @@ export default function DocumentUpload({ profile, onUploadSuccess }: DocumentUpl
               {getStatusBadge(!!profile.physical?.medicalReportUrl)}
             </div>
 
-            <div className="relative">
-              <input 
-                type="file" 
-                accept="image/*,.pdf" 
-                onChange={(e) => handleFileUpload(e, 'medical')}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-                disabled={uploadingTarget === 'medical'}
-              />
-              <button 
-                disabled={uploadingTarget === 'medical'}
-                className="px-6 py-3 bg-white border-2 border-primary text-primary font-bold rounded-xl flex items-center gap-2 hover:bg-primary/5 transition-all disabled:opacity-50"
-              >
-                <UploadCloud size={18} />
-                {uploadingTarget === 'medical' ? 'Uploading...' : profile.physical?.medicalReportUrl ? 'Update Report' : 'Upload Report'}
-              </button>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <input 
+                  type="file" 
+                  accept="image/*,.pdf" 
+                  onChange={(e) => handleFileUpload(e, 'medical')}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                  disabled={uploadingTarget === 'medical'}
+                />
+                <button 
+                  disabled={uploadingTarget === 'medical'}
+                  className="w-full px-6 py-3 bg-white border-2 border-primary text-primary font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-primary/5 transition-all disabled:opacity-50"
+                >
+                  <UploadCloud size={18} />
+                  {uploadingTarget === 'medical' ? 'Uploading...' : profile.physical?.medicalReportUrl ? 'Update Report' : 'Upload Report'}
+                </button>
+              </div>
+              {profile.physical?.medicalReportUrl && (
+                <button 
+                  onClick={() => handleViewDocument('medical')}
+                  className="px-4 py-3 bg-white border-2 border-primary text-primary font-bold rounded-xl flex items-center justify-center hover:bg-primary/5 transition-all shadow-sm"
+                >
+                  View
+                </button>
+              )}
             </div>
           </div>
         </div>
