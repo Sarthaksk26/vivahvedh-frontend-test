@@ -19,6 +19,7 @@ import { UserTable } from './components/UserTable';
 import { FilterBar } from './components/FilterBar';
 import { AdminProfilePreviewModal } from './components/AdminProfilePreviewModal';
 import { AdminUserEditModal } from './components/AdminUserEditModal';
+import { ReportList } from './components/ReportList';
 
 interface Story {
   id: string;
@@ -447,6 +448,9 @@ export default function AdminPanel() {
                           </div>
                         </div>
                       </div>
+                    )}
+                    {activeTab === 'reports' && (
+                      <ReportList />
                     )}
                     {(activeTab === 'pending' || activeTab === 'all') && (
                       <>

@@ -38,6 +38,8 @@ export default function Dashboard() {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  // Account deletion state
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const fetchProfile = useCallback(async () => {
     try {
       const res = await apiClient.get<FullUserProfile>('/user/profile');
@@ -112,11 +114,33 @@ export default function Dashboard() {
       setConfirmPassword('');
       authStorage.setForcePasswordChange(false);
     } catch (err: unknown) {
-      toast.error(formatApiError(err, 'Failed to change password.'));
+      toast.error(formatApiError(err, 'Failed to change password'));
     } finally {
       setChangingPassword(false);
     }
-  }, [newPassword, confirmPassword, currentPassword]);
+  }, [currentPassword, newPassword, confirmPassword, isForced]);
+
+  const handleDeleteAccount = useCallback(async () => {
+    if (!window.confirm("WARNING: Are you absolutely sure you want to permanently delete your account? This action cannot be undone and all your data, photos, and connections will be lost.")) {
+      return;
+    }
+    
+    // Double confirmation for safety
+    if (!window.confirm("FINAL WARNING: Your profile will be permanently erased. Do you want to proceed?")) {
+      return;
+    }
+
+    setIsDeletingAccount(true);
+    try {
+      await apiClient.delete('/user/account');
+      toast.success('Your account has been successfully deleted.');
+      authStorage.clearSession();
+      window.location.href = '/';
+    } catch (err) {
+      toast.error(formatApiError(err, 'Failed to delete account.'));
+      setIsDeletingAccount(false);
+    }
+  }, []);
 
   const switchTab = useCallback((tab: string) => {
     setActiveTab(tab);
@@ -523,6 +547,26 @@ export default function Dashboard() {
                 {changingPassword ? 'Updating Password...' : 'Update Password'}
               </button>
             </form>
+
+            <div className="mt-12 pt-8 border-t border-red-100">
+              <div className="flex items-center gap-3 mb-4">
+                <Shield size={20} className="text-red-500" />
+                <h3 className="text-lg font-bold text-red-600">Danger Zone</h3>
+              </div>
+              <div className="p-4 bg-red-50/50 border border-red-100 rounded-xl">
+                <h4 className="font-bold text-red-800 text-sm mb-1">Delete Account</h4>
+                <p className="text-xs text-red-600/80 mb-4 leading-relaxed">
+                  Permanently delete your account and remove all personal data, photos, and matches from our servers. This action cannot be undone.
+                </p>
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={isDeletingAccount}
+                  className="px-4 py-2 bg-red-100 text-red-600 font-bold text-sm rounded-lg hover:bg-red-200 transition-colors disabled:opacity-50"
+                >
+                  {isDeletingAccount ? 'Deleting...' : 'Delete My Account'}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

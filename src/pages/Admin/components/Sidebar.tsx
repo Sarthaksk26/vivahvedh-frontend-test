@@ -23,6 +23,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, notif
       items: [
         { id: 'pending', label: 'Pending Approvals', icon: <Users size={18} />, badge: notifications?.notifications?.pendingApprovals?.count || stats?.pendingApprovals || 0 },
         { id: 'payments', label: 'Plan Payments', icon: <CreditCard size={18} />, badge: notifications?.notifications?.pendingPayments?.count || stats?.pendingPayments || 0 },
+        { id: 'reports', label: 'Reported Profiles', icon: <Shield size={18} /> },
         { id: 'enquiries', label: 'Inbox / Enquiries', icon: <Inbox size={18} />, badge: notifications?.notifications?.unresolvedEnquiries?.count || 0 },
       ]
     },

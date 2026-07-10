@@ -7,6 +7,7 @@ export type AdminTab =
   | 'payments'
   | 'birthdays'
   | 'connections'
+  | 'reports'
   | 'profit';
 
 export interface ProfileData {

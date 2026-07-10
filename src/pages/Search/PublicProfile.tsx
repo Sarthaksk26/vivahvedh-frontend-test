@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import apiClient from '../../lib/apiClient';
 import CarouselLightbox from '../../components/layout/Lightbox';
+import { ReportModal } from '../../components/ReportModal';
 import toast from 'react-hot-toast';
 import { authStorage } from '../../lib/authStorage';
 import OptimizedImage from '../../components/ui/OptimizedImage';
@@ -16,6 +17,7 @@ export default function PublicProfile() {
   const [loading, setLoading] = useState(true);
   const [carouselOpen, setCarouselOpen] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
   const [isShortlisted, setIsShortlisted] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('NONE');
@@ -289,6 +291,15 @@ export default function PublicProfile() {
             >
               {isShortlisted ? '⭐ Shortlisted' : '☆ Shortlist'}
             </button>
+
+            {isAuthenticated && !isAdmin && (
+              <button
+                onClick={() => setReportModalOpen(true)}
+                className="px-6 py-3 border-2 border-transparent text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-full font-bold transition-all text-sm ml-auto"
+              >
+                ⚐ Report Profile
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -449,6 +460,11 @@ export default function PublicProfile() {
           )}
         </section>
       </div>
+      <ReportModal 
+        isOpen={reportModalOpen} 
+        onClose={() => setReportModalOpen(false)} 
+        targetUserId={id!} 
+      />
     </div>
   );
 }

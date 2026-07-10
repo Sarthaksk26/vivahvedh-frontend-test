@@ -22,16 +22,23 @@ const registerSchema = z.object({
   maritalStatus: z.enum(['UNMARRIED', 'DIVORCED', 'WIDOWED', 'SEPARATED']),
   birthDate: z.string().refine((val) => {
     const dob = new Date(val);
-    if (!val || isNaN(dob.getTime())) return false;
-    const age = (Date.now() - dob.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
-    return age >= 18;
-  }, { message: 'You must be at least 18 years old.' }),
+    return val && !isNaN(dob.getTime());
+  }, { message: 'Valid Date of Birth is required' }),
   profileCreatedBy: z.enum(['Self', 'Father', 'Mother', 'Sibling', 'Relative', 'Friend', 'Marriage Bureau']).optional(),
   password: z.string().min(8, "Password must be 8+ characters"),
   confirmPassword: z.string().min(1, "Please confirm your password"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
   path: ["confirmPassword"],
+}).refine((data) => {
+  const dob = new Date(data.birthDate);
+  const age = (Date.now() - dob.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+  if (data.gender === 'MALE' && age < 21) return false;
+  if (data.gender === 'FEMALE' && age < 18) return false;
+  return true;
+}, {
+  message: "Legal marriage age in India is 21+ for Men and 18+ for Women.",
+  path: ["birthDate"],
 });
 
 type RegisterForm = z.infer<typeof registerSchema>;

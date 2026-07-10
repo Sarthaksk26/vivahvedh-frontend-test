@@ -8,6 +8,7 @@ import MainLayout from './components/layout/MainLayout';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 import ErrorBoundary from './components/ErrorBoundary';
+import { CookieBanner } from './components/CookieBanner';
 
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Auth/Login'));
@@ -69,6 +70,7 @@ function App() {
             }} 
           />
           <Suspense fallback={<PageLoader />}>
+            <CookieBanner />
             <Routes>
               <Route element={<MainLayout />}>
                 {/* Public Routes */}
