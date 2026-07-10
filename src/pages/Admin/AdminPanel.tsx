@@ -355,7 +355,7 @@ export default function AdminPanel() {
           <main className="flex-1 min-w-0">
             <div className="bg-white rounded-[40px] shadow-ambient overflow-hidden border border-black/5">
               <div className="px-10 py-8 bg-[#F7F9FB]/50 border-b border-black/5 flex justify-between items-center">
-                <h2 className="text-xl font-display font-black text-foreground uppercase tracking-widest">
+                <h2 className="text-xl font-semibold text-foreground tracking-wide">
                   {activeTab === 'pending' ? 'Pending Approvals' : 
                    activeTab === 'all' ? 'All Members' : 
                    activeTab === 'addProfile' ? 'Onboard Offline Customer' : 
