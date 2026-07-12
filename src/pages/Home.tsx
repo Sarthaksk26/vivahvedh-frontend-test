@@ -201,21 +201,6 @@ export default function Home() {
               </div>
             </div>
             
-            {/* Floating Trust Badge */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-              className="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl border border-border flex items-center gap-3"
-            >
-              <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-green-600">
-                <ShieldCheck size={24} />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-foreground">100% Verified</p>
-                <p className="text-xs text-muted-foreground">Genuine Profiles</p>
-              </div>
-            </motion.div>
           </motion.div>
         </div>
       </section>
