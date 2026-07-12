@@ -113,38 +113,37 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════
           MINIMALIST ROYAL HERO SECTION (WITH MORE MARATHI)
       ═══════════════════════════════════════════════════ */}
-      <section className="relative w-full pt-20 lg:pt-32 pb-20 lg:pb-32 flex flex-col items-center justify-center bg-[#fcfaf7] border-b border-border overflow-hidden">
+      <section className="relative w-full pt-20 lg:pt-28 pb-20 lg:pb-32 flex flex-col items-center justify-center bg-[#fcfaf7] border-b border-border overflow-hidden">
         
         {/* Subtle Background Elements */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-[100px] translate-y-1/3 pointer-events-none" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-24">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16">
           
-          {/* Left Column: Cinematic Animated Logo */}
-          <motion.div 
-            initial={{ opacity: 0, x: -20, filter: "blur(10px)" }} 
-            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} 
-            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-            className="flex-1 w-full flex justify-center lg:justify-end"
-          >
-            <div className="w-[220px] sm:w-[280px] lg:w-[350px] h-auto relative">
+          {/* Left Column: Copy & Logo */}
+          <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left">
+            
+            {/* Elegant Logo above text */}
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="w-[220px] sm:w-[280px] h-auto relative mb-10"
+            >
               <img 
                 src="/logo.png" 
                 alt="Vivahvedh Logo" 
                 className="w-full h-auto object-contain mix-blend-multiply" 
               />
-            </div>
-          </motion.div>
+            </motion.div>
 
-          {/* Right Column: Hero Copy */}
-          <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left">
-            {/* Slogan Pill without any star/logo */}
+            {/* Slogan Pill */}
             <motion.div 
               initial={{ opacity: 0, y: 10 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="inline-flex items-center justify-center px-6 py-2.5 rounded-full border border-[#e5d5b5] bg-white/60 text-sm font-semibold mb-6 shadow-sm"
+              className="inline-flex items-center justify-center px-5 py-2 rounded-full border border-[#e5d5b5] bg-white/60 text-sm font-semibold mb-6 shadow-sm"
             >
               <span className="font-display tracking-wide text-primary">॥ शोध नव्या नात्यांचा ॥</span>
             </motion.div>
@@ -153,16 +152,16 @@ export default function Home() {
               initial={{ opacity: 0, y: 15 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-4xl sm:text-5xl lg:text-[3.5rem] font-display text-foreground mb-6 leading-[1.4]"
+              className="text-4xl sm:text-5xl lg:text-6xl font-display text-foreground mb-6 leading-[1.25]"
             >
-              तुमचा योग्य जीवनसाथी शोधा.
+              तुमचा योग्य <br className="hidden lg:block"/> जीवनसाथी शोधा.
             </motion.h1>
 
             <motion.p 
               initial={{ opacity: 0, y: 15 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-base sm:text-lg text-[#52525b] mb-10 max-w-[450px] leading-[1.8] font-sans"
+              className="text-base sm:text-lg text-[#52525b] mb-10 max-w-[480px] leading-[1.7] font-sans"
             >
               महाराष्ट्रातील सुशिक्षित आणि प्रतिष्ठित कुटुंबांसाठी एक खात्रीशीर व सुरक्षित विवाह व्यासपीठ. १००% पडताळणी केलेले प्रोफाइल्स.
             </motion.p>
@@ -181,6 +180,43 @@ export default function Home() {
               </Link>
             </motion.div>
           </div>
+
+          {/* Right Column: Beautiful Image to fill space */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }} 
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }} 
+            transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
+            className="flex-1 w-full max-w-md lg:max-w-lg relative mt-12 lg:mt-0"
+          >
+            {/* Decorative background shape */}
+            <div className="absolute inset-0 bg-primary/5 rounded-[40px] transform rotate-3 scale-105" />
+            
+            <div className="relative w-full aspect-[4/5] rounded-[40px] overflow-hidden bg-white border border-border p-2 shadow-xl">
+              <div className="w-full h-full rounded-[32px] overflow-hidden">
+                <img 
+                  src="/happy_couple.png" 
+                  alt="Happy Couple" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            
+            {/* Floating Trust Badge */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
+              className="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl border border-border flex items-center gap-3"
+            >
+              <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                <ShieldCheck size={24} />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-foreground">100% Verified</p>
+                <p className="text-xs text-muted-foreground">Genuine Profiles</p>
+              </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
