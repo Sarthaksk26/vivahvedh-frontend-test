@@ -152,7 +152,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 15 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-display text-foreground mb-6 leading-[1.25]"
+              className="text-4xl sm:text-5xl lg:text-6xl font-display text-foreground mb-6 leading-relaxed"
             >
               तुमचा योग्य <br className="hidden lg:block"/> जीवनसाथी शोधा.
             </motion.h1>

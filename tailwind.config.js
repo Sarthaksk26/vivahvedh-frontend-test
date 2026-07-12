@@ -43,9 +43,9 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["'Plus Jakarta Sans'", "sans-serif"],
-        display: ["'Outfit'", "sans-serif"],
-        serif: ["'Playfair Display'", "Georgia", "serif"],
+        sans: ["'Noto Sans Devanagari'", "sans-serif"],
+        display: ["'Noto Serif Devanagari'", "serif"],
+        serif: ["'Noto Serif Devanagari'", "Georgia", "serif"],
       },
       boxShadow: {
         'sm-soft': '0 2px 8px -2px rgba(0, 0, 0, 0.05)',
