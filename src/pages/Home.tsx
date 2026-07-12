@@ -119,7 +119,7 @@ export default function Home() {
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-[100px] translate-y-1/3 pointer-events-none" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-24">
           
           {/* Left Column: Cinematic Animated Logo */}
           <motion.div 
@@ -128,7 +128,7 @@ export default function Home() {
             transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
             className="flex-1 w-full flex justify-center lg:justify-end"
           >
-            <div className="w-[300px] sm:w-[450px] lg:w-[500px] h-auto relative">
+            <div className="w-[220px] sm:w-[280px] lg:w-[350px] h-auto relative">
               <img 
                 src="/logo.png" 
                 alt="Vivahvedh Logo" 
@@ -153,17 +153,16 @@ export default function Home() {
               initial={{ opacity: 0, y: 15 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-display text-foreground mb-6 leading-[1.25]"
+              className="text-4xl sm:text-5xl lg:text-[3.5rem] font-display text-foreground mb-6 leading-[1.4]"
             >
-              तुमचा योग्य <br />
-              जीवनसाथी शोधा.
+              तुमचा योग्य जीवनसाथी शोधा.
             </motion.h1>
 
             <motion.p 
               initial={{ opacity: 0, y: 15 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-base sm:text-lg text-[#52525b] mb-10 max-w-[500px] leading-[1.7] font-sans"
+              className="text-base sm:text-lg text-[#52525b] mb-10 max-w-[450px] leading-[1.8] font-sans"
             >
               महाराष्ट्रातील सुशिक्षित आणि प्रतिष्ठित कुटुंबांसाठी एक खात्रीशीर व सुरक्षित विवाह व्यासपीठ. १००% पडताळणी केलेले प्रोफाइल्स.
             </motion.p>
