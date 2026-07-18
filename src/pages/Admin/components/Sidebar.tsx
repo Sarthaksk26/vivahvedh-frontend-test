@@ -19,28 +19,39 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, notif
 
   const sections: { title: string; items: Tab[] }[] = [
     {
-      title: "Approvals & Inbox",
+      title: "Approvals & Inbox (मंजुरी आणि संदेश)",
       items: [
-        { id: 'pending', label: 'Pending Approvals', icon: <Users size={18} />, badge: notifications?.notifications?.pendingApprovals?.count || stats?.pendingApprovals || 0 },
-        { id: 'payments', label: 'Plan Payments', icon: <CreditCard size={18} />, badge: notifications?.notifications?.pendingPayments?.count || stats?.pendingPayments || 0 },
-        { id: 'reports', label: 'Reported Profiles', icon: <Shield size={18} /> },
-        { id: 'enquiries', label: 'Inbox / Enquiries', icon: <Inbox size={18} />, badge: notifications?.notifications?.unresolvedEnquiries?.count || 0 },
+        { id: 'pending', label: 'New Approvals (नवीन मंजुरी)', icon: <Users size={18} />, badge: notifications?.notifications?.pendingApprovals?.count || stats?.pendingApprovals || 0 },
+        { id: 'payments', label: 'Payments (पेमेंट)', icon: <CreditCard size={18} />, badge: notifications?.notifications?.pendingPayments?.count || stats?.pendingPayments || 0 },
+        { id: 'reports', label: 'Reported (तक्रार आलेले)', icon: <Shield size={18} /> },
+        { id: 'enquiries', label: 'Inbox (चौकशी)', icon: <Inbox size={18} />, badge: notifications?.notifications?.unresolvedEnquiries?.count || 0 },
       ]
     },
     {
-      title: "Member Directory",
+      title: "Profiles (प्रोफाइल्स)",
       items: [
-        { id: 'all', label: 'All Members', icon: <Shield size={18} /> },
-        { id: 'addProfile', label: 'Create Offline Profile', icon: <UserPlus size={18} /> },
-        { id: 'connections', label: 'Connection Logs', icon: <Link2 size={18} /> },
+        { id: 'all', label: 'All (सर्व)', icon: <Users size={18} /> },
+        { id: 'activeProfiles', label: 'Active (सक्रिय)', icon: <Shield size={18} /> },
+        { id: 'paidProfiles', label: 'Paid (पेड)', icon: <Heart size={18} /> },
+        { id: 'unpaidProfiles', label: 'Unpaid (फ्री)', icon: <Users size={18} /> },
+        { id: 'deletedProfiles', label: 'Deleted (काढून टाकलेले)', icon: <TrendingUp size={18} /> },
+        { id: 'incompleteProfiles', label: 'Incomplete (अपूर्ण)', icon: <UserPlus size={18} /> },
+      ]
+    },
+    {
+      title: "Member Directory (सदस्य माहिती)",
+      items: [
+        { id: 'addProfile', label: 'Add Offline User (नवीन प्रोफाइल)', icon: <UserPlus size={18} /> },
+        { id: 'connections', label: 'Member Requests (विनंती रेकॉर्ड)', icon: <Link2 size={18} /> },
+        { id: 'auditLogs', label: 'Admin Actions Log (अॅडमिन कृती)', icon: <Shield size={18} /> },
       ]
     },
     {
       title: "Marketing & Growth",
       items: [
-        { id: 'birthdays', label: 'Upcoming Birthdays', icon: <Cake size={18} />, badge: notifications?.notifications?.upcomingBirthdays?.count || 0 },
-        { id: 'stories', label: 'Success Stories', icon: <Heart size={18} />, badge: notifications?.notifications?.pendingStories?.count || 0 },
-        { id: 'profit', label: 'Profit Tracker', icon: <TrendingUp size={18} /> },
+        { id: 'birthdays', label: 'Birthdays (वाढदिवस)', icon: <Cake size={18} />, badge: notifications?.notifications?.upcomingBirthdays?.count || 0 },
+        { id: 'stories', label: 'Success Stories (यशस्वी कथा)', icon: <Heart size={18} />, badge: notifications?.notifications?.pendingStories?.count || 0 },
+        { id: 'profit', label: 'Revenue (उत्पन्न)', icon: <TrendingUp size={18} /> },
       ]
     }
   ];

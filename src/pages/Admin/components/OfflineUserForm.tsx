@@ -1,5 +1,6 @@
 import React from 'react';
-import { UserPlus, Check } from 'lucide-react';
+import { UserPlus, Check, Copy } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface OfflineForm {
   firstName: string;
@@ -16,7 +17,7 @@ interface OfflineUserFormProps {
   handleOfflineFormChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   handleOfflineSubmit: (e: React.FormEvent) => void;
   offlineSubmitting: boolean;
-  offlineSuccess: { regId: string; name: string; email: string } | null;
+  offlineSuccess: { regId: string; name: string; email: string; tempPassword?: string } | null;
   offlineError: string;
 }
 
@@ -43,10 +44,32 @@ export const OfflineUserForm: React.FC<OfflineUserFormProps> = ({
               <p className="text-green-700 text-sm font-medium">RegID: <strong>{offlineSuccess.regId}</strong></p>
             </div>
           </div>
-          <p className="text-green-700 text-sm leading-relaxed">
+          <p className="text-green-700 text-sm leading-relaxed mb-4">
             Login credentials have been sent to <strong>{offlineSuccess.email}</strong>. 
-            The user ({offlineSuccess.name}) must change their password on first login.
+            It is recommended that the user ({offlineSuccess.name}) changes their password on first login.
           </p>
+          {offlineSuccess.tempPassword && (
+            <div className="mt-4 p-4 bg-white rounded-xl border border-green-200 flex items-center justify-between">
+              <div>
+                <span className="block text-xs font-bold text-green-700 uppercase tracking-widest mb-1">Temporary Password</span>
+                <span className="font-mono text-lg font-black text-green-900">{offlineSuccess.tempPassword}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(offlineSuccess.tempPassword || '');
+                  toast.success('Password copied to clipboard');
+                }}
+                className="p-3 bg-green-100 text-green-700 hover:bg-green-200 hover:text-green-800 rounded-xl transition-colors"
+                title="Copy Password"
+              >
+                <Copy size={18} />
+              </button>
+            </div>
+          )}
+          <div className="mt-4 p-3 bg-amber-50 rounded-xl text-amber-800 text-xs font-bold border border-amber-200">
+            ⚠️ Save this password now. It will not be shown again.
+          </div>
         </div>
       )}
 
@@ -117,7 +140,7 @@ export const OfflineUserForm: React.FC<OfflineUserFormProps> = ({
           <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl mb-6">
             <p className="text-amber-800 text-sm font-medium">
               ⚡ A secure temporary password will be auto-generated and emailed to the customer. 
-              They will be required to change it on first login.
+              They can change it later if they prefer.
             </p>
           </div>
 

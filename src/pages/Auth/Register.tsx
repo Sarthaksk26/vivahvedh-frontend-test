@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import apiClient from '../../lib/apiClient';
-import { UserPlus, Sparkles, CheckCircle, Eye, EyeOff } from 'lucide-react';
+import { UserPlus, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { formatApiError } from '../../lib/errorUtils';
 import { InfoModal } from '../../components/InfoModal';
@@ -74,7 +74,7 @@ export default function Register() {
     }
   };
 
-  const inputClass = "flex h-12 w-full rounded-xl border border-input bg-background/80 px-4 text-sm placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all";
+  const inputClass = "input-cultural";
 
   return (
     <>
@@ -82,10 +82,12 @@ export default function Register() {
         title="Register | Vivahvedh" 
         description="Create your free Vivahvedh profile to start your search for the perfect Maharashtrian bride or groom."
       />
-      <div className="min-h-[85vh] py-12 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="min-h-[85vh] py-12 flex items-center justify-center p-4 relative overflow-hidden"
+        style={{ background: 'linear-gradient(160deg, #FFFCF5 0%, #FFF8EB 50%, #FFFCF5 100%)' }}
+      >
       {/* Background */}
-      <div className="absolute top-10 right-[10%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
-      <div className="absolute bottom-10 left-[10%] w-[300px] h-[300px] bg-amber-300/10 rounded-full blur-[100px]" />
+      <div className="absolute top-10 right-[10%] w-[400px] h-[400px] bg-kumkum-500/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-10 left-[10%] w-[300px] h-[300px] bg-haldi-400/8 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="w-full max-w-4xl flex flex-col md:flex-row gap-8 relative">
         {/* Left - Benefits Panel */}
@@ -95,11 +97,16 @@ export default function Register() {
           transition={{ duration: 0.5 }}
           className="hidden md:flex flex-col justify-center w-80 flex-shrink-0"
         >
-          <h2 className="text-3xl font-extrabold tracking-tight mb-3">
+          {/* Logo on benefits side */}
+          <Link to="/" className="mb-8 inline-block">
+            <img src="/logo.png" alt="विवाहवेध" className="w-44 h-auto object-contain mix-blend-multiply" />
+          </Link>
+          
+          <h2 className="text-3xl font-display font-bold tracking-tight mb-3">
             आपल्या कुटुंबासाठी<br />
             <span className="text-primary">योग्य निवड</span>
           </h2>
-          <p className="text-muted-foreground text-sm mb-8 leading-relaxed">
+          <p className="text-muted-foreground text-sm mb-8 leading-relaxed font-sans">
             Join Vivahvedh and get access to verified, trusted profiles from Maharashtrian families.
           </p>
 
@@ -111,10 +118,17 @@ export default function Register() {
               { text: 'गोपनीय — Your data is private & encrypted' },
             ].map((item, i) => (
               <div key={i} className="flex items-start gap-3">
-                <CheckCircle size={18} className="text-green-500 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-foreground/80">{item.text}</p>
+                <CheckCircle size={18} className="text-paan-500 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-foreground/70 font-sans">{item.text}</p>
               </div>
             ))}
+          </div>
+
+          {/* Cultural decoration */}
+          <div className="mt-10 flex items-center gap-3">
+            <div className="w-8 h-px bg-haldi-500/30" />
+            <span className="text-xs text-haldi-500/60 font-display italic">॥ शुभ विवाह ॥</span>
+            <div className="w-8 h-px bg-haldi-500/30" />
           </div>
         </motion.div>
 
@@ -125,61 +139,61 @@ export default function Register() {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="flex-1"
         >
-          <div className="bg-card/80 backdrop-blur-xl border shadow-2xl shadow-primary/5 rounded-3xl p-8 md:p-10 relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-rose-400 to-amber-400" />
+          <div className="bg-white/90 backdrop-blur-xl border border-border shadow-premium rounded-3xl p-8 md:p-10 relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-kumkum-500 via-haldi-500 to-kumkum-500" />
 
             <div className="text-center mb-8">
               <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <UserPlus size={24} className="text-primary" />
               </div>
-              <h1 className="text-3xl font-extrabold tracking-tight mb-1">नोंदणी करा</h1>
-              <p className="text-muted-foreground text-sm">Create your profile — It's free & takes 2 minutes</p>
+              <h1 className="text-2xl font-display font-bold tracking-tight mb-1">नोंदणी करा</h1>
+              <p className="text-muted-foreground text-sm font-ui">Create your profile — It's free & takes 2 minutes</p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-foreground/80">First Name *</label>
+                  <label className="text-sm font-bold text-foreground/80 font-ui">First Name *</label>
                   <input {...register("firstName")} className={inputClass} placeholder="पहिले नाव" />
-                  {errors.firstName && <p className="text-red-500 text-xs font-medium">{errors.firstName.message}</p>}
+                  {errors.firstName && <p className="text-red-500 text-xs font-medium font-ui">{errors.firstName.message}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-foreground/80">Middle Name *</label>
+                  <label className="text-sm font-bold text-foreground/80 font-ui">Middle Name *</label>
                   <input {...register("middleName")} className={inputClass} placeholder="मधले नाव" />
-                  {errors.middleName && <p className="text-red-500 text-xs font-medium">{errors.middleName.message}</p>}
+                  {errors.middleName && <p className="text-red-500 text-xs font-medium font-ui">{errors.middleName.message}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-foreground/80">Last Name *</label>
+                  <label className="text-sm font-bold text-foreground/80 font-ui">Last Name *</label>
                   <input {...register("lastName")} className={inputClass} placeholder="आडनाव" />
-                  {errors.lastName && <p className="text-red-500 text-xs font-medium">{errors.lastName.message}</p>}
+                  {errors.lastName && <p className="text-red-500 text-xs font-medium font-ui">{errors.lastName.message}</p>}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-foreground/80">Mobile Number *</label>
+                  <label className="text-sm font-bold text-foreground/80 font-ui">Mobile Number *</label>
                   <input {...register("mobile")} type="tel" className={inputClass} placeholder="e.g. 9876543210" />
-                  {errors.mobile && <p className="text-red-500 text-xs font-medium">{errors.mobile.message}</p>}
+                  {errors.mobile && <p className="text-red-500 text-xs font-medium font-ui">{errors.mobile.message}</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-foreground/80">Email *</label>
+                  <label className="text-sm font-bold text-foreground/80 font-ui">Email *</label>
                   <input {...register("email")} type="email" className={inputClass} placeholder="email@example.com" />
-                  {errors.email && <p className="text-red-500 text-xs font-medium">{errors.email.message}</p>}
+                  {errors.email && <p className="text-red-500 text-xs font-medium font-ui">{errors.email.message}</p>}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-foreground/80">Gender *</label>
+                  <label className="text-sm font-bold text-foreground/80 font-ui">Gender *</label>
                   <select {...register("gender")} className={inputClass}>
                     <option value="">लिंग निवडा — Select</option>
                     <option value="MALE">पुरुष — Male</option>
                     <option value="FEMALE">स्त्री — Female</option>
                   </select>
-                  {errors.gender && <p className="text-red-500 text-xs font-medium">Gender is required</p>}
+                  {errors.gender && <p className="text-red-500 text-xs font-medium font-ui">Gender is required</p>}
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-foreground/80">Marital Status *</label>
+                  <label className="text-sm font-bold text-foreground/80 font-ui">Marital Status *</label>
                   <select {...register("maritalStatus")} className={inputClass}>
                     <option value="">वैवाहिक स्थिती — Select</option>
                     <option value="UNMARRIED">अविवाहित — Unmarried</option>
@@ -187,13 +201,13 @@ export default function Register() {
                     <option value="WIDOWED">विधवा/विधुर — Widowed</option>
                     <option value="SEPARATED">विभक्त — Separated</option>
                   </select>
-                  {errors.maritalStatus && <p className="text-red-500 text-xs font-medium">Required</p>}
+                  {errors.maritalStatus && <p className="text-red-500 text-xs font-medium font-ui">Required</p>}
                 </div>
               </div>
 
               {/* Date of Birth */}
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-foreground/80">
+                <label className="text-sm font-bold text-foreground/80 font-ui">
                   Date of Birth * <span className="text-xs font-normal text-muted-foreground">(Must be 18+)</span>
                 </label>
                 <input
@@ -202,12 +216,12 @@ export default function Register() {
                   max={MAX_BIRTH_DATE}
                   className={inputClass}
                 />
-                {errors.birthDate && <p className="text-red-500 text-xs font-medium">{errors.birthDate.message}</p>}
+                {errors.birthDate && <p className="text-red-500 text-xs font-medium font-ui">{errors.birthDate.message}</p>}
               </div>
 
               {/* Profile Created By — New Field */}
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-foreground/80">Profile Created By</label>
+                <label className="text-sm font-bold text-foreground/80 font-ui">Profile Created By</label>
                 <select {...register("profileCreatedBy")} className={inputClass}>
                   <option value="Self">स्वतः — Self</option>
                   <option value="Father">वडील — Father</option>
@@ -217,18 +231,18 @@ export default function Register() {
                   <option value="Friend">मित्र — Friend</option>
                   <option value="Marriage Bureau">विवाह संस्था — Marriage Bureau</option>
                 </select>
-                {errors.profileCreatedBy && <p className="text-red-500 text-xs font-medium">Please select an option</p>}
+                {errors.profileCreatedBy && <p className="text-red-500 text-xs font-medium font-ui">Please select an option</p>}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-foreground/80">Password *</label>
+                  <label className="text-sm font-bold text-foreground/80 font-ui">Password *</label>
                   <div className="relative">
                     <input 
                       {...register("password")} 
                       type={showPassword ? "text" : "password"} 
                       className={`${inputClass} pr-12`} 
-                      placeholder="Minimum 6 characters" 
+                      placeholder="Minimum 8 characters" 
                     />
                     <button
                       type="button"
@@ -238,11 +252,11 @@ export default function Register() {
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  {errors.password && <p className="text-red-500 text-xs font-medium">{errors.password.message}</p>}
+                  {errors.password && <p className="text-red-500 text-xs font-medium font-ui">{errors.password.message}</p>}
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-sm font-bold text-foreground/80">Confirm Password *</label>
+                  <label className="text-sm font-bold text-foreground/80 font-ui">Confirm Password *</label>
                   <div className="relative">
                     <input 
                       {...register("confirmPassword")} 
@@ -258,7 +272,7 @@ export default function Register() {
                       {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  {errors.confirmPassword && <p className="text-red-500 text-xs font-medium">{errors.confirmPassword.message}</p>}
+                  {errors.confirmPassword && <p className="text-red-500 text-xs font-medium font-ui">{errors.confirmPassword.message}</p>}
                 </div>
               </div>
 
@@ -269,7 +283,7 @@ export default function Register() {
                     required 
                     className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary" 
                   />
-                  <span className="text-xs text-muted-foreground leading-relaxed">
+                  <span className="text-xs text-muted-foreground leading-relaxed font-sans">
                     I agree to the <Link to="/terms-of-service" className="text-primary hover:underline">Terms of Service</Link> and <Link to="/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>
                   </span>
                 </label>
@@ -278,7 +292,8 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-primary text-white h-12 rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary/90 hover:shadow-xl transition-all active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full h-12 rounded-xl font-ui font-bold text-sm text-white shadow-kumkum transition-all active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2"
+                style={{ background: 'linear-gradient(135deg, #C41E2A 0%, #8B1218 100%)' }}
               >
                 {isSubmitting ? (
                   <>
@@ -292,7 +307,7 @@ export default function Register() {
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground font-sans">
                 Already registered?{" "}
                 <Link to="/login" className="text-primary font-bold hover:underline">
                   लॉगिन करा — Sign In
@@ -301,10 +316,13 @@ export default function Register() {
             </div>
           </div>
 
-          <p className="text-center mt-4 text-xs text-muted-foreground/60 flex items-center justify-center gap-1.5">
-            <Sparkles size={12} className="text-primary/50" />
-            नोंदणी केल्यावर Admin मान्यता आवश्यक • Profile approval within 24 hours
-          </p>
+          <div className="text-center mt-4 flex items-center justify-center gap-3">
+            <div className="w-6 h-px bg-haldi-500/30" />
+            <p className="text-xs text-muted-foreground/50 font-ui">
+              नोंदणी केल्यावर Admin मान्यता आवश्यक • Profile approval within 24 hours
+            </p>
+            <div className="w-6 h-px bg-haldi-500/30" />
+          </div>
         </motion.div>
       </div>
     </div>

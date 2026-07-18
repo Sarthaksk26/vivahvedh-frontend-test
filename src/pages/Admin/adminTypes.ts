@@ -8,7 +8,13 @@ export type AdminTab =
   | 'birthdays'
   | 'connections'
   | 'reports'
-  | 'profit';
+  | 'profit'
+  | 'activeProfiles'
+  | 'paidProfiles'
+  | 'unpaidProfiles'
+  | 'deletedProfiles'
+  | 'incompleteProfiles'
+  | 'auditLogs';
 
 export interface ProfileData {
   firstName: string;

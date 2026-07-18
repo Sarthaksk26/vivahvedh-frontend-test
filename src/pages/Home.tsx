@@ -21,6 +21,7 @@ import apiClient from '../lib/apiClient';
 import { resolveImageUrl } from '../lib/url';
 import { PaymentModal } from '../components/PaymentModal';
 import { SEO } from '../components/common/SEO';
+import { authStorage } from '../lib/authStorage';
 
 // --- Reusable Scroll Animation Wrapper ---
 function Reveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -78,7 +79,7 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    document.title = 'Vivahvedh | Premium Marathi Matrimony';
+    document.title = 'विवाहवेध | Premium Marathi Matrimony';
     const setMeta = (name: string, content: string) => {
       let el = document.querySelector(`meta[name="${name}"]`);
       if (!el) { el = document.createElement('meta'); el.setAttribute('name', name); document.head.appendChild(el); }
@@ -106,113 +107,103 @@ export default function Home() {
     setCurrentStory((prev) => (prev - 1 + successStories.length) % successStories.length);
   };
 
+  const handlePlanSelect = (type: 'SILVER' | 'GOLD', price: number) => {
+    if (!authStorage.isAuthenticated()) {
+      navigate(`/login?returnUrl=${encodeURIComponent('/#plans')}`);
+      return;
+    }
+    setSelectedPlan({ type, price });
+    setIsPaymentModalOpen(true);
+  };
+
   return (
-    <div className="flex-1 w-full flex flex-col items-center bg-background overflow-x-hidden font-sans text-foreground">
+    <div className="flex-1 w-full flex flex-col items-center overflow-x-hidden font-sans text-foreground">
       <SEO />
       
       {/* ═══════════════════════════════════════════════════
-          MINIMALIST ROYAL HERO SECTION (WITH MORE MARATHI)
+          HERO SECTION — विवाह मंडप (Wedding Pavilion)
       ═══════════════════════════════════════════════════ */}
-      <section className="relative w-full pt-20 lg:pt-28 pb-20 lg:pb-32 flex flex-col items-center justify-center bg-[#fcfaf7] border-b border-border overflow-hidden">
-        
-        {/* Subtle Background Elements */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-[100px] translate-y-1/3 pointer-events-none" />
+      <section className="relative w-full py-16 lg:py-24 flex flex-col items-center justify-center overflow-hidden"
+        style={{ background: 'linear-gradient(160deg, #FFFCF5 0%, #FFF8EB 30%, #FFF5E1 60%, #FFFCF5 100%)' }}
+      >
+        {/* Decorative ambient blobs */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-kumkum-500/5 rounded-full blur-[120px] -translate-y-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-haldi-500/8 rounded-full blur-[120px] translate-y-1/3 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-haldi-400/5 rounded-full blur-[200px] pointer-events-none" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16">
+        <div className="relative z-10 max-w-5xl mx-auto px-6 w-full flex flex-col items-center text-center">
           
-          {/* Left Column: Copy & Logo */}
-          <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left">
-            
-            {/* Elegant Logo above text */}
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="w-[220px] sm:w-[280px] h-auto relative mb-10"
-            >
-              <img 
-                src="/logo.png" 
-                alt="Vivahvedh Logo" 
-                className="w-full h-auto object-contain mix-blend-multiply" 
-              />
-            </motion.div>
-
-            {/* Slogan Pill */}
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="inline-flex items-center justify-center px-5 py-2 rounded-full border border-[#e5d5b5] bg-white/60 text-sm font-semibold mb-6 shadow-sm"
-            >
-              <span className="font-display tracking-wide text-primary">॥ शोध नव्या नात्यांचा ॥</span>
-            </motion.div>
-
-            <motion.h1 
-              initial={{ opacity: 0, y: 15 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-display text-foreground mb-6 leading-relaxed"
-            >
-              तुमचा योग्य <br className="hidden lg:block"/> जीवनसाथी शोधा.
-            </motion.h1>
-
-            <motion.p 
-              initial={{ opacity: 0, y: 15 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-base sm:text-lg text-[#52525b] mb-10 max-w-[480px] leading-[1.7] font-sans"
-            >
-              महाराष्ट्रातील सुशिक्षित आणि प्रतिष्ठित कुटुंबांसाठी एक खात्रीशीर व सुरक्षित विवाह व्यासपीठ. १००% पडताळणी केलेले प्रोफाइल्स.
-            </motion.p>
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 15 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ delay: 0.5, duration: 0.8 }} 
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start w-full sm:w-auto"
-            >
-              <Link to="/register" className="btn-premium-primary h-[50px] text-sm shadow-sm px-10 w-full sm:w-auto flex items-center justify-center font-sans tracking-wide">
-                मोफत नोंदणी करा
-              </Link>
-              <Link to="/search" className="h-[50px] text-sm px-10 w-full sm:w-auto flex items-center justify-center border border-[#e4e4e7] bg-white hover:bg-zinc-50 text-foreground rounded-lg transition-colors font-sans font-medium tracking-wide">
-                स्थळे पाहा
-              </Link>
-            </motion.div>
-          </div>
-
-          {/* Right Column: Beautiful Image to fill space */}
+          {/* Logo as Sacred Hero Centerpiece */}
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }} 
-            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }} 
-            transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
-            className="flex-1 w-full max-w-md lg:max-w-lg relative mt-12 lg:mt-0"
+            initial={{ opacity: 0, scale: 0.9 }} 
+            animate={{ opacity: 1, scale: 1 }} 
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="relative mb-6"
           >
-            {/* Decorative background shape */}
-            <div className="absolute inset-0 bg-primary/5 rounded-[40px] transform rotate-3 scale-105" />
-            
-            <div className="relative w-full aspect-[4/5] rounded-[40px] overflow-hidden bg-white border border-border p-2 shadow-xl">
-              <div className="w-full h-full rounded-[32px] overflow-hidden">
-                <img 
-                  src="/happy_couple.png" 
-                  alt="Happy Couple" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-            
+            {/* Radial glow behind logo */}
+            <div className="absolute inset-0 -m-16 bg-haldi-400/10 rounded-full blur-[60px] animate-pulse-glow pointer-events-none" />
+            <img 
+              src="/logo.png" 
+              alt="विवाहवेध — शोध नव्या नात्यांचा" 
+              className="w-[280px] sm:w-[360px] md:w-[420px] h-auto object-contain relative z-10 mix-blend-multiply" 
+            />
+          </motion.div>
+
+          {/* Paithani decorative divider */}
+          <motion.div 
+            initial={{ opacity: 0, scaleX: 0 }} 
+            animate={{ opacity: 1, scaleX: 1 }} 
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="w-48 h-[3px] mb-8"
+            style={{
+              background: 'repeating-linear-gradient(90deg, #C41E2A 0px, #C41E2A 8px, #E8A317 8px, #E8A317 16px, transparent 16px, transparent 20px)'
+            }}
+          />
+
+          {/* Tagline */}
+          <motion.p 
+            initial={{ opacity: 0, y: 15 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="text-lg sm:text-xl text-foreground/60 mb-4 max-w-xl leading-relaxed font-sans"
+          >
+            महाराष्ट्रातील सुशिक्षित आणि प्रतिष्ठित कुटुंबांसाठी एक खात्रीशीर व सुरक्षित विवाह व्यासपीठ.
+          </motion.p>
+
+          <motion.p 
+            initial={{ opacity: 0, y: 15 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ delay: 0.6, duration: 0.8 }}
+            className="text-sm text-foreground/40 mb-10 font-ui"
+          >
+            १००% पडताळणी केलेले प्रोफाइल्स • Trusted by 2,500+ Families
+          </motion.p>
+          
+          {/* CTAs */}
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ delay: 0.7, duration: 0.8 }} 
+            className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto"
+          >
+            <Link to="/register" className="btn-premium-primary h-[52px] text-sm px-10 w-full sm:w-auto flex items-center justify-center font-ui">
+              मोफत नोंदणी करा — Register Free
+            </Link>
+            <Link to="/search" className="h-[52px] text-sm px-10 w-full sm:w-auto flex items-center justify-center border-2 border-primary/15 bg-white hover:bg-primary/5 text-foreground rounded-xl transition-all font-ui font-bold">
+              स्थळे पाहा — Browse
+            </Link>
           </motion.div>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          MINIMALIST SEARCH CONSOLE
+          SEARCH CONSOLE
       ═══════════════════════════════════════════════════ */}
-      <section className="w-full relative z-20 -mt-8 px-6">
-        <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md-soft border border-border p-3 flex flex-col md:flex-row gap-3 font-sans">
+      <section className="w-full relative z-20 -mt-7 px-6">
+        <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-premium border border-haldi-500/10 p-4 flex flex-col md:flex-row gap-3 font-sans">
           
-          <div className="flex-1 bg-background border border-border rounded-lg p-3 flex items-center gap-3 focus-within:border-primary/50 transition-colors">
-            <Heart size={16} className="text-primary/60" />
+          <div className="flex-1 bg-background border border-border rounded-xl p-3 flex items-center gap-3 focus-within:border-primary/40 transition-colors">
+            <Heart size={16} className="text-primary/50" />
             <select 
               value={searchGender} 
               onChange={e => setSearchGender(e.target.value)} 
@@ -224,8 +215,8 @@ export default function Home() {
             </select>
           </div>
           
-          <div className="flex-1 bg-background border border-border rounded-lg p-3 flex items-center gap-3 focus-within:border-primary/50 transition-colors">
-            <Compass size={16} className="text-secondary" />
+          <div className="flex-1 bg-background border border-border rounded-xl p-3 flex items-center gap-3 focus-within:border-primary/40 transition-colors">
+            <Compass size={16} className="text-haldi-500" />
             <select 
               value={searchAge} 
               onChange={e => setSearchAge(e.target.value)} 
@@ -240,8 +231,8 @@ export default function Home() {
             </select>
           </div>
           
-          <div className="flex-1 bg-background border border-border rounded-lg p-3 flex items-center gap-3 focus-within:border-primary/50 transition-colors">
-            <MapPin size={16} className="text-primary/60" />
+          <div className="flex-1 bg-background border border-border rounded-xl p-3 flex items-center gap-3 focus-within:border-primary/40 transition-colors">
+            <MapPin size={16} className="text-primary/50" />
             <input 
               type="text" 
               value={searchLocation} 
@@ -253,7 +244,7 @@ export default function Home() {
 
           <button 
             onClick={handleQuickSearch} 
-            className="md:w-32 btn-premium-primary h-auto py-3 md:py-0 flex items-center justify-center gap-2"
+            className="md:w-36 btn-premium-primary h-auto py-3.5 md:py-0 flex items-center justify-center gap-2 font-ui"
           >
             <Search size={16} />
             शोधा
@@ -262,47 +253,58 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          TRUST METRICS
+          TRUST METRICS — Golden Strip
       ═══════════════════════════════════════════════════ */}
-      <section className="w-full py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-6 border-y border-border py-16">
-          <Reveal className="grid grid-cols-2 md:grid-cols-4 gap-12 divide-y md:divide-y-0 md:divide-x divide-border">
-            {[
-              { val: '2.5k+', label: 'व्हेरिफाइड प्रोफाइल्स' },
-              { val: '100%', label: 'सुरक्षितता व गोपनियता' },
-              { val: '500+', label: 'यशस्वी विवाह' },
-              { val: '24/7', label: 'उत्कृष्ट सपोर्ट' },
-            ].map((stat, i) => (
-              <div key={i} className="text-center pt-8 md:pt-0">
-                <h3 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-2">{stat.val}</h3>
-                <p className="text-sm font-semibold text-muted-foreground">{stat.label}</p>
+      <section className="w-full py-20">
+        <div className="max-w-5xl mx-auto px-6">
+          <Reveal>
+            <div className="bg-white rounded-2xl border border-haldi-500/15 p-10 shadow-md-soft">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4">
+                {[
+                  { val: '2,500+', label: 'व्हेरिफाइड प्रोफाइल्स' },
+                  { val: '100%', label: 'सुरक्षितता व गोपनीयता' },
+                  { val: '500+', label: 'यशस्वी विवाह' },
+                  { val: '24/7', label: 'उत्कृष्ट सपोर्ट' },
+                ].map((stat, i) => (
+                  <div key={i} className={`text-center ${i < 3 ? 'md:border-r md:border-haldi-500/10' : ''}`}>
+                    <h3 className="text-3xl md:text-4xl font-display font-bold text-primary mb-1">{stat.val}</h3>
+                    <p className="text-xs font-ui font-bold text-foreground/40 uppercase tracking-wider">{stat.label}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </Reveal>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          HOW IT WORKS
+          HOW IT WORKS — कसे काम करते?
       ═══════════════════════════════════════════════════ */}
-      <section className="w-full py-24 bg-background">
+      <section className="w-full py-20 bg-rangoli-pattern">
         <div className="max-w-6xl mx-auto px-6">
-          <Reveal className="text-center mb-16">
-            <h2 className="section-title text-foreground mb-4 font-display">सोपी आणि सुरक्षित पद्धत</h2>
-            <p className="text-muted-foreground text-lg max-w-md mx-auto font-sans">योग्य जोडीदार शोधण्याचा तुमचा प्रवास आम्ही अत्यंत सोपा आणि सुरक्षित केला आहे.</p>
+          <Reveal className="text-center mb-14">
+            <span className="text-haldi-500 text-xs font-ui font-bold uppercase tracking-[0.3em] mb-3 block">प्रक्रिया • Process</span>
+            <h2 className="section-title text-foreground mb-3">कसे काम करते?</h2>
+            <p className="text-muted-foreground text-base max-w-md mx-auto font-sans">योग्य जोडीदार शोधण्याचा तुमचा प्रवास आम्ही अत्यंत सोपा आणि सुरक्षित केला आहे.</p>
           </Reveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: <Users size={20} />, title: 'नोंदणी करा', desc: 'तुमची मोफत नोंदणी करा आणि तुमची माहिती सविस्तर भरा.' },
-              { icon: <ShieldCheck size={20} />, title: 'पडताळणी (Verified)', desc: 'तुमचे शासकीय ओळखपत्र अपलोड करून प्रोफाइल व्हेरिफाय करा.' },
-              { icon: <Compass size={20} />, title: 'स्थळे शोधा', desc: 'तुमच्या अपेक्षेनुसार शिक्षण, जात आणि नोकरीच्या आधारावर स्थळे शोधा.' },
-              { icon: <Heart size={20} />, title: 'संपर्क साधा', desc: 'पसंत असलेल्या स्थळांशी संवाद साधा आणि पुढील निर्णय घ्या.' },
+              { num: '१', icon: <Users size={22} />, title: 'नोंदणी करा', desc: 'तुमची मोफत नोंदणी करा आणि तुमची माहिती सविस्तर भरा.' },
+              { num: '२', icon: <ShieldCheck size={22} />, title: 'पडताळणी', desc: 'तुमचे शासकीय ओळखपत्र अपलोड करून प्रोफाइल व्हेरिफाय करा.' },
+              { num: '३', icon: <Compass size={22} />, title: 'स्थळे शोधा', desc: 'तुमच्या अपेक्षेनुसार शिक्षण, जात आणि नोकरीच्या आधारावर स्थळे शोधा.' },
+              { num: '४', icon: <Heart size={22} />, title: 'संपर्क साधा', desc: 'पसंत असलेल्या स्थळांशी संवाद साधा आणि पुढील निर्णय घ्या.' },
             ].map((step, i) => (
               <Reveal key={i} delay={i * 0.1}>
-                <div className="bg-white rounded-xl p-8 border border-border h-full flex flex-col hover:shadow-sm-soft transition-shadow">
-                  <div className="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center text-primary mb-6">
-                    {step.icon}
+                <div className="bg-white rounded-2xl p-7 border border-border h-full flex flex-col hover:shadow-card-hover transition-all duration-500 group relative overflow-hidden">
+                  {/* Golden top accent */}
+                  <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-kumkum-500 to-haldi-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  
+                  <div className="flex items-center gap-3 mb-5">
+                    <span className="w-9 h-9 rounded-full bg-haldi-500/10 flex items-center justify-center text-haldi-600 font-display text-lg font-bold">{step.num}</span>
+                    <div className="w-9 h-9 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
+                      {step.icon}
+                    </div>
                   </div>
                   <h3 className="text-lg font-display font-bold text-foreground mb-2">{step.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed font-sans">{step.desc}</p>
@@ -314,22 +316,23 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          FEATURED PROFILES
+          FEATURED PROFILES — नवे सभासद
       ═══════════════════════════════════════════════════ */}
       {featuredProfiles.length > 0 && (
-        <section className="w-full py-24 bg-white">
+        <section className="w-full py-20 bg-white">
           <div className="max-w-7xl mx-auto px-6">
             <Reveal className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
               <div>
-                <h2 className="section-title text-foreground mb-2 font-display">नवे सभासद</h2>
-                <p className="text-muted-foreground text-lg font-sans">विवाहवेधवर नव्याने जोडले गेलेले काही प्रतिष्ठित प्रोफाइल्स.</p>
+                <span className="text-haldi-500 text-xs font-ui font-bold uppercase tracking-[0.3em] mb-3 block">प्रोफाइल्स • Profiles</span>
+                <h2 className="section-title text-foreground mb-2">नवे सभासद</h2>
+                <p className="text-muted-foreground text-base font-sans">विवाहवेधवर नव्याने जोडले गेलेले काही प्रतिष्ठित प्रोफाइल्स.</p>
               </div>
-              <Link to="/search" className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors font-sans">
+              <Link to="/search" className="inline-flex items-center gap-2 text-sm font-ui font-bold text-primary hover:text-primary/80 transition-colors">
                 सर्व स्थळे पाहा <ArrowRight size={16} />
               </Link>
             </Reveal>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
               {featuredProfiles.map((user, i) => {
                 const imgUrl = user.images?.[0]?.url;
                 const initial = user.profile?.firstName?.[0] || 'V';
@@ -337,9 +340,9 @@ export default function Home() {
                   <Reveal key={user.id} delay={i * 0.05}>
                     <div 
                       onClick={() => navigate(`/profile/${user.id}`)} 
-                      className="group cursor-pointer flex flex-col gap-4 bg-background border border-border rounded-xl p-3 hover:shadow-md-soft transition-all"
+                      className="group cursor-pointer flex flex-col gap-3 bg-white border border-border rounded-2xl p-3 hover:shadow-card-hover transition-all duration-500"
                     >
-                      <div className="aspect-[4/5] relative bg-white rounded-lg overflow-hidden border border-border">
+                      <div className="aspect-[4/5] relative bg-background rounded-xl overflow-hidden border border-border">
                         {imgUrl ? (
                           <img 
                             src={resolveImageUrl(imgUrl)} 
@@ -347,24 +350,24 @@ export default function Home() {
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-white">
-                            <span className="text-3xl font-display font-medium text-muted-foreground">{initial}</span>
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-haldi-500/5">
+                            <span className="text-3xl font-display font-bold text-primary/30">{initial}</span>
                           </div>
                         )}
                         
                         {user.kycVerified && (
-                          <div className="absolute top-3 left-3 bg-white/95 backdrop-blur border border-border px-2 py-1 rounded text-[10px] font-bold text-foreground flex items-center gap-1.5 uppercase tracking-wider">
-                            <div className="w-1.5 h-1.5 rounded-full bg-secondary" />
+                          <div className="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur border border-paan-500/30 px-2.5 py-1 rounded-lg text-[10px] font-ui font-bold text-paan-600 flex items-center gap-1.5 uppercase tracking-wider">
+                            <div className="w-1.5 h-1.5 rounded-full bg-paan-500" />
                             Verified
                           </div>
                         )}
                       </div>
                       
                       <div className="px-1 text-center font-sans">
-                        <h3 className="text-base font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                        <h3 className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">
                           {user.profile?.firstName} {user.profile?.lastName}
                         </h3>
-                        <p className="text-xs text-muted-foreground truncate mt-1 font-medium">
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">
                           {user.education?.jobBusiness || 'Professional'} • {user.addresses?.[0]?.city || 'India'}
                         </p>
                       </div>
@@ -378,14 +381,22 @@ export default function Home() {
       )}
 
       {/* ═══════════════════════════════════════════════════
-          SUCCESS STORIES 
+          SUCCESS STORIES — यशोगाथा
       ═══════════════════════════════════════════════════ */}
-      <section className="w-full py-24 bg-primary text-primary-foreground overflow-hidden">
+      <section className="w-full py-24 overflow-hidden relative" 
+        style={{ background: 'linear-gradient(135deg, #7a1018 0%, #520A0D 100%)' }}
+      >
+        {/* Decorative top border */}
+        <div className="absolute top-0 left-0 right-0 h-[4px]" style={{
+          background: 'repeating-linear-gradient(90deg, #E8A317 0px, #E8A317 12px, #C41E2A 12px, #C41E2A 24px)'
+        }} />
+
         <div className="max-w-5xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row gap-16 items-center">
+          <div className="flex flex-col md:flex-row gap-14 items-center">
             
-            <div className="w-full md:w-1/2 aspect-[4/5] rounded-t-full rounded-b-xl overflow-hidden border border-white/20 relative p-2 bg-white/5">
-              <div className="w-full h-full rounded-t-full rounded-b-lg overflow-hidden">
+            {/* Image */}
+            <div className="w-full md:w-1/2 aspect-[4/5] rounded-t-full rounded-b-2xl overflow-hidden border-2 border-white/10 relative p-2 bg-white/5">
+              <div className="w-full h-full rounded-t-full rounded-b-xl overflow-hidden">
                 <AnimatePresence mode="wait">
                   <motion.img 
                     key={currentStory}
@@ -401,8 +412,9 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="w-full md:w-1/2 flex flex-col">
-              <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-8 font-sans">कथा यशस्वितेच्या</h2>
+            {/* Text */}
+            <div className="w-full md:w-1/2 flex flex-col text-white">
+              <span className="text-haldi-400 text-xs font-ui font-bold uppercase tracking-[0.3em] mb-8">कथा यशस्वितेच्या • Success Stories</span>
               
               <div className="min-h-[180px]">
                 <AnimatePresence mode="wait">
@@ -413,30 +425,36 @@ export default function Home() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.4 }}
                   >
-                    <p className="text-xl md:text-2xl font-display text-white/95 leading-relaxed mb-6 italic">
+                    <p className="text-lg md:text-xl font-display text-white/90 leading-relaxed mb-6 italic">
                       "{successStories[currentStory].quote}"
                     </p>
                     <h4 className="text-lg font-bold text-white font-sans">{successStories[currentStory].couple}</h4>
-                    <p className="text-sm text-secondary mt-1 font-sans">
+                    <p className="text-sm text-haldi-400 mt-1 font-sans">
                       {successStories[currentStory].location}
                     </p>
                   </motion.div>
                 </AnimatePresence>
               </div>
 
-              <div className="flex gap-3 mt-12">
+              <div className="flex gap-3 mt-10">
                 <button 
                   onClick={prevStory} 
-                  className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-colors"
+                  className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center hover:bg-white/10 hover:border-haldi-400/50 transition-all"
                 >
                   <ChevronLeft size={18} />
                 </button>
                 <button 
                   onClick={nextStory} 
-                  className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-colors"
+                  className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center hover:bg-white/10 hover:border-haldi-400/50 transition-all"
                 >
                   <ChevronRight size={18} />
                 </button>
+                {/* Dots */}
+                <div className="flex items-center gap-2 ml-3">
+                  {successStories.map((_, i) => (
+                    <button key={i} onClick={() => setCurrentStory(i)} className={`w-2 h-2 rounded-full transition-all ${i === currentStory ? 'bg-haldi-400 w-6' : 'bg-white/20'}`} />
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -445,50 +463,53 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          EXACT PRICING DESIGN REPLICATION
+          PRICING — सभासदत्व योजना
       ═══════════════════════════════════════════════════ */}
-      <section className="w-full py-24 bg-background">
+      <section className="w-full py-24 bg-rangoli-pattern">
         <div className="max-w-6xl mx-auto px-6">
           <Reveal className="text-center mb-16">
-            <h2 className="section-title text-foreground mb-4 font-display">सभासदत्व योजना (Membership Plans)</h2>
-            <p className="text-muted-foreground text-lg max-w-sm mx-auto font-sans">तुमच्या गरजेनुसार योग्य प्लॅन निवडा.</p>
+            <span className="text-haldi-500 text-xs font-ui font-bold uppercase tracking-[0.3em] mb-3 block">योजना • Plans</span>
+            <h2 className="section-title text-foreground mb-3">सभासदत्व योजना</h2>
+            <p className="text-muted-foreground text-base max-w-sm mx-auto font-sans">तुमच्या गरजेनुसार योग्य प्लॅन निवडा.</p>
           </Reveal>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 font-sans">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-7 font-sans">
             
             {/* --- FREE PLAN --- */}
             <Reveal delay={0.1} className="h-full">
-              <div className="bg-white rounded-[24px] p-8 border border-gray-200 h-full flex flex-col shadow-sm">
-                <h3 className="text-[28px] font-bold text-[#1a8c3d] mb-1">Free</h3>
+              <div className="bg-white rounded-3xl p-8 border border-border h-full flex flex-col shadow-sm-soft relative overflow-hidden group hover:shadow-md-soft transition-all duration-500">
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-paan-500" />
+                <h3 className="text-2xl font-display font-bold text-paan-600 mb-1">मोफत</h3>
+                <p className="text-xs font-ui text-foreground/40 uppercase tracking-wider mb-1">Free Plan</p>
                 <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-5xl font-bold text-[#1a8c3d]">₹0</span>
+                  <span className="text-4xl font-display font-bold text-paan-600">₹0</span>
                 </div>
-                <p className="text-[#64748b] text-[15px] mb-8 font-medium">Forever • No expiry</p>
+                <p className="text-foreground/50 text-sm mb-8 font-ui">Forever • No expiry</p>
                 
-                <ul className="space-y-4 mb-10 flex-1">
-                  <li className="flex items-center gap-3 text-[#334155] text-[15px]">
-                    <Check size={18} className="text-[#1a8c3d] flex-shrink-0" /> Create & complete profile
+                <ul className="space-y-3.5 mb-10 flex-1">
+                  <li className="flex items-center gap-3 text-foreground/70 text-sm">
+                    <Check size={16} className="text-paan-500 flex-shrink-0" /> प्रोफाइल तयार करा
                   </li>
-                  <li className="flex items-center gap-3 text-[#334155] text-[15px]">
-                    <Check size={18} className="text-[#1a8c3d] flex-shrink-0" /> Upload up to 3 photos
+                  <li className="flex items-center gap-3 text-foreground/70 text-sm">
+                    <Check size={16} className="text-paan-500 flex-shrink-0" /> ३ फोटो अपलोड करा
                   </li>
-                  <li className="flex items-center gap-3 text-[#334155] text-[15px]">
-                    <Check size={18} className="text-[#1a8c3d] flex-shrink-0" /> Search active profiles
+                  <li className="flex items-center gap-3 text-foreground/70 text-sm">
+                    <Check size={16} className="text-paan-500 flex-shrink-0" /> स्थळे शोधा
                   </li>
-                  <li className="flex items-center gap-3 text-[#334155] text-[15px]">
-                    <Check size={18} className="text-[#1a8c3d] flex-shrink-0" /> Receive match proposals
+                  <li className="flex items-center gap-3 text-foreground/70 text-sm">
+                    <Check size={16} className="text-paan-500 flex-shrink-0" /> प्रस्ताव प्राप्त करा
                   </li>
-                  <li className="flex items-center gap-3 text-[#94a3b8] text-[15px]">
-                    <X size={18} className="text-[#cbd5e1] flex-shrink-0" /> Cannot send proposals
+                  <li className="flex items-center gap-3 text-foreground/30 text-sm">
+                    <X size={16} className="text-foreground/15 flex-shrink-0" /> प्रस्ताव पाठवता येत नाही
                   </li>
-                  <li className="flex items-center gap-3 text-[#94a3b8] text-[15px]">
-                    <X size={18} className="text-[#cbd5e1] flex-shrink-0" /> Cannot view contact info
+                  <li className="flex items-center gap-3 text-foreground/30 text-sm">
+                    <X size={16} className="text-foreground/15 flex-shrink-0" /> संपर्क माहिती पाहता येत नाही
                   </li>
                 </ul>
 
                 <Link 
                   to="/register" 
-                  className="w-full py-4 text-center rounded-[12px] font-bold text-[16px] border-2 border-[#1a8c3d] text-[#1a8c3d] hover:bg-[#1a8c3d] hover:text-white transition-colors block"
+                  className="w-full py-3.5 text-center rounded-xl font-ui font-bold text-sm border-2 border-paan-500 text-paan-600 hover:bg-paan-500 hover:text-white transition-all duration-300 block"
                 >
                   Get Started Free
                 </Link>
@@ -497,46 +518,48 @@ export default function Home() {
 
             {/* --- SILVER PLAN --- */}
             <Reveal delay={0.2} className="h-full">
-              <div className="bg-[#b30f36] rounded-[24px] p-8 h-full flex flex-col relative shadow-xl shadow-primary/20 scale-100 lg:scale-105 z-10 border-4 border-[#b30f36]">
-                
+              <div className="rounded-3xl p-8 h-full flex flex-col relative shadow-kumkum scale-100 lg:scale-[1.04] z-10 overflow-hidden"
+                style={{ background: 'linear-gradient(135deg, #C41E2A 0%, #8B1218 100%)' }}
+              >
                 {/* Popular Ribbon */}
-                <div className="absolute top-0 right-6 bg-[#fbbf24] text-[#78350f] text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-b-md flex items-center gap-1 shadow-sm">
-                  <Star size={12} fill="currentColor" /> POPULAR
+                <div className="absolute top-0 right-6 bg-haldi-500 text-white text-[10px] font-ui font-bold uppercase tracking-wider px-3 py-1.5 rounded-b-lg flex items-center gap-1">
+                  <Star size={10} fill="currentColor" /> POPULAR
                 </div>
 
-                <h3 className="text-[28px] font-bold text-white mb-1 mt-2">Silver</h3>
+                <h3 className="text-2xl font-display font-bold text-white mb-1 mt-2">रौप्य</h3>
+                <p className="text-xs font-ui text-white/50 uppercase tracking-wider mb-1">Silver Plan</p>
                 <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-5xl font-bold text-white">₹2,000</span>
+                  <span className="text-4xl font-display font-bold text-white">₹2,000</span>
                 </div>
-                <p className="text-white/80 text-[15px] mb-8 font-medium">Valid for 1 Year</p>
+                <p className="text-white/60 text-sm mb-8 font-ui">Valid for 1 Year</p>
                 
-                <ul className="space-y-4 mb-10 flex-1">
-                  <li className="flex items-center gap-3 text-white text-[15px]">
-                    <Check size={18} className="text-white flex-shrink-0" /> Everything in Free
+                <ul className="space-y-3.5 mb-10 flex-1">
+                  <li className="flex items-center gap-3 text-white/90 text-sm">
+                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> Free मधील सर्व सुविधा
                   </li>
-                  <li className="flex items-center gap-3 text-white text-[15px]">
-                    <Check size={18} className="text-white flex-shrink-0" /> Send 4 proposals per day
+                  <li className="flex items-center gap-3 text-white/90 text-sm">
+                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> दररोज ४ प्रस्ताव पाठवा
                   </li>
-                  <li className="flex items-center gap-3 text-white text-[15px]">
-                    <Check size={18} className="text-white flex-shrink-0" /> View contact on mutual accept
+                  <li className="flex items-center gap-3 text-white/90 text-sm">
+                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> संपर्क माहिती पाहा
                   </li>
-                  <li className="flex items-center gap-3 text-white text-[15px]">
-                    <Check size={18} className="text-white flex-shrink-0" /> Full photo gallery access
+                  <li className="flex items-center gap-3 text-white/90 text-sm">
+                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> सर्व फोटो पाहा
                   </li>
-                  <li className="flex items-center gap-3 text-white text-[15px]">
-                    <Check size={18} className="text-white flex-shrink-0" /> Advanced search filters
+                  <li className="flex items-center gap-3 text-white/90 text-sm">
+                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> प्रगत शोध फिल्टर
                   </li>
-                  <li className="flex items-center gap-3 text-white text-[15px]">
-                    <Check size={18} className="text-white flex-shrink-0" /> Who viewed my profile
+                  <li className="flex items-center gap-3 text-white/90 text-sm">
+                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> कोणी प्रोफाइल पाहिले
                   </li>
-                  <li className="flex items-center gap-3 text-white text-[15px]">
-                    <Check size={18} className="text-white flex-shrink-0" /> Email support
+                  <li className="flex items-center gap-3 text-white/90 text-sm">
+                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> ईमेल सपोर्ट
                   </li>
                 </ul>
 
                 <button 
-                  onClick={() => { setSelectedPlan({ type: 'SILVER', price: 2000 }); setIsPaymentModalOpen(true); }}
-                  className="w-full py-4 text-center rounded-[12px] font-bold text-[16px] bg-white text-[#b30f36] hover:bg-gray-50 transition-colors"
+                  onClick={() => handlePlanSelect('SILVER', 2000)}
+                  className="w-full py-3.5 text-center rounded-xl font-ui font-bold text-sm bg-white text-kumkum-500 hover:bg-white/90 transition-all duration-300"
                 >
                   Upgrade to Silver
                 </button>
@@ -545,47 +568,50 @@ export default function Home() {
 
             {/* --- GOLD PLAN --- */}
             <Reveal delay={0.3} className="h-full">
-              <div className="bg-white rounded-[24px] p-8 border-2 border-[#f59e0b] h-full flex flex-col relative shadow-md shadow-amber-500/10">
+              <div className="bg-white rounded-3xl p-8 border-2 border-haldi-500/30 h-full flex flex-col relative shadow-gold overflow-hidden group hover:shadow-lg-soft transition-all duration-500">
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-haldi-500 to-haldi-700" />
                 
                 {/* Premium Ribbon */}
-                <div className="absolute top-0 right-6 bg-[#f59e0b] text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-b-md flex items-center gap-1 shadow-sm">
+                <div className="absolute top-0 right-6 bg-haldi-500 text-white text-[10px] font-ui font-bold uppercase tracking-wider px-3 py-1.5 rounded-b-lg flex items-center gap-1">
                   👑 PREMIUM
                 </div>
 
-                <h3 className="text-[28px] font-bold text-[#d97706] mb-1 mt-2">Gold</h3>
+                <h3 className="text-2xl font-display font-bold text-haldi-700 mb-1 mt-2">सुवर्ण</h3>
+                <p className="text-xs font-ui text-foreground/40 uppercase tracking-wider mb-1">Gold Plan</p>
                 <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-5xl font-bold text-[#b45309]">₹5,000</span>
+                  <span className="text-4xl font-display font-bold text-haldi-700">₹5,000</span>
                 </div>
-                <p className="text-[#64748b] text-[15px] mb-8 font-medium">Valid for 1 Year</p>
+                <p className="text-foreground/50 text-sm mb-8 font-ui">Valid for 1 Year</p>
                 
-                <ul className="space-y-4 mb-10 flex-1">
-                  <li className="flex items-center gap-3 text-[#334155] text-[15px]">
-                    <Check size={18} className="text-[#d97706] flex-shrink-0" /> Everything in Silver
+                <ul className="space-y-3.5 mb-10 flex-1">
+                  <li className="flex items-center gap-3 text-foreground/70 text-sm">
+                    <Check size={16} className="text-haldi-600 flex-shrink-0" /> Silver मधील सर्व सुविधा
                   </li>
-                  <li className="flex items-center gap-3 text-[#334155] text-[15px]">
-                    <Check size={18} className="text-[#d97706] flex-shrink-0" /> Unlimited match proposals
+                  <li className="flex items-center gap-3 text-foreground/70 text-sm">
+                    <Check size={16} className="text-haldi-600 flex-shrink-0" /> अमर्यादित प्रस्ताव
                   </li>
-                  <li className="flex items-center gap-3 text-[#334155] text-[15px]">
-                    <Star size={18} className="text-[#d97706] fill-[#d97706] flex-shrink-0" /> Priority listing in search
+                  <li className="flex items-center gap-3 text-foreground/70 text-sm">
+                    <Star size={16} className="text-haldi-600 fill-haldi-600 flex-shrink-0" /> शोधात प्राधान्य
                   </li>
-                  <li className="flex items-center gap-3 text-[#334155] text-[15px]">
-                    <div className="w-[18px] h-[18px] bg-[#22c55e] rounded-sm flex items-center justify-center flex-shrink-0">
-                      <Check size={14} className="text-white" strokeWidth={3} />
+                  <li className="flex items-center gap-3 text-foreground/70 text-sm">
+                    <div className="w-4 h-4 bg-paan-500 rounded flex items-center justify-center flex-shrink-0">
+                      <Check size={12} className="text-white" strokeWidth={3} />
                     </div>
-                    Verified profile badge
+                    Verified बॅज
                   </li>
-                  <li className="flex items-start gap-3 text-[#334155] text-[15px]">
-                    <Handshake size={18} className="text-[#d97706] flex-shrink-0 mt-0.5" /> 
+                  <li className="flex items-start gap-3 text-foreground/70 text-sm">
+                    <Handshake size={16} className="text-haldi-600 flex-shrink-0 mt-0.5" /> 
                     <span>Dedicated Offline Relationship Manager</span>
                   </li>
-                  <li className="flex items-center gap-3 text-[#334155] text-[15px]">
-                    <Smartphone size={18} className="text-[#4f46e5] fill-[#4f46e5] flex-shrink-0" /> Premium WhatsApp Support
+                  <li className="flex items-center gap-3 text-foreground/70 text-sm">
+                    <Smartphone size={16} className="text-haldi-600 flex-shrink-0" /> Premium WhatsApp Support
                   </li>
                 </ul>
 
                 <button 
-                  onClick={() => { setSelectedPlan({ type: 'GOLD', price: 5000 }); setIsPaymentModalOpen(true); }}
-                  className="w-full py-4 text-center rounded-[12px] font-bold text-[16px] bg-[#f59e0b] text-white hover:bg-[#d97706] transition-colors"
+                  onClick={() => handlePlanSelect('GOLD', 5000)}
+                  className="w-full py-3.5 text-center rounded-xl font-ui font-bold text-sm text-white transition-all duration-300"
+                  style={{ background: 'linear-gradient(135deg, #E8A317 0%, #CA8A04 100%)' }}
                 >
                   Upgrade to Gold
                 </button>
@@ -597,15 +623,29 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          FINAL CTA
+          FINAL CTA — शुभारंभ करा
       ═══════════════════════════════════════════════════ */}
-      <section className="w-full py-32 bg-background text-center border-t border-border">
-        <Reveal className="max-w-2xl mx-auto px-6">
-          <h2 className="section-title text-foreground mb-6 font-display">तुमचा शोध आजच सुरु करा</h2>
-          <p className="text-muted-foreground text-lg mb-10 font-sans">फक्त २ मिनिटांत मोफत प्रोफाइल तयार करा आणि योग्य जोडीदार मिळवा.</p>
-          <Link to="/register" className="btn-premium-primary h-14 text-sm px-10 font-sans">
-            मोफत नोंदणी करा (Register Free)
+      <section className="w-full py-28 text-center relative overflow-hidden"
+        style={{ background: 'linear-gradient(160deg, #FFFCF5 0%, #FFF5E1 100%)' }}
+      >
+        <div className="absolute inset-0 bg-rangoli-pattern pointer-events-none" />
+        <Reveal className="max-w-2xl mx-auto px-6 relative z-10">
+          {/* Cultural ornament */}
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <div className="w-12 h-px bg-haldi-500/40" />
+            <span className="text-haldi-500 text-lg">✦</span>
+            <div className="w-12 h-px bg-haldi-500/40" />
+          </div>
+          
+          <h2 className="section-title text-foreground mb-4">तुमचा शोध आजच सुरू करा</h2>
+          <p className="text-muted-foreground text-base mb-10 font-sans">फक्त २ मिनिटांत मोफत प्रोफाइल तयार करा आणि योग्य जोडीदार मिळवा.</p>
+          <Link to="/register" className="btn-premium-primary h-14 text-sm px-12 font-ui inline-flex items-center justify-center">
+            मोफत नोंदणी करा — Register Free
           </Link>
+          
+          <p className="mt-6 text-xs font-ui text-foreground/30">
+            १००% मोफत • कोणतेही शुल्क नाही • तात्काळ सुरू करा
+          </p>
         </Reveal>
       </section>
 

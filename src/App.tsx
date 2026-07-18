@@ -29,10 +29,10 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Loading Fallback UI
 const PageLoader = () => (
-  <div className="flex h-screen w-full items-center justify-center bg-[#F7F9FB]">
+  <div className="flex h-screen w-full items-center justify-center" style={{ background: 'linear-gradient(160deg, #FFFCF5 0%, #FFF8EB 50%, #FFFCF5 100%)' }}>
     <div className="flex flex-col items-center">
-      <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary/20 border-t-primary"></div>
-      <p className="mt-4 font-display text-xs font-black uppercase tracking-[0.2em] text-foreground/40">Loading</p>
+      <div className="h-12 w-12 animate-spin rounded-full border-4 border-haldi-500/20 border-t-kumkum-500"></div>
+      <p className="mt-5 font-display text-xs font-bold uppercase tracking-[0.3em] text-foreground/30">विवाहवेध</p>
     </div>
   </div>
 );
@@ -60,12 +60,13 @@ function App() {
               duration: 4000,
               style: {
                 background: '#fff',
-                color: '#333',
+                color: '#2a1f1a',
                 borderRadius: '16px',
                 fontSize: '14px',
                 fontWeight: '600',
-                border: '1px solid rgba(0,0,0,0.05)',
-                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
+                fontFamily: 'Mukta, sans-serif',
+                border: '1px solid rgba(232, 163, 23, 0.12)',
+                boxShadow: '0 10px 30px -5px rgba(0,0,0,0.08)',
               },
             }} 
           />

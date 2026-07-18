@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import apiClient from '../../lib/apiClient';
-import { Mail, X as CloseIcon, TrendingUp } from 'lucide-react';
+import { Mail, X as CloseIcon, TrendingUp, Copy } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { formatApiError } from '../../lib/errorUtils';
 import type { AdminTab, AdminUser, Enquiry, PaymentRecord, AdminNotifications } from './adminTypes';
@@ -20,6 +20,7 @@ import { FilterBar } from './components/FilterBar';
 import { AdminProfilePreviewModal } from './components/AdminProfilePreviewModal';
 import { AdminUserEditModal } from './components/AdminUserEditModal';
 import { ReportList } from './components/ReportList';
+import { AuditLogList } from './components/AuditLogList';
 
 interface Story {
   id: string;
@@ -77,7 +78,7 @@ export default function AdminPanel() {
     gender: '', maritalStatus: '', profileCreatedBy: 'Marriage Bureau'
   });
   const [offlineSubmitting, setOfflineSubmitting] = useState(false);
-  const [offlineSuccess, setOfflineSuccess] = useState<{ regId: string; name: string; email: string } | null>(null);
+  const [offlineSuccess, setOfflineSuccess] = useState<{ regId: string; name: string; email: string; tempPassword?: string } | null>(null);
   const [offlineError, setOfflineError] = useState('');
 
   const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; title: string; message: string; onConfirm: () => void; loading?: boolean }>({ 
@@ -85,6 +86,9 @@ export default function AdminPanel() {
   });
   const [previewUser, setPreviewUser] = useState<AdminUser | null>(null);
   const [editModal, setEditModal] = useState<{ isOpen: boolean; user: AdminUser | null }>({ isOpen: false, user: null });
+  const [resetPasswordModal, setResetPasswordModal] = useState<{ isOpen: boolean; user: AdminUser | null }>({ isOpen: false, user: null });
+  const [tempPasswordDisplay, setTempPasswordDisplay] = useState<{ isOpen: boolean; password: string; regId: string; name: string } | null>(null);
+  const [resettingPassword, setResettingPassword] = useState(false);
 
   const fetchStats = useCallback(async () => {
     try {
@@ -118,13 +122,21 @@ export default function AdminPanel() {
       } else if (activeTab === 'pending') {
         const response = await apiClient.get('/admin/pending');
         setUsers(response.data);
-      } else {
+      } else if (['all', 'activeProfiles', 'paidProfiles', 'unpaidProfiles', 'deletedProfiles', 'incompleteProfiles'].includes(activeTab)) {
         const params = new URLSearchParams();
         if (allUsersFilters.q) params.append('q', allUsersFilters.q);
         if (allUsersFilters.gender) params.append('gender', allUsersFilters.gender);
         if (allUsersFilters.ageMin) params.append('ageMin', allUsersFilters.ageMin);
         if (allUsersFilters.ageMax) params.append('ageMax', allUsersFilters.ageMax);
-        if (allUsersFilters.accountStatus) params.append('accountStatus', allUsersFilters.accountStatus);
+        
+        if (activeTab === 'activeProfiles') params.append('accountStatus', 'ACTIVE');
+        else if (activeTab === 'deletedProfiles') params.append('accountStatus', 'DELETED');
+        else if (activeTab === 'incompleteProfiles') params.append('accountStatus', 'INCOMPLETE');
+        else if (allUsersFilters.accountStatus) params.append('accountStatus', allUsersFilters.accountStatus);
+
+        if (activeTab === 'paidProfiles') params.append('planType', 'PAID');
+        else if (activeTab === 'unpaidProfiles') params.append('planType', 'FREE');
+
         params.append('page', allUsersFilters.page.toString());
         const response = await apiClient.get(`/admin/all-users?${params.toString()}`);
         setUsers(response.data.users);
@@ -304,7 +316,8 @@ export default function AdminPanel() {
       setOfflineSuccess({
         regId: response.data.regId,
         name: response.data.userName,
-        email: offlineForm.email
+        email: offlineForm.email,
+        tempPassword: response.data.tempPassword
       });
       setOfflineForm({ firstName: '', lastName: '', mobile: '', email: '', gender: '', maritalStatus: '', profileCreatedBy: 'Marriage Bureau' });
     } catch (error: unknown) {
@@ -366,6 +379,8 @@ export default function AdminPanel() {
                    activeTab === 'birthdays' ? 'Birthday Wishes' :
                    activeTab === 'connections' ? 'Connection Logs' :
                    activeTab === 'profit' ? 'Revenue Analytics' :
+                   activeTab === 'auditLogs' ? 'Audit Logs' :
+                   ['activeProfiles', 'paidProfiles', 'unpaidProfiles', 'deletedProfiles', 'incompleteProfiles'].includes(activeTab) ? 'Profile Directory' :
                    'Dashboard'}
                 </h2>
               </div>
@@ -429,21 +444,21 @@ export default function AdminPanel() {
                             <TrendingUp size={24} />
                           </div>
                           <div>
-                            <h3 className="text-xl font-display font-black text-foreground">Revenue Analytics</h3>
+                            <h3 className="text-xl font-display font-black text-foreground">Revenue Analytics (उत्पन्न आणि माहिती)</h3>
                             <p className="text-sm text-foreground/60 font-medium">Tracking platform growth and subscription performance.</p>
                           </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                           <div className="p-6 bg-[#F7F9FB] rounded-3xl border border-black/5">
-                            <p className="text-xs font-medium text-foreground/50 mb-1">Total Revenue</p>
+                            <p className="text-xs font-medium text-foreground/50 mb-1">Total Revenue (एकूण उत्पन्न)</p>
                             <p className="text-3xl font-display font-black text-foreground">₹{profitData?.totalRevenue || 0}</p>
                           </div>
                           <div className="p-6 bg-[#F7F9FB] rounded-3xl border border-black/5">
-                            <p className="text-xs font-medium text-foreground/50 mb-1">Subscriptions</p>
+                            <p className="text-xs font-medium text-foreground/50 mb-1">Subscriptions (एकूण सबस्क्रिप्शन्स)</p>
                             <p className="text-3xl font-display font-black text-foreground">{profitData?.subscriptionCount || 0}</p>
                           </div>
                           <div className="p-6 bg-[#F7F9FB] rounded-3xl border border-black/5">
-                            <p className="text-xs font-medium text-foreground/50 mb-1">Avg Order</p>
+                            <p className="text-xs font-medium text-foreground/50 mb-1">Avg Order (सरासरी पेमेंट)</p>
                             <p className="text-3xl font-display font-black text-foreground">₹{Math.round(profitData?.avgOrderValue || 0)}</p>
                           </div>
                         </div>
@@ -452,7 +467,10 @@ export default function AdminPanel() {
                     {activeTab === 'reports' && (
                       <ReportList />
                     )}
-                    {(activeTab === 'pending' || activeTab === 'all') && (
+                    {activeTab === 'auditLogs' && (
+                      <AuditLogList />
+                    )}
+                    {(['pending', 'all', 'activeProfiles', 'paidProfiles', 'unpaidProfiles', 'deletedProfiles', 'incompleteProfiles'].includes(activeTab)) && (
                       <>
                         {activeTab === 'all' && <FilterBar filters={allUsersFilters} setFilters={handleAllUsersFiltersChange} />}
                         <UserTable
@@ -463,6 +481,7 @@ export default function AdminPanel() {
                           handleToggleKyc={handleToggleKyc}
                           setEditModal={setEditModal}
                           onView={(u) => setPreviewUser(u)}
+                          onResetPassword={(u) => setResetPasswordModal({ isOpen: true, user: u })}
                         />
                         {activeTab === 'all' && pagination.totalPages > 1 && (
                           <div className="flex items-center justify-center gap-6 px-10 py-6 border-t border-black/5">
@@ -565,6 +584,95 @@ export default function AdminPanel() {
             fetchData();
           }}
         />
+      )}
+
+      {/* Reset Password Confirmation Modal */}
+      {resetPasswordModal.isOpen && resetPasswordModal.user && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-[32px] p-10 max-w-md w-full shadow-2xl border border-black/10">
+            <h3 className="text-2xl font-display font-black text-foreground mb-4">Reset Password</h3>
+            <p className="text-foreground/60 font-medium leading-relaxed mb-8">
+              Generate a new temporary password for <strong>{resetPasswordModal.user.profile?.firstName} {resetPasswordModal.user.profile?.lastName}</strong> ({resetPasswordModal.user.regId})?
+              <br /><br />
+              They can change it later if they prefer. This will also log them out of all current sessions.
+            </p>
+            <div className="flex gap-4">
+              <button 
+                onClick={() => setResetPasswordModal({ isOpen: false, user: null })} 
+                className="flex-1 h-14 rounded-2xl font-display font-black text-xs uppercase tracking-widest text-foreground/60 hover:bg-black/5 transition-all"
+                disabled={resettingPassword}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={async () => {
+                  setResettingPassword(true);
+                  try {
+                    const res = await apiClient.post(`/admin/users/${resetPasswordModal.user?.id}/reset-password`);
+                    setTempPasswordDisplay({
+                      isOpen: true,
+                      password: res.data.tempPassword,
+                      regId: resetPasswordModal.user?.regId || '',
+                      name: `${resetPasswordModal.user?.profile?.firstName} ${resetPasswordModal.user?.profile?.lastName}`
+                    });
+                    setResetPasswordModal({ isOpen: false, user: null });
+                  } catch (e: unknown) {
+                    toast.error(formatApiError(e, "Failed to reset password"));
+                  } finally {
+                    setResettingPassword(false);
+                  }
+                }} 
+                className="flex-1 h-14 bg-primary text-white rounded-2xl font-display font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-2"
+                disabled={resettingPassword}
+              >
+                {resettingPassword ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
+                Confirm Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Temp Password Display Modal */}
+      {tempPasswordDisplay?.isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-[32px] p-10 max-w-md w-full shadow-2xl border border-black/10">
+            <h3 className="text-2xl font-display font-black text-green-700 mb-2">Password Reset Successful</h3>
+            <p className="text-foreground/60 font-medium leading-relaxed mb-6">
+              A temporary password has been generated for <strong>{tempPasswordDisplay.name}</strong> ({tempPasswordDisplay.regId}).
+            </p>
+            
+            <div className="p-4 bg-green-50 border border-green-200 rounded-2xl flex items-center justify-between mb-6">
+              <div>
+                <span className="block text-xs font-bold text-green-700 uppercase tracking-widest mb-1">Temporary Password</span>
+                <span className="font-mono text-xl font-black text-green-900">{tempPasswordDisplay.password}</span>
+              </div>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(tempPasswordDisplay.password);
+                  toast.success('Password copied to clipboard');
+                }}
+                className="p-3 bg-white text-green-700 hover:bg-green-100 rounded-xl transition-colors shadow-sm"
+                title="Copy Password"
+              >
+                <Copy size={20} />
+              </button>
+            </div>
+            
+            <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl mb-8">
+              <p className="text-amber-800 text-sm font-bold">
+                ⚠️ This password will NOT be shown again. Please copy and communicate it to the user now.
+              </p>
+            </div>
+            
+            <button 
+              onClick={() => setTempPasswordDisplay(null)} 
+              className="w-full h-14 bg-black text-white rounded-2xl font-display font-black text-xs uppercase tracking-widest hover:bg-black/80 transition-all"
+            >
+              Done
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

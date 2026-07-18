@@ -51,25 +51,26 @@ export default function ResetPassword() {
   if (!token) return null;
 
   return (
-    <div className="min-h-screen bg-[#F7F9FB] flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-3xl shadow-xl border border-black/5 p-8 relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-primary/80 to-primary/50" />
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
+    <div className="min-h-screen flex items-center justify-center p-4"
+      style={{ background: 'linear-gradient(160deg, #FFFCF5 0%, #FFF8EB 50%, #FFFCF5 100%)' }}
+    >
+      <div className="max-w-md w-full bg-white/90 backdrop-blur-xl rounded-3xl shadow-premium border border-border p-8 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-kumkum-500 via-haldi-500 to-kumkum-500" />
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-kumkum-500/5 rounded-full blur-3xl pointer-events-none" />
         
         <div className="text-center mb-8 relative z-10">
           <Link to="/" className="inline-block mb-6">
-            <h1 className="text-3xl font-black tracking-tighter text-primary">Vivahvedh</h1>
+            <img src="/logo.png" alt="विवाहवेध" className="w-36 h-auto mx-auto object-contain mix-blend-multiply" />
           </Link>
-          <h2 className="text-2xl font-bold text-foreground">Create New Password</h2>
-          <p className="text-muted-foreground mt-2 text-sm">
+          <h2 className="text-2xl font-display font-bold text-foreground">Create New Password</h2>
+          <p className="text-muted-foreground mt-2 text-sm font-ui">
             Please enter your new password below.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-bold text-foreground block">
+            <label htmlFor="password" className="text-sm font-ui font-bold text-foreground block">
               New Password
             </label>
             <div className="relative">
@@ -81,7 +82,7 @@ export default function ResetPassword() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-muted/30 border border-black/10 rounded-xl text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none font-medium"
+                className="input-cultural pl-10"
                 placeholder="Minimum 8 characters"
                 required
                 minLength={8}
@@ -90,7 +91,7 @@ export default function ResetPassword() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="confirmPassword" className="text-sm font-bold text-foreground block">
+            <label htmlFor="confirmPassword" className="text-sm font-ui font-bold text-foreground block">
               Confirm New Password
             </label>
             <div className="relative">
@@ -102,7 +103,7 @@ export default function ResetPassword() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-muted/30 border border-black/10 rounded-xl text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none font-medium"
+                className="input-cultural pl-10"
                 placeholder="Confirm your new password"
                 required
                 minLength={8}
@@ -113,7 +114,8 @@ export default function ResetPassword() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-primary/20 mt-2"
+            className="w-full py-3 text-white font-ui font-bold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed shadow-kumkum mt-2"
+            style={{ background: 'linear-gradient(135deg, #C41E2A 0%, #8B1218 100%)' }}
           >
             {isLoading ? (
               <>
@@ -126,7 +128,7 @@ export default function ResetPassword() {
           </button>
 
           <div className="mt-8 text-center">
-            <Link to="/login" className="inline-flex items-center text-sm font-bold text-foreground/60 hover:text-primary transition-colors">
+            <Link to="/login" className="inline-flex items-center text-sm font-ui font-bold text-foreground/60 hover:text-primary transition-colors">
               <ArrowLeft size={16} className="mr-1" />
               Back to Login
             </Link>

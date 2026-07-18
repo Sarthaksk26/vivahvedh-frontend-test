@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2, Check, Shield, ShieldOff, Edit } from 'lucide-react';
+
 import { resolveImageUrl, DEFAULT_USER_AVATAR } from '../../../lib/url';
 import type { AdminUser } from '../adminTypes';
 
@@ -11,6 +11,7 @@ interface UserTableProps {
   handleToggleKyc: (id: string, currentStatus: boolean) => void;
   setEditModal: (modal: { isOpen: boolean; user: AdminUser }) => void;
   onView: (user: AdminUser) => void;
+  onResetPassword?: (user: AdminUser) => void;
 }
 
 export const UserTable: React.FC<UserTableProps> = React.memo(({ 
@@ -20,7 +21,8 @@ export const UserTable: React.FC<UserTableProps> = React.memo(({
   handleSetPlan, 
   handleToggleKyc,
   setEditModal,
-  onView
+  onView,
+  onResetPassword
 }) => {
   if (loading) return null; // Handled in parent
 
@@ -98,47 +100,56 @@ export const UserTable: React.FC<UserTableProps> = React.memo(({
                 </select>
               </td>
               <td className="px-10 py-6 text-right">
-                <div className="flex items-center justify-end gap-2">
+                <div className="flex items-center justify-end gap-2 flex-wrap">
                   {user.accountStatus === 'INACTIVE' && (
                     <button 
                       onClick={() => handleAction('approve', user.id)}
-                      className="p-2.5 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-all shadow-lg shadow-green-500/10"
-                      title="Approve"
+                      className="px-3 py-1.5 bg-green-500 text-white text-xs font-bold rounded-lg hover:bg-green-600 transition-all shadow-sm"
+                      title="Approve Profile"
                     >
-                      <Check size={16} />
+                      Approve (मंजूर)
                     </button>
                   )}
                   {user.accountStatus === 'ACTIVE' && (
                     <button 
                       onClick={() => handleAction('ban', user.id)}
-                      className="p-2.5 bg-amber-500/10 text-amber-600 rounded-xl hover:bg-amber-500/20 transition-all"
-                      title="Suspend"
+                      className="px-3 py-1.5 bg-amber-500/10 text-amber-700 text-xs font-bold rounded-lg hover:bg-amber-500/20 transition-all"
+                      title="Suspend Profile"
                     >
-                      <ShieldOff size={16} />
+                      Suspend (स्थगित)
                     </button>
                   )}
                   {user.accountStatus === 'SUSPENDED' && (
                     <button 
                       onClick={() => handleAction('unban', user.id)}
-                      className="p-2.5 bg-green-500/10 text-green-600 rounded-xl hover:bg-green-500/20 transition-all"
-                      title="Reactivate"
+                      className="px-3 py-1.5 bg-green-500/10 text-green-700 text-xs font-bold rounded-lg hover:bg-green-500/20 transition-all"
+                      title="Reactivate Profile"
                     >
-                      <Shield size={16} />
+                      Reactivate (पुन्हा सुरू)
                     </button>
                   )}
                   <button 
                     onClick={() => setEditModal({ isOpen: true, user })}
-                    className="p-2.5 bg-blue-500/10 text-blue-600 rounded-xl hover:bg-blue-500/20 transition-all"
-                    title="Edit"
+                    className="px-3 py-1.5 bg-blue-500/10 text-blue-700 text-xs font-bold rounded-lg hover:bg-blue-500/20 transition-all"
+                    title="Edit Profile"
                   >
-                    <Edit size={16} />
+                    Edit (बदल करा)
                   </button>
+                  {onResetPassword && (
+                    <button 
+                      onClick={() => onResetPassword(user)}
+                      className="px-3 py-1.5 bg-purple-500/10 text-purple-700 text-xs font-bold rounded-lg hover:bg-purple-500/20 transition-all"
+                      title="Reset Password"
+                    >
+                      Password (पासवर्ड)
+                    </button>
+                  )}
                   <button 
                     onClick={() => handleAction('delete', user.id)}
-                    className="p-2.5 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500/20 transition-all"
+                    className="px-3 py-1.5 bg-red-500/10 text-red-600 text-xs font-bold rounded-lg hover:bg-red-500/20 transition-all"
                     title="Permanently Delete"
                   >
-                    <Trash2 size={16} />
+                    Delete (काढून टाका)
                   </button>
                 </div>
               </td>

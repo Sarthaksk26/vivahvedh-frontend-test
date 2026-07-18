@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import apiClient from '../../lib/apiClient';
 import { authStorage } from '../../lib/authStorage';
-import { LogIn, Sparkles, Eye, EyeOff } from 'lucide-react';
+import { LogIn, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import type { LoginResponse, ApiErrorResponse } from '../../types';
 import type { AxiosError } from 'axios';
@@ -52,12 +52,15 @@ export default function Login() {
       }
 
       // Route based on role
+      const params = new URLSearchParams(window.location.search);
+      const returnUrl = params.get('returnUrl');
+
       if (user.role === 'ADMIN') {
         toast.success('Welcome back, Admin!');
-        navigate('/admin');
+        navigate(returnUrl || '/admin');
       } else {
         toast.success('Welcome back!');
-        navigate('/dashboard');
+        navigate(returnUrl || '/dashboard');
       }
     } catch (err: unknown) {
       const axiosError = err as AxiosError<ApiErrorResponse>;
@@ -72,14 +75,16 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-[85vh] w-full flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-[85vh] w-full flex items-center justify-center p-4 relative overflow-hidden"
+      style={{ background: 'linear-gradient(160deg, #FFFCF5 0%, #FFF8EB 50%, #FFFCF5 100%)' }}
+    >
       <SEO 
         title="Login | Vivahvedh" 
         description="Sign in to your Vivahvedh account to continue your matchmaking journey."
       />
       {/* Background decorations */}
-      <div className="absolute top-10 left-[10%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px]" />
-      <div className="absolute bottom-10 right-[10%] w-[300px] h-[300px] bg-amber-300/10 rounded-full blur-[100px]" />
+      <div className="absolute top-10 left-[10%] w-[400px] h-[400px] bg-kumkum-500/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-10 right-[10%] w-[300px] h-[300px] bg-haldi-400/8 rounded-full blur-[100px] pointer-events-none" />
 
       <motion.div
         initial={{ y: 20, opacity: 0 }}
@@ -88,40 +93,40 @@ export default function Login() {
         className="w-full max-w-md relative"
       >
         {/* Card */}
-        <div className="bg-card/80 backdrop-blur-xl border shadow-2xl shadow-primary/5 rounded-3xl p-8 md:p-10 relative overflow-hidden">
-          {/* Decorative gradient bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-rose-400 to-amber-400" />
+        <div className="bg-white/90 backdrop-blur-xl border border-border shadow-premium rounded-3xl p-8 md:p-10 relative overflow-hidden">
+          {/* Cultural gradient bar */}
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-kumkum-500 via-haldi-500 to-kumkum-500" />
 
           <div className="text-center mb-8">
-            <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <LogIn size={24} className="text-primary" />
-            </div>
-            <h1 className="text-3xl font-extrabold tracking-tight mb-1">पुन्हा स्वागत!</h1>
-            <p className="text-muted-foreground text-sm">Welcome back — Sign in to find your match</p>
+            {/* Logo */}
+            <Link to="/" className="inline-block mb-5">
+              <img src="/logo.png" alt="विवाहवेध" className="w-36 h-auto mx-auto object-contain mix-blend-multiply" />
+            </Link>
+            <h1 className="text-2xl font-display font-bold tracking-tight mb-1">पुन्हा स्वागत!</h1>
+            <p className="text-muted-foreground text-sm font-ui">Welcome back — Sign in to find your match</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-sm font-bold text-foreground/80">Mobile / Email / RegID</label>
+              <label className="text-sm font-bold text-foreground/80 font-ui">Mobile / Email / RegID</label>
               <input
                 {...register("identifier")}
                 type="text"
-                className="flex h-12 w-full rounded-xl border border-input bg-background/80 px-4 text-sm ring-offset-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all"
+                className="input-cultural"
                 placeholder="e.g. 9876543210 or VV-100201"
               />
-              {errors.identifier && <p className="text-red-500 text-xs font-medium">{errors.identifier.message}</p>}
+              {errors.identifier && <p className="text-red-500 text-xs font-medium font-ui">{errors.identifier.message}</p>}
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-bold text-foreground/80">Password</label>
-                <a href="#" className="text-xs text-primary hover:underline font-semibold">Forgot?</a>
+                <label className="text-sm font-bold text-foreground/80 font-ui">Password</label>
               </div>
               <div className="relative">
                 <input
                   {...register("password")}
                   type={showPassword ? "text" : "password"}
-                  className="flex h-12 w-full rounded-xl border border-input bg-background/80 px-4 pr-12 text-sm ring-offset-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all"
+                  className="input-cultural pr-12"
                   placeholder="Enter your password"
                 />
                 <button
@@ -132,10 +137,10 @@ export default function Login() {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-xs font-medium">{errors.password.message}</p>}
+              {errors.password && <p className="text-red-500 text-xs font-medium font-ui">{errors.password.message}</p>}
               
               <div className="flex justify-end mt-1">
-                <Link to="/forgot-password" className="text-xs font-bold text-primary hover:underline">
+                <Link to="/forgot-password" className="text-xs font-ui font-bold text-primary hover:underline">
                   Forgot Password?
                 </Link>
               </div>
@@ -144,7 +149,8 @@ export default function Login() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-primary text-white h-12 rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/25 transition-all active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full h-12 rounded-xl font-ui font-bold text-sm text-white shadow-kumkum hover:shadow-lg transition-all active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2"
+              style={{ background: 'linear-gradient(135deg, #C41E2A 0%, #8B1218 100%)' }}
             >
               {isSubmitting ? (
                 <>
@@ -152,13 +158,16 @@ export default function Login() {
                   Signing in...
                 </>
               ) : (
-                'Sign In — लॉगिन करा'
+                <>
+                  <LogIn size={16} />
+                  Sign In — लॉगिन करा
+                </>
               )}
             </button>
           </form>
 
           <div className="mt-8 text-center">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground font-sans">
               Don't have an account?{" "}
               <Link to="/register" className="text-primary font-bold hover:underline">
                 Register Free — मोफत नोंदणी
@@ -168,10 +177,13 @@ export default function Login() {
         </div>
 
         {/* Trust indicator below card */}
-        <p className="text-center mt-5 text-xs text-muted-foreground/60 flex items-center justify-center gap-1.5">
-          <Sparkles size={12} className="text-primary/50" />
-          सुरक्षित • Encrypted • 100% Private
-        </p>
+        <div className="text-center mt-5 flex items-center justify-center gap-3">
+          <div className="w-8 h-px bg-haldi-500/30" />
+          <p className="text-xs text-muted-foreground/50 font-ui">
+            सुरक्षित • Encrypted • 100% Private
+          </p>
+          <div className="w-8 h-px bg-haldi-500/30" />
+        </div>
       </motion.div>
     </div>
   );

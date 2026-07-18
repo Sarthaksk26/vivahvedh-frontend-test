@@ -4,27 +4,27 @@
 
 @layer base {
   :root {
-    --background: 40 33% 98%; /* Warm cream */
-    --foreground: 333 47% 11%; /* Deep burgundy/brown */
-    --card: 0 0% 100%;
-    --card-foreground: 333 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 333 47% 11%;
-    --primary: 343 75% 29%; /* Rich Burgundy/Crimson */
-    --primary-foreground: 40 33% 98%;
-    --primary-container: 343 60% 40%;
-    --secondary: 43 74% 49%; /* Elegant Gold */
+    --background: 38 45% 97%;       /* Warm silk cream */
+    --foreground: 25 15% 15%;       /* Deep warm charcoal */
+    --card: 38 40% 99%;
+    --card-foreground: 25 15% 15%;
+    --popover: 38 40% 99%;
+    --popover-foreground: 25 15% 15%;
+    --primary: 355 78% 43%;         /* Kumkum Red — #C41E2A */
+    --primary-foreground: 40 100% 97%;
+    --primary-container: 355 70% 50%;
+    --secondary: 42 82% 50%;        /* Haldi Gold — #E8A317 */
     --secondary-foreground: 0 0% 100%;
-    --muted: 40 20% 93%;
-    --muted-foreground: 333 10% 45%;
-    --accent: 43 74% 60%;
-    --accent-foreground: 333 47% 11%;
+    --muted: 38 25% 93%;
+    --muted-foreground: 25 10% 45%;
+    --accent: 24 80% 50%;           /* Saffron/Kesari */
+    --accent-foreground: 25 15% 15%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 40 20% 86%; /* Warm border */
-    --input: 40 20% 86%;
-    --ring: 343 75% 29%;
-    --radius: 12px; /* Slightly softer for a luxurious feel */
+    --border: 38 30% 88%;           /* Warm golden border */
+    --input: 38 25% 88%;
+    --ring: 355 78% 43%;
+    --radius: 12px;
   }
 }
 
@@ -42,65 +42,219 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-display tracking-tight transition-colors duration-300;
   }
+
+  /* Cultural selection color */
+  ::selection {
+    background: hsl(42 82% 50% / 0.25);
+    color: hsl(25 15% 15%);
+  }
 }
 
 @layer components {
-  /* Minimalist Containers */
+  /* ═══════════════════════════════════════
+     MARATHI CULTURAL COMPONENTS 
+  ═══════════════════════════════════════ */
+
+  /* Premium Card with golden hint */
   .premium-card {
-    @apply bg-white border border-border rounded-xl transition-all duration-300 hover:shadow-md-soft;
+    @apply bg-white border border-border rounded-2xl transition-all duration-500;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+  }
+  .premium-card:hover {
+    box-shadow: 0 16px 40px -12px rgba(196, 30, 42, 0.1), 0 4px 12px -4px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
   }
 
+  /* Glass Container */
   .glass-container {
-    @apply bg-white/70 backdrop-blur-xl border border-border shadow-sm-soft;
+    @apply bg-white/70 backdrop-blur-xl border border-border;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
   }
 
-  /* Minimalist Buttons */
-  .btn-premium {
-    @apply relative inline-flex items-center justify-center px-6 py-3 rounded-md font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
-  }
-
-  .btn-premium-primary {
-    @apply btn-premium bg-primary text-primary-foreground hover:bg-primary/90;
-  }
-
-  .btn-premium-outline {
-    @apply btn-premium border border-border bg-transparent text-foreground hover:bg-secondary;
-  }
-
-  /* Refined Typography Utilities */
-  .display-hero {
-    @apply text-5xl md:text-7xl lg:text-8xl font-display font-bold leading-tight tracking-tighter;
-  }
-
-  .section-title {
-    @apply text-3xl md:text-4xl lg:text-5xl font-display font-semibold tracking-tight;
-  }
-  
+  /* Glass Card */
   .glass-card {
-    @apply bg-white/60 backdrop-blur-lg border border-border rounded-xl shadow-sm-soft;
+    @apply bg-white/60 backdrop-blur-lg border border-border rounded-2xl;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
     position: relative;
     z-index: 1;
   }
+
+  /* ═══════════════════════════════════════
+     BUTTONS — Marathi Styled
+  ═══════════════════════════════════════ */
+  .btn-premium {
+    @apply relative inline-flex items-center justify-center px-7 py-3.5 rounded-xl font-ui font-bold text-sm tracking-wide transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-premium-primary {
+    @apply btn-premium text-white;
+    background: linear-gradient(135deg, hsl(355 78% 43%) 0%, hsl(355 70% 36%) 100%);
+    box-shadow: 0 8px 24px -6px rgba(196, 30, 42, 0.35);
+  }
+  .btn-premium-primary:hover {
+    box-shadow: 0 12px 32px -6px rgba(196, 30, 42, 0.45);
+    transform: translateY(-1px);
+  }
+
+  .btn-premium-outline {
+    @apply btn-premium border-2 border-primary/20 bg-white text-foreground hover:bg-primary/5 hover:border-primary/40;
+  }
+
+  .btn-gold {
+    @apply btn-premium text-white;
+    background: linear-gradient(135deg, #E8A317 0%, #CA8A04 100%);
+    box-shadow: 0 8px 24px -6px rgba(232, 163, 23, 0.35);
+  }
+  .btn-gold:hover {
+    box-shadow: 0 12px 32px -6px rgba(232, 163, 23, 0.45);
+    transform: translateY(-1px);
+  }
+
+  /* ═══════════════════════════════════════
+     TYPOGRAPHY — Marathi Heritage
+  ═══════════════════════════════════════ */
+  .display-hero {
+    @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display leading-tight;
+    letter-spacing: -0.02em;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl lg:text-5xl font-display leading-tight;
+    letter-spacing: -0.01em;
+  }
+
+  /* ═══════════════════════════════════════
+     PAITHANI BORDER — CSS Decorative Pattern
+  ═══════════════════════════════════════ */
+  .paithani-border {
+    position: relative;
+  }
+  .paithani-border::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: repeating-linear-gradient(
+      90deg,
+      #C41E2A 0px,
+      #C41E2A 8px,
+      #E8A317 8px,
+      #E8A317 16px,
+      #C41E2A 16px,
+      #C41E2A 20px,
+      transparent 20px,
+      transparent 24px
+    );
+  }
+
+  /* Decorative golden divider */
+  .golden-divider {
+    @apply flex items-center gap-4 my-8;
+  }
+  .golden-divider::before,
+  .golden-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #E8A317, transparent);
+  }
+
+  /* Cultural card with golden accent */
+  .cultural-card {
+    @apply bg-white rounded-2xl border border-border overflow-hidden transition-all duration-500;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+  }
+  .cultural-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #C41E2A, #E8A317, #C41E2A);
+  }
+  .cultural-card:hover {
+    box-shadow: 0 16px 40px -12px rgba(196, 30, 42, 0.1);
+    transform: translateY(-3px);
+  }
+
+  /* Rangoli-inspired corner ornament */
+  .rangoli-corner {
+    position: relative;
+  }
+  .rangoli-corner::before {
+    content: '✦';
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    font-size: 12px;
+    color: #E8A317;
+    opacity: 0.6;
+  }
+  .rangoli-corner::after {
+    content: '✦';
+    position: absolute;
+    bottom: -6px;
+    right: -6px;
+    font-size: 12px;
+    color: #E8A317;
+    opacity: 0.6;
+  }
+
+  /* Input fields with cultural styling */
+  .input-cultural {
+    @apply flex h-12 w-full rounded-xl border border-input bg-white px-4 text-sm font-sans ring-offset-background transition-all duration-300;
+    @apply placeholder:text-muted-foreground/50;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary/50;
+  }
 }
 
-/* Smooth Scrollbars */
+/* ═══════════════════════════════════════
+   SCROLLBAR — Themed
+═══════════════════════════════════════ */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-background;
+  background: hsl(38 45% 97%);
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/30 rounded-full hover:bg-muted-foreground/50 transition-colors;
+  background: hsl(38 30% 78%);
+  border-radius: 999px;
+  transition: background 0.3s;
 }
 
-/* Animations */
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(355 78% 43% / 0.4);
+}
+
+/* ═══════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════ */
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out;
 }
 
 .animate-fade-up {
   animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Subtle background pattern — faint rangoli */
+.bg-rangoli-pattern {
+  background-image: radial-gradient(circle at 25% 25%, rgba(232, 163, 23, 0.03) 0%, transparent 50%),
+                     radial-gradient(circle at 75% 75%, rgba(196, 30, 42, 0.03) 0%, transparent 50%);
+}
+
+/* Golden shimmer text effect */
+.text-shimmer {
+  background: linear-gradient(90deg, #E8A317 0%, #FACC15 25%, #E8A317 50%, #FACC15 75%, #E8A317 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s ease-in-out infinite;
 }
