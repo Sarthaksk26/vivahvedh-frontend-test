@@ -15,13 +15,16 @@ import {
   ChevronRight,
   Star,
   Smartphone,
-  Handshake
+  Handshake,
+  Phone,
+  MessageCircle
 } from 'lucide-react';
 import apiClient from '../lib/apiClient';
 import { resolveImageUrl } from '../lib/url';
 import { PaymentModal } from '../components/PaymentModal';
 import { SEO } from '../components/common/SEO';
 import { authStorage } from '../lib/authStorage';
+import { SUPPORT_PHONE, WHATSAPP_DISPLAY, getWhatsAppUrl } from '../lib/constants';
 
 // --- Reusable Scroll Animation Wrapper ---
 function Reveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -121,9 +124,9 @@ export default function Home() {
       <SEO />
       
       {/* ═══════════════════════════════════════════════════
-          HERO SECTION — विवाह मंडप (Wedding Pavilion)
+          HERO SECTION — विवाह मंडप (Wedding Pavilion) — Compact & Premium
       ═══════════════════════════════════════════════════ */}
-      <section className="relative w-full py-16 lg:py-24 flex flex-col items-center justify-center overflow-hidden"
+      <section className="relative w-full py-10 lg:py-16 flex flex-col items-center justify-center overflow-hidden"
         style={{ background: 'linear-gradient(160deg, #FFFCF5 0%, #FFF8EB 30%, #FFF5E1 60%, #FFFCF5 100%)' }}
       >
         {/* Decorative ambient blobs */}
@@ -135,17 +138,17 @@ export default function Home() {
           
           {/* Logo as Sacred Hero Centerpiece */}
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }} 
-            animate={{ opacity: 1, scale: 1 }} 
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="relative mb-6"
+            initial={{ opacity: 0, scale: 0.85, filter: 'blur(8px)' }} 
+            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} 
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="relative mb-5"
           >
             {/* Radial glow behind logo */}
             <div className="absolute inset-0 -m-16 bg-haldi-400/10 rounded-full blur-[60px] animate-pulse-glow pointer-events-none" />
             <img 
               src="/logo.png" 
               alt="विवाहवेध — शोध नव्या नात्यांचा" 
-              className="w-[280px] sm:w-[360px] md:w-[420px] h-auto object-contain relative z-10 mix-blend-multiply" 
+              className="w-[240px] sm:w-[320px] md:w-[380px] h-auto object-contain relative z-10 mix-blend-multiply" 
             />
           </motion.div>
 
@@ -153,8 +156,8 @@ export default function Home() {
           <motion.div 
             initial={{ opacity: 0, scaleX: 0 }} 
             animate={{ opacity: 1, scaleX: 1 }} 
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="w-48 h-[3px] mb-8"
+            transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="w-48 h-[3px] mb-6"
             style={{
               background: 'repeating-linear-gradient(90deg, #C41E2A 0px, #C41E2A 8px, #E8A317 8px, #E8A317 16px, transparent 16px, transparent 20px)'
             }}
@@ -164,8 +167,8 @@ export default function Home() {
           <motion.p 
             initial={{ opacity: 0, y: 15 }} 
             animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="text-lg sm:text-xl text-foreground/60 mb-4 max-w-xl leading-relaxed font-sans"
+            transition={{ delay: 0.4, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="text-base sm:text-lg text-foreground/60 mb-3 max-w-xl leading-relaxed font-sans"
           >
             महाराष्ट्रातील सुशिक्षित आणि प्रतिष्ठित कुटुंबांसाठी एक खात्रीशीर व सुरक्षित विवाह व्यासपीठ.
           </motion.p>
@@ -173,25 +176,71 @@ export default function Home() {
           <motion.p 
             initial={{ opacity: 0, y: 15 }} 
             animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="text-sm text-foreground/40 mb-10 font-ui"
+            transition={{ delay: 0.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="text-sm text-foreground/40 mb-8 font-ui"
           >
             १००% पडताळणी केलेले प्रोफाइल्स • Trusted by 2,500+ Families
           </motion.p>
           
-          {/* CTAs */}
+          {/* Primary CTAs — Register (bold/prominent) + Know About Us */}
           <motion.div 
-            initial={{ opacity: 0, y: 15 }} 
+            initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.7, duration: 0.8 }} 
-            className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto"
+            transition={{ delay: 0.6, duration: 0.8, ease: [0.16, 1, 0.3, 1] }} 
+            className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto mb-6"
           >
-            <Link to="/register" className="btn-premium-primary h-[52px] text-sm px-10 w-full sm:w-auto flex items-center justify-center font-ui">
-              मोफत नोंदणी करा — Register Free
+            {/* REGISTER — extra bold & prominent */}
+            <Link 
+              to="/register" 
+              className="relative h-[56px] text-base px-12 w-full sm:w-auto flex items-center justify-center font-ui font-black tracking-wide text-white rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-[0.98]"
+              style={{
+                background: 'linear-gradient(135deg, #C41E2A 0%, #8B1218 100%)',
+                boxShadow: '0 10px 30px -6px rgba(196, 30, 42, 0.5), 0 0 0 2px rgba(196, 30, 42, 0.1)'
+              }}
+            >
+              {/* Animated shimmer overlay */}
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 animate-hero-shimmer" />
+              <span className="relative z-10 flex items-center gap-2">
+                मोफत नोंदणी करा — Register Free
+                <ArrowRight size={18} />
+              </span>
             </Link>
-            <Link to="/search" className="h-[52px] text-sm px-10 w-full sm:w-auto flex items-center justify-center border-2 border-primary/15 bg-white hover:bg-primary/5 text-foreground rounded-xl transition-all font-ui font-bold">
-              स्थळे पाहा — Browse
+            <Link 
+              to="/about" 
+              className="h-[52px] text-sm px-8 w-full sm:w-auto flex items-center justify-center border-2 border-primary/15 bg-white hover:bg-primary/5 text-foreground rounded-xl transition-all font-ui font-bold hover:border-primary/30 hover:shadow-sm"
+            >
+              आमच्याबद्दल जाणा — Know About Us
             </Link>
+          </motion.div>
+
+          {/* Secondary Row — Call Us + WhatsApp */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 text-sm"
+          >
+            <a 
+              href={`tel:${SUPPORT_PHONE.split(',')[0].trim().replace(/\s/g, '')}`}
+              className="flex items-center gap-2 text-foreground/50 hover:text-primary transition-colors font-sans group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                <Phone size={14} className="text-primary" />
+              </div>
+              <span>Call Us: <span className="font-bold text-foreground/70">7447448844</span></span>
+            </a>
+            <span className="hidden sm:block text-foreground/15">|</span>
+            <a 
+              href={getWhatsAppUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-foreground/50 hover:text-[#25D366] transition-colors font-sans group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-[#25D366]/8 flex items-center justify-center group-hover:bg-[#25D366]/15 transition-colors">
+                <MessageCircle size={14} className="text-[#25D366]" />
+              </div>
+              <span>WhatsApp: <span className="font-bold text-foreground/70">{WHATSAPP_DISPLAY}</span></span>
+            </a>
           </motion.div>
         </div>
       </section>

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import apiClient from '../../lib/apiClient';
 import toast from 'react-hot-toast';
-import { Phone, Mail, MapPin, Send } from 'lucide-react';
-import { SUPPORT_PHONE, SUPPORT_EMAIL } from '../../lib/constants';
+import { Phone, Mail, MapPin, Send, MessageCircle } from 'lucide-react';
+import { SUPPORT_PHONE, SUPPORT_EMAIL, WHATSAPP_DISPLAY, getWhatsAppUrl } from '../../lib/constants';
 import { SEO } from '../../components/common/SEO';
 
 export default function Contact() {
@@ -39,21 +39,28 @@ export default function Contact() {
           {/* Contact Info Cards */}
           <div className="md:col-span-2 space-y-5">
             {[
-              { icon: <Phone size={20} />, label: 'फोन', value: SUPPORT_PHONE, sub: 'Call Us' },
-              { icon: <Mail size={20} />, label: 'ईमेल', value: SUPPORT_EMAIL, sub: 'Email Us' },
+              { icon: <Phone size={20} />, label: 'फोन', value: SUPPORT_PHONE, sub: 'Call Us', href: `tel:${SUPPORT_PHONE.split(',')[0].trim().replace(/\s/g, '')}` },
+              { icon: <MessageCircle size={20} />, label: 'व्हॉट्सॲप', value: WHATSAPP_DISPLAY, sub: 'WhatsApp', href: getWhatsAppUrl(), isWhatsApp: true },
+              { icon: <Mail size={20} />, label: 'ईमेल', value: SUPPORT_EMAIL, sub: 'Email Us', href: `mailto:${SUPPORT_EMAIL}` },
               { icon: <MapPin size={20} />, label: 'कार्यालय', value: 'पुणे, महाराष्ट्र', sub: 'Visit Us' },
             ].map((item, i) => (
-              <div key={i} className="bg-white/90 backdrop-blur-xl rounded-2xl p-6 border border-border shadow-sm-soft group hover:shadow-md-soft transition-all duration-500">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 flex-shrink-0">
-                    {item.icon}
+              <a key={i} href={item.href || '#'} target={item.href?.startsWith('https') ? '_blank' : undefined} rel={item.href?.startsWith('https') ? 'noopener noreferrer' : undefined}
+                className={`bg-white/90 backdrop-blur-xl rounded-2xl p-6 border border-border shadow-sm-soft group hover:shadow-md-soft transition-all duration-500 block ${!item.href ? 'pointer-events-none' : ''}`}
+              >
+                  <div className="flex items-start gap-4">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 flex-shrink-0 ${
+                      (item as any).isWhatsApp 
+                        ? 'bg-[#25D366]/10 text-[#25D366] group-hover:bg-[#25D366] group-hover:text-white'
+                        : 'bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white'
+                    }`}>
+                      {item.icon}
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-ui font-bold uppercase tracking-widest text-foreground/30">{item.sub}</span>
+                      <p className="text-base font-bold text-foreground font-sans mt-1">{item.value}</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[10px] font-ui font-bold uppercase tracking-widest text-foreground/30">{item.sub}</span>
-                    <p className="text-base font-bold text-foreground font-sans mt-1">{item.value}</p>
-                  </div>
-                </div>
-              </div>
+                </a>
             ))}
 
             {/* Cultural decoration */}

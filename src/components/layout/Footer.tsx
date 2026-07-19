@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin } from 'lucide-react';
-import { SUPPORT_PHONE, SUPPORT_EMAIL } from '../../lib/constants';
+import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
+import { SUPPORT_PHONE, SUPPORT_EMAIL, WHATSAPP_DISPLAY, getWhatsAppUrl } from '../../lib/constants';
 
 export default function Footer() {
   return (
@@ -88,6 +88,15 @@ export default function Footer() {
                     <span className="text-base font-bold text-white font-sans">{SUPPORT_PHONE}</span>
                   </div>
                 </div>
+                <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer" className="flex gap-4 group">
+                  <div className="w-12 h-12 rounded-xl bg-[#25D366]/15 flex items-center justify-center flex-shrink-0 group-hover:bg-[#25D366] transition-all duration-300">
+                    <MessageCircle size={18} className="text-[#25D366] group-hover:text-white transition-colors" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-ui font-bold uppercase tracking-widest text-white/30 mb-1">WhatsApp</span>
+                    <span className="text-base font-bold text-white font-sans">{WHATSAPP_DISPLAY}</span>
+                  </div>
+                </a>
                 <div className="flex gap-4 group">
                   <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 group-hover:bg-haldi-500 transition-all duration-300">
                     <Mail size={18} className="text-haldi-400 group-hover:text-white transition-colors" />

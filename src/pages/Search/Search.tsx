@@ -14,17 +14,14 @@ interface SearchFilters {
   q: string;
   ageMin: string;
   ageMax: string;
-  height: string;
   trade: string;
-  occupation: string;
   location: string;
-  diet: string;
 }
 
 export default function Search() {
   const [filters, setFilters] = useState<SearchFilters>({ 
     gender: '', maritalStatus: '', q: '',
-    ageMin: '', ageMax: '', height: '', trade: '', occupation: '', location: '', diet: ''
+    ageMin: '', ageMax: '', trade: '', location: ''
   });
   const [debouncedFilters, setDebouncedFilters] = useState<SearchFilters>(filters);
   const [cursor, setCursor] = useState<string | null>(null);
@@ -153,34 +150,13 @@ export default function Search() {
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">Height</label>
-                <input type="text" name="height" placeholder="e.g. 5'8&quot; or 170cm" value={filters.height} onChange={handleFilterChange} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none placeholder:text-foreground/20" />
-              </div>
-
-              <div className="space-y-3">
                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">Location (City/State)</label>
                 <input type="text" name="location" placeholder="Pune, Maharashtra..." value={filters.location} onChange={handleFilterChange} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none placeholder:text-foreground/20" />
               </div>
-              
+
               <div className="space-y-3">
                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">Education / Trade</label>
                 <input type="text" name="trade" placeholder="e.g. B.Tech, MBA" value={filters.trade} onChange={handleFilterChange} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none placeholder:text-foreground/20" />
-              </div>
-
-              <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">Occupation</label>
-                <input type="text" name="occupation" placeholder="Software Engineer..." value={filters.occupation} onChange={handleFilterChange} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none placeholder:text-foreground/20" />
-              </div>
-
-              <div className="space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/60">Diet</label>
-                <select name="diet" onChange={handleFilterChange} value={filters.diet} className="w-full h-12 bg-[#F2F4F6] border-b-2 border-transparent focus:border-primary focus:bg-white rounded-xl px-4 text-sm transition-all focus:outline-none appearance-none cursor-pointer">
-                  <option value="">Any Diet</option>
-                  <option value="Vegetarian">Vegetarian</option>
-                  <option value="Non-Vegetarian">Non-Vegetarian</option>
-                  <option value="Vegan">Vegan</option>
-                  <option value="Jain">Jain</option>
-                </select>
               </div>
 
               <button 
