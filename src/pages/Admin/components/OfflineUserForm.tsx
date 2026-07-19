@@ -10,6 +10,8 @@ interface OfflineForm {
   gender: string;
   maritalStatus: string;
   profileCreatedBy: string;
+  kycType: string;
+  kycNumber: string;
 }
 
 interface OfflineUserFormProps {
@@ -136,7 +138,21 @@ export const OfflineUserForm: React.FC<OfflineUserFormProps> = ({
           </select>
         </div>
 
-        <div className="pt-4 border-t border-black/5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-foreground/70">KYC Type *</label>
+            <select name="kycType" value={offlineForm.kycType} onChange={handleOfflineFormChange} required className={inputClass}>
+              <option value="AADHAR">Aadhar Card</option>
+              <option value="PAN">PAN Card</option>
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-foreground/70">KYC Number *</label>
+            <input name="kycNumber" value={offlineForm.kycNumber} onChange={handleOfflineFormChange} required className={inputClass} placeholder="Aadhar or PAN number" />
+          </div>
+        </div>
+
+        <div className="bg-primary/5 p-4 rounded-xl border border-primary/10">
           <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl mb-6">
             <p className="text-amber-800 text-sm font-medium">
               ⚡ A secure temporary password will be auto-generated and emailed to the customer. 

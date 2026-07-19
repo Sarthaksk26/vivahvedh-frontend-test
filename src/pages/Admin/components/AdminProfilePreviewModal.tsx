@@ -185,7 +185,10 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
                   {user.kycDocumentUrl ? (
                     <button onClick={() => handleViewDocument('kyc')} className="text-primary text-xs font-bold hover:underline">View Document ({user.kycType || 'Unknown'})</button>
                   ) : (
-                    <p className="text-xs text-foreground/40">Not uploaded</p>
+                    <p className="text-xs text-foreground/40 mb-1">Not uploaded</p>
+                  )}
+                  {user.kycNumber && (
+                    <p className="text-xs font-mono font-semibold text-foreground/80 mt-1">{user.kycNumber}</p>
                   )}
                 </div>
                 <div className="p-4 border border-black/5 rounded-2xl">

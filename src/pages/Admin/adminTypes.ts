@@ -100,6 +100,7 @@ export interface AdminUser {
   paymentDone: boolean;
   kycDocumentUrl?: string | null;
   kycType?: string | null;
+  kycNumber?: string | null;
   kycVerified: boolean;
   profile: ProfileData | null;
   physical: PhysicalData | null;

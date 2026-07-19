@@ -29,6 +29,8 @@ export const AdminUserEditModal: React.FC<AdminUserEditModalProps> = ({ user, on
     accountStatus: user.accountStatus || 'INACTIVE',
     planType: user.planType || 'FREE',
     paymentDone: user.paymentDone ?? false,
+    kycType: user.kycType || 'AADHAR',
+    kycNumber: user.kycNumber || '',
 
     // Profile
     firstName: user.profile?.firstName || '',
@@ -107,6 +109,8 @@ export const AdminUserEditModal: React.FC<AdminUserEditModalProps> = ({ user, on
         accountStatus: form.accountStatus,
         planType: form.planType,
         paymentDone: form.paymentDone,
+        kycType: form.kycType || null,
+        kycNumber: form.kycNumber || null,
         profile: {
           firstName: form.firstName,
           middleName: form.middleName,
@@ -267,6 +271,12 @@ export const AdminUserEditModal: React.FC<AdminUserEditModalProps> = ({ user, on
                   <span className="text-sm font-medium">{form.paymentDone ? 'Yes — Paid' : 'No — Not Paid'}</span>
                 </label>
               </div>
+              <SelectField label="KYC Type" name="kycType" options={[
+                { value: 'AADHAR', label: 'Aadhar Card' },
+                { value: 'PAN', label: 'PAN Card' },
+                { value: 'PASSPORT', label: 'Passport' },
+              ]} />
+              <Field label="KYC Number" name="kycNumber" placeholder="Aadhar or PAN number" />
             </div>
           )}
 

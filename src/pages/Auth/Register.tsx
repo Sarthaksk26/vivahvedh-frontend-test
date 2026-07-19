@@ -25,6 +25,8 @@ const registerSchema = z.object({
     return val && !isNaN(dob.getTime());
   }, { message: 'Valid Date of Birth is required' }),
   profileCreatedBy: z.enum(['Self', 'Father', 'Mother', 'Sibling', 'Relative', 'Friend', 'Marriage Bureau']).optional(),
+  kycType: z.enum(['AADHAR', 'PAN']),
+  kycNumber: z.string().min(10, "KYC number must be at least 10 characters long"),
   password: z.string().min(8, "Password must be 8+ characters"),
   confirmPassword: z.string().min(1, "Please confirm your password"),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -232,6 +234,28 @@ export default function Register() {
                   <option value="Marriage Bureau">विवाह संस्था — Marriage Bureau</option>
                 </select>
                 {errors.profileCreatedBy && <p className="text-red-500 text-xs font-medium font-ui">Please select an option</p>}
+              </div>
+
+              {/* KYC Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-bold text-foreground/80 font-ui">KYC Type *</label>
+                  <select {...register("kycType")} className={inputClass}>
+                    <option value="AADHAR">Aadhar Card</option>
+                    <option value="PAN">PAN Card</option>
+                  </select>
+                  {errors.kycType && <p className="text-red-500 text-xs font-medium font-ui">{errors.kycType.message}</p>}
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-bold text-foreground/80 font-ui">KYC Number *</label>
+                  <input 
+                    {...register("kycNumber")} 
+                    type="text" 
+                    className={inputClass} 
+                    placeholder="Aadhar or PAN number" 
+                  />
+                  {errors.kycNumber && <p className="text-red-500 text-xs font-medium font-ui">{errors.kycNumber.message}</p>}
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

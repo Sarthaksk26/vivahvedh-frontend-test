@@ -75,7 +75,8 @@ export default function AdminPanel() {
   // Offline user creation state
   const [offlineForm, setOfflineForm] = useState({
     firstName: '', lastName: '', mobile: '', email: '',
-    gender: '', maritalStatus: '', profileCreatedBy: 'Marriage Bureau'
+    gender: '', maritalStatus: '', profileCreatedBy: 'Marriage Bureau',
+    kycType: 'AADHAR', kycNumber: ''
   });
   const [offlineSubmitting, setOfflineSubmitting] = useState(false);
   const [offlineSuccess, setOfflineSuccess] = useState<{ regId: string; name: string; email: string; tempPassword?: string } | null>(null);
@@ -319,7 +320,10 @@ export default function AdminPanel() {
         email: offlineForm.email,
         tempPassword: response.data.tempPassword
       });
-      setOfflineForm({ firstName: '', lastName: '', mobile: '', email: '', gender: '', maritalStatus: '', profileCreatedBy: 'Marriage Bureau' });
+      setOfflineForm({
+        firstName: '', lastName: '', mobile: '', email: '',
+        gender: '', maritalStatus: '', profileCreatedBy: 'Marriage Bureau', kycType: 'AADHAR', kycNumber: ''
+      });
     } catch (error: unknown) {
       const msg = (error as { response?: { data?: { error?: unknown } } })?.response?.data?.error;
       setOfflineError(typeof msg === 'string' ? msg : 'Failed to create user. Please check all fields.');

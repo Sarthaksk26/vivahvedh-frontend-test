@@ -54,6 +54,8 @@ export default function ProfileEditor({
   const [formData, setFormData] = useState({
     // Basic / About
     aboutMe: currentData.profile?.aboutMe || '',
+    kycType: currentData.kycType || 'AADHAR',
+    kycNumber: currentData.kycNumber || '',
     // Physical
     height: currentData.physical?.height || '',
     weight: currentData.physical?.weight || '',
@@ -110,6 +112,10 @@ export default function ProfileEditor({
     const sectionPayloads: Record<string, Record<string, any>> = {
       basic: {
         profile: { aboutMe: formData.aboutMe || null },
+        user: { 
+          kycType: formData.kycType || null, 
+          kycNumber: formData.kycNumber || null 
+        }
       },
       body: {
         physical: {
@@ -226,6 +232,19 @@ export default function ProfileEditor({
             <div>
               <Label en="About Me" mr="माझ्याबद्दल" />
               <textarea name="aboutMe" value={formData.aboutMe} onChange={handleChange} className={textareaClass} placeholder="Write a few lines about yourself... (स्वतःबद्दल थोडे लिहा...)" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label en="KYC Type" mr="ओळखपत्र प्रकार" />
+                <select name="kycType" value={formData.kycType} onChange={handleChange} className={inputClass}>
+                  <option value="AADHAR">Aadhar Card</option>
+                  <option value="PAN">PAN Card</option>
+                </select>
+              </div>
+              <div>
+                <Label en="KYC Number" mr="ओळखपत्र क्रमांक" />
+                <input type="text" name="kycNumber" value={formData.kycNumber} onChange={handleChange} className={inputClass} placeholder="Aadhar or PAN number" />
+              </div>
             </div>
             <SaveButton sectionId="basic" />
           </div>
