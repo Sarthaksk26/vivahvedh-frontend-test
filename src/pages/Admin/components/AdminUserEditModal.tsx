@@ -295,7 +295,7 @@ export const AdminUserEditModal: React.FC<AdminUserEditModalProps> = ({ user, on
           {/* PHYSICAL TAB */}
           {activeTab === 'physical' && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Field label="Height (inches)" name="height" placeholder="64" />
+              <Field label="Height (cm)" name="height" placeholder="170" />
               <Field label="Weight (kg)" name="weight" type="number" placeholder="70" />
               <SelectField label="Blood Group" name="bloodGroup" options={[
                 { value: '', label: 'Select' },

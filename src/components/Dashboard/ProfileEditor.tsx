@@ -236,8 +236,8 @@ export default function ProfileEditor({
           <div className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label en="Height" mr="उंची (inches)" />
-                <input type="text" name="height" value={formData.height} onChange={handleChange} className={inputClass} placeholder="e.g. 64 or 5'4" />
+                <Label en="Height" mr="उंची (cm)" />
+                <input type="text" name="height" value={formData.height} onChange={handleChange} className={inputClass} placeholder="e.g. 170" />
               </div>
               <div>
                 <Label en="Weight" mr="वजन (kg)" />
