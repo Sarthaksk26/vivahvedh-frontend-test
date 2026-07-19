@@ -290,7 +290,7 @@ export default function Search() {
                           </div>
                           <div className="space-y-1">
                             <p className="text-[10px] uppercase font-bold text-foreground/60 tracking-widest">Height</p>
-                            <p className="text-sm font-bold text-foreground/80">{user.physical?.height ? `${user.physical.height} cm` : 'N/A'}</p>
+                            <p className="text-sm font-bold text-foreground/80">{user.physical?.height ? `${user.physical.height} in` : 'N/A'}</p>
                           </div>
                           <div className="col-span-2 space-y-1 mt-2">
                             <p className="text-[10px] uppercase font-bold text-foreground/60 tracking-widest">Profession</p>

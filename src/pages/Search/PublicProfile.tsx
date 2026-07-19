@@ -198,7 +198,7 @@ export default function PublicProfile() {
             <span className="px-3 py-1 bg-muted rounded-md text-sm font-medium">{profile.profile?.maritalStatus}</span>
             <span className="px-3 py-1 bg-muted rounded-md text-sm font-medium">{profile.profile?.gender}</span>
             {profile.physical?.height && (
-              <span className="px-3 py-1 bg-muted rounded-md text-sm font-medium">{profile.physical.height} cm</span>
+              <span className="px-3 py-1 bg-muted rounded-md text-sm font-medium">{profile.physical.height} in</span>
             )}
           </div>
 
@@ -347,7 +347,7 @@ export default function PublicProfile() {
         <section className="premium-card p-8">
           <h2 className="text-xl font-bold mb-6 border-b pb-4">Physical Attributes</h2>
           <ul className="space-y-4">
-            <li className="flex justify-between"><span className="text-muted-foreground font-medium">Height</span><span className="font-semibold">{profile.physical?.height ? `${profile.physical.height} cm` : '-'}</span></li>
+            <li className="flex justify-between"><span className="text-muted-foreground font-medium">Height</span><span className="font-semibold">{profile.physical?.height ? `${profile.physical.height} in` : '-'}</span></li>
             <li className="flex justify-between"><span className="text-muted-foreground font-medium">Weight</span><span className="font-semibold">{profile.physical?.weight ? `${profile.physical.weight} kg` : '-'}</span></li>
             <li className="flex justify-between"><span className="text-muted-foreground font-medium">Diet</span><span className="font-semibold">{profile.physical?.diet || '-'}</span></li>
             <li className="flex justify-between"><span className="text-muted-foreground font-medium">Blood Group</span><span className="font-semibold">{profile.physical?.bloodGroup || '-'}</span></li>

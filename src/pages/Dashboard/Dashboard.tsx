@@ -322,7 +322,7 @@ export default function Dashboard() {
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
                     <div className="space-y-1">
                       <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Height</p>
-                      <p className="font-bold">{profile.physical?.height ? `${profile.physical.height} cm` : "-"}</p>
+                      <p className="font-bold">{profile.physical?.height ? `${profile.physical.height} in` : "-"}</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Occupation</p>

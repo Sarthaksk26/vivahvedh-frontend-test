@@ -135,7 +135,7 @@ export const AdminProfilePreviewModal: React.FC<AdminProfilePreviewModalProps> =
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <Section title="Physical & Lifestyle" icon={Ruler}>
-              <DataPoint label="Height" value={user.physical?.height ? `${user.physical.height} cm` : '—'} />
+              <DataPoint label="Height" value={user.physical?.height ? `${user.physical.height} in` : '—'} />
               <DataPoint label="Weight" value={user.physical?.weight ? `${user.physical.weight} kg` : '—'} />
             </Section>
 
