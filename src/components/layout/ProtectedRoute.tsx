@@ -26,8 +26,8 @@ export default function ProtectedRoute({ adminOnly = false }: ProtectedRouteProp
     return <Navigate to="/dashboard" replace />;
   }
 
-  // Redirect admin away from user dashboard
-  if (!adminOnly && user?.role === 'ADMIN' && location.pathname === '/dashboard') {
+  // Redirect admin away from user dashboard unless forced to change password
+  if (!adminOnly && user?.role === 'ADMIN' && location.pathname === '/dashboard' && !authStorage.getForcePasswordChange()) {
     return <Navigate to="/admin" replace />;
   }
 

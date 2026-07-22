@@ -26,7 +26,7 @@ const registerSchema = z.object({
   }, { message: 'Valid Date of Birth is required' }),
   profileCreatedBy: z.enum(['Self', 'Father', 'Mother', 'Sibling', 'Relative', 'Friend', 'Marriage Bureau']).optional(),
   kycType: z.enum(['AADHAR', 'PAN']),
-  kycNumber: z.string().min(10, "KYC number must be at least 10 characters long"),
+  kycNumber: z.string().min(1, "KYC number is required"),
   password: z.string().min(8, "Password must be 8+ characters"),
   confirmPassword: z.string().min(1, "Please confirm your password"),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -41,6 +41,22 @@ const registerSchema = z.object({
 }, {
   message: "Legal marriage age in India is 21+ for Men and 18+ for Women.",
   path: ["birthDate"],
+}).refine((data) => {
+  if (data.kycType === 'AADHAR') {
+    return /^\d{12}$/.test(data.kycNumber.trim());
+  }
+  return true;
+}, {
+  message: "Aadhaar number must be exactly 12 numbers",
+  path: ["kycNumber"],
+}).refine((data) => {
+  if (data.kycType === 'PAN') {
+    return /^[A-Za-z0-9]{10}$/.test(data.kycNumber.trim());
+  }
+  return true;
+}, {
+  message: "PAN number must be exactly 10 characters (e.g. ABCDE1234F)",
+  path: ["kycNumber"],
 });
 
 type RegisterForm = z.infer<typeof registerSchema>;

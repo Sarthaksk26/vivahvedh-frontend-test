@@ -309,6 +309,16 @@ export default function AdminPanel() {
 
   const handleOfflineSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (offlineForm.kycType === 'AADHAR' && !/^\d{12}$/.test(offlineForm.kycNumber.trim())) {
+      toast.error('Aadhaar number must be exactly 12 numbers.');
+      return;
+    }
+    if (offlineForm.kycType === 'PAN' && !/^[A-Za-z0-9]{10}$/.test(offlineForm.kycNumber.trim())) {
+      toast.error('PAN number must be exactly 10 characters (e.g. ABCDE1234F).');
+      return;
+    }
+
     setOfflineSubmitting(true);
     setOfflineError('');
     setOfflineSuccess(null);

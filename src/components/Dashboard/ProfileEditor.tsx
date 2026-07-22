@@ -185,6 +185,21 @@ export default function ProfileEditor({
   };
 
   const handleSaveSection = async (sectionId: string) => {
+    if ((sectionId === 'basic' || sectionId === 'all') && formData.kycNumber) {
+      const kNumber = formData.kycNumber.trim();
+      if (kNumber) {
+        const kType = formData.kycType || 'AADHAR';
+        if (kType === 'AADHAR' && !/^\d{12}$/.test(kNumber)) {
+          toast.error('Aadhaar number must be exactly 12 numbers.');
+          return;
+        }
+        if (kType === 'PAN' && !/^[A-Za-z0-9]{10}$/.test(kNumber)) {
+          toast.error('PAN number must be exactly 10 characters (e.g. ABCDE1234F).');
+          return;
+        }
+      }
+    }
+
     setSaving(true);
     const payload = buildSectionPayload(sectionId);
 

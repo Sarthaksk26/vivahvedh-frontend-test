@@ -101,6 +101,21 @@ export const AdminUserEditModal: React.FC<AdminUserEditModalProps> = ({ user, on
   };
 
   const handleSave = async () => {
+    if (form.kycNumber) {
+      const kNumber = form.kycNumber.trim();
+      if (kNumber) {
+        const kType = form.kycType || 'AADHAR';
+        if (kType === 'AADHAR' && !/^\d{12}$/.test(kNumber)) {
+          toast.error('Aadhaar number must be exactly 12 numbers.');
+          return;
+        }
+        if (kType === 'PAN' && !/^[A-Za-z0-9]{10}$/.test(kNumber)) {
+          toast.error('PAN number must be exactly 10 characters (e.g. ABCDE1234F).');
+          return;
+        }
+      }
+    }
+
     setLoading(true);
     try {
       const payload: any = {
