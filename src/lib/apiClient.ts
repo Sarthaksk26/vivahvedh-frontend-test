@@ -23,7 +23,16 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Required for HttpOnly cookie transmission
+  withCredentials: true, // Still send cookies if available
+});
+
+// Request interceptor to inject token
+apiClient.interceptors.request.use((config) => {
+  const token = authStorage.getAccessToken();
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 // ═══════════════════════════════════════════════════════════════════
@@ -77,12 +86,18 @@ apiClient.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      // Silent refresh — the refresh token is in the HttpOnly cookie
-      const refreshResponse = await apiClient.post('/auth/refresh');
+      // Fallback: send refresh token in body if cookies are blocked
+      const refreshResponse = await apiClient.post('/auth/refresh', {
+        refreshToken: authStorage.getRefreshToken()
+      });
       
-      // Update stored user metadata if refresh returned fresh data
-      if (refreshResponse.data?.user) {
-        authStorage.setUser(refreshResponse.data.user);
+      const { user, accessToken, refreshToken } = refreshResponse.data;
+
+      if (user) {
+        authStorage.setUser(user);
+      }
+      if (accessToken && refreshToken) {
+        authStorage.setTokens(accessToken, refreshToken);
       }
 
       // Reset refreshing state BEFORE replaying queue

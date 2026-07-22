@@ -35,10 +35,12 @@ export default function Login() {
   const onSubmit = async (data: LoginForm) => {
     try {
       const response = await apiClient.post<LoginResponse>('/auth/login', data);
-      const { user } = response.data;
+      const { user, accessToken, refreshToken } = response.data;
 
-      // Tokens are now set via HttpOnly cookies by the backend — no client-side storage needed
       authStorage.setUser(user);
+      if (accessToken && refreshToken) {
+        authStorage.setTokens(accessToken, refreshToken);
+      }
 
       // If admin-created account, force password change on first login
       if (user.requiresPasswordChange) {

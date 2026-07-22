@@ -205,13 +205,15 @@ export default function Header() {
   }, []);
 
   const handleLogout = async () => {
-    authStorage.clearSession();
     try {
-      await apiClient.post('/auth/logout');
+      const refreshToken = authStorage.getRefreshToken();
+      await apiClient.post('/auth/logout', { refreshToken });
     } catch {
-      // Server cleanup failed, but local is already clear
+      // Server cleanup failed, but local will be cleared anyway
+    } finally {
+      authStorage.clearSession();
+      navigate('/login');
     }
-    navigate('/login');
   };
 
   const navLinks = [

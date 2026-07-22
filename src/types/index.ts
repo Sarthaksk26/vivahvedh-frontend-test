@@ -170,6 +170,8 @@ export interface StoredUser {
 export interface LoginResponse {
   message: string;
   user: StoredUser;
+  accessToken?: string;
+  refreshToken?: string;
 }
 
 // ═══════════════════════════════════════════════════════════════════
