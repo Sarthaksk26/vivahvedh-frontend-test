@@ -5,18 +5,18 @@ import { PaymentModal } from '../../components/PaymentModal';
 import { SEO } from '../../components/common/SEO';
 
 const features = [
-  { name: 'प्रोफाइल तयार करा (Create profile)', free: true, silver: true, gold: true },
-  { name: 'फोटो अपलोड (Upload photos)', free: 'Up to 3', silver: 'Up to 8', gold: 'Up to 15' },
-  { name: 'स्थळे शोधा (Browse profiles)', free: true, silver: true, gold: true },
-  { name: 'शोध फिल्टर (Search filters)', free: 'Basic', silver: 'All', gold: 'All' },
-  { name: "फोटो पाहा (View photos)", free: 'Primary only', silver: 'Full gallery', gold: 'Full gallery' },
-  { name: 'प्रस्ताव पाठवा (Send proposals)', free: false, silver: '4 per day', gold: 'Unlimited' },
-  { name: 'प्रस्ताव प्राप्त करा (Receive proposals)', free: true, silver: true, gold: true },
-  { name: 'संपर्क माहिती (Contact info)', free: false, silver: true, gold: true },
-  { name: 'शॉर्टलिस्ट (Shortlist)', free: 'Up to 5', silver: 'Up to 50', gold: 'Unlimited' },
-  { name: 'कोणी प्रोफाइल पाहिले (Profile views)', free: false, silver: '30 days', gold: 'Full history' },
-  { name: 'प्राधान्य सूची (Priority listing)', free: false, silver: false, gold: true },
-  { name: 'Verified बॅज', free: false, silver: false, gold: true },
+  { name: 'Create profile', free: true, silver: true, gold: true },
+  { name: 'Upload photos', free: 'Up to 3', silver: 'Up to 8', gold: 'Up to 15' },
+  { name: 'Browse profiles', free: true, silver: true, gold: true },
+  { name: 'Search filters', free: 'Basic', silver: 'All', gold: 'All' },
+  { name: "View photos", free: 'Primary only', silver: 'Full gallery', gold: 'Full gallery' },
+  { name: 'Send proposals', free: false, silver: '4 per day', gold: 'Unlimited' },
+  { name: 'Receive proposals', free: true, silver: true, gold: true },
+  { name: 'Contact info', free: false, silver: true, gold: true },
+  { name: 'Shortlist', free: 'Up to 5', silver: 'Up to 50', gold: 'Unlimited' },
+  { name: 'Profile views', free: false, silver: '30 days', gold: 'Full history' },
+  { name: 'Priority listing', free: false, silver: false, gold: true },
+  { name: 'Verified Badge', free: false, silver: false, gold: true },
   { name: 'Dedicated Relationship Manager', free: false, silver: false, gold: true },
   { name: 'Premium WhatsApp Support', free: false, silver: false, gold: true },
 ];
@@ -38,15 +38,15 @@ export default function Rules() {
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(160deg, #FFFCF5 0%, #FFF8EB 50%, #FFFCF5 100%)' }}>
-      <SEO title="दरपत्रक | Vivahvedh" description="Choose the right Vivahvedh plan for your matrimony journey." />
+      <SEO title="Pricing & Membership Plans | Vivahvedh" description="Choose the right Vivahvedh plan for your matrimony journey." />
 
       {/* Hero */}
       <div className="relative py-16 text-center">
         <div className="absolute inset-0 bg-rangoli-pattern pointer-events-none" />
         <div className="relative z-10">
-          <span className="text-haldi-500 text-xs font-ui font-bold uppercase tracking-[0.3em] mb-3 block">योजना • Plans</span>
-          <h1 className="text-3xl md:text-5xl font-display font-bold mb-3 tracking-tight">सभासदत्व योजना</h1>
-          <p className="text-lg text-muted-foreground font-sans max-w-md mx-auto">तुमच्या गरजेनुसार योग्य प्लॅन निवडा</p>
+          <span className="text-haldi-500 text-xs font-ui font-bold uppercase tracking-[0.3em] mb-3 block">Membership Plans</span>
+          <h1 className="text-3xl md:text-5xl font-display font-bold mb-3 tracking-tight">Subscription Plans</h1>
+          <p className="text-lg text-muted-foreground font-sans max-w-md mx-auto">Choose the right plan for your matrimony journey</p>
         </div>
       </div>
 
@@ -57,17 +57,17 @@ export default function Rules() {
           {/* FREE */}
           <div className="bg-white/90 backdrop-blur-xl border border-border p-8 rounded-3xl shadow-sm-soft hover:shadow-md-soft transition-all duration-500 relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-paan-500" />
-            <h3 className="text-2xl font-display font-bold mb-1 text-paan-600">मोफत</h3>
+            <h3 className="text-2xl font-display font-bold mb-1 text-paan-600">Free</h3>
             <p className="text-xs font-ui text-foreground/40 uppercase tracking-wider mb-1">Free Plan</p>
             <p className="text-4xl font-display font-bold mb-1 text-paan-600">₹0</p>
             <p className="text-sm text-muted-foreground font-ui mb-6">Forever • No expiry</p>
             <ul className="space-y-3 mb-8">
-              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-paan-500 flex-shrink-0" /> प्रोफाइल तयार करा</li>
-              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-paan-500 flex-shrink-0" /> ३ फोटो अपलोड</li>
-              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-paan-500 flex-shrink-0" /> स्थळे शोधा</li>
-              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-paan-500 flex-shrink-0" /> प्रस्ताव प्राप्त करा</li>
-              <li className="flex items-center gap-3 text-sm font-sans opacity-40"><X size={16} className="flex-shrink-0" /> प्रस्ताव पाठवता येत नाही</li>
-              <li className="flex items-center gap-3 text-sm font-sans opacity-40"><X size={16} className="flex-shrink-0" /> संपर्क माहिती नाही</li>
+              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-paan-500 flex-shrink-0" /> Create profile</li>
+              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-paan-500 flex-shrink-0" /> Upload 3 photos</li>
+              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-paan-500 flex-shrink-0" /> Browse profiles</li>
+              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-paan-500 flex-shrink-0" /> Receive proposals</li>
+              <li className="flex items-center gap-3 text-sm font-sans opacity-40"><X size={16} className="flex-shrink-0" /> Cannot send proposals</li>
+              <li className="flex items-center gap-3 text-sm font-sans opacity-40"><X size={16} className="flex-shrink-0" /> No contact information</li>
             </ul>
             <Link to="/register" className="block w-full py-3.5 border-2 border-paan-500 text-paan-600 font-ui font-bold rounded-xl hover:bg-paan-500 hover:text-white transition-all duration-300 text-center text-sm">
               Get Started Free
@@ -81,18 +81,18 @@ export default function Rules() {
             <div className="absolute top-0 right-6 bg-haldi-500 text-white text-[10px] font-ui font-bold uppercase tracking-wider px-3 py-1.5 rounded-b-lg flex items-center gap-1">
               <Star size={10} fill="currentColor" /> POPULAR
             </div>
-            <h3 className="text-2xl font-display font-bold mb-1 text-white mt-2">रौप्य</h3>
+            <h3 className="text-2xl font-display font-bold mb-1 text-white mt-2">Silver</h3>
             <p className="text-xs font-ui text-white/50 uppercase tracking-wider mb-1">Silver Plan</p>
             <p className="text-4xl font-display font-bold mb-1 text-white">₹2,000</p>
             <p className="text-sm text-white/60 font-ui mb-6">Valid for 1 Year</p>
             <ul className="space-y-3 mb-8 text-white/90">
-              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-haldi-400 flex-shrink-0" /> Free मधील सर्व सुविधा</li>
-              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-haldi-400 flex-shrink-0" /> दररोज ४ प्रस्ताव</li>
-              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-haldi-400 flex-shrink-0" /> संपर्क माहिती पाहा</li>
-              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-haldi-400 flex-shrink-0" /> सर्व फोटो पाहा</li>
-              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-haldi-400 flex-shrink-0" /> प्रगत शोध फिल्टर</li>
-              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-haldi-400 flex-shrink-0" /> प्रोफाइल दर्शक</li>
-              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-haldi-400 flex-shrink-0" /> ईमेल सपोर्ट</li>
+              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-haldi-400 flex-shrink-0" /> All Free features</li>
+              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-haldi-400 flex-shrink-0" /> Send 4 proposals per day</li>
+              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-haldi-400 flex-shrink-0" /> View contact info</li>
+              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-haldi-400 flex-shrink-0" /> View all photos</li>
+              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-haldi-400 flex-shrink-0" /> Advanced search filters</li>
+              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-haldi-400 flex-shrink-0" /> Who viewed your profile</li>
+              <li className="flex items-center gap-3 text-sm font-sans"><Check size={16} className="text-haldi-400 flex-shrink-0" /> Email support</li>
             </ul>
             <button 
               onClick={() => handleUpgrade('SILVER', 2000)}
@@ -108,17 +108,17 @@ export default function Rules() {
             <div className="absolute top-0 right-6 bg-haldi-500 text-white text-[10px] font-ui font-bold uppercase tracking-wider px-3 py-1.5 rounded-b-lg flex items-center gap-1">
               👑 PREMIUM
             </div>
-            <h3 className="text-2xl font-display font-bold mb-1 text-haldi-700 mt-2">सुवर्ण</h3>
+            <h3 className="text-2xl font-display font-bold mb-1 text-haldi-700 mt-2">Gold</h3>
             <p className="text-xs font-ui text-foreground/40 uppercase tracking-wider mb-1">Gold Plan</p>
             <p className="text-4xl font-display font-bold text-haldi-700 mb-1">₹5,000</p>
             <p className="text-sm text-muted-foreground font-ui mb-6">Valid for 1 Year</p>
             <ul className="space-y-3 mb-8 text-sm font-sans">
-              <li className="flex items-center gap-3"><Check size={16} className="text-haldi-600 flex-shrink-0" /> Silver मधील सर्व</li>
-              <li className="flex items-center gap-3"><Check size={16} className="text-haldi-600 flex-shrink-0" /> अमर्यादित प्रस्ताव</li>
-              <li className="flex items-center gap-3"><Star size={16} className="text-haldi-600 fill-haldi-600 flex-shrink-0" /> शोधात प्राधान्य</li>
-              <li className="flex items-center gap-3"><Check size={16} className="text-haldi-600 flex-shrink-0" /> Verified बॅज</li>
-              <li className="flex items-center gap-3"><Handshake size={16} className="text-haldi-600 flex-shrink-0" /> Dedicated Manager</li>
-              <li className="flex items-center gap-3"><Smartphone size={16} className="text-haldi-600 flex-shrink-0" /> WhatsApp Support</li>
+              <li className="flex items-center gap-3"><Check size={16} className="text-haldi-600 flex-shrink-0" /> All Silver features</li>
+              <li className="flex items-center gap-3"><Check size={16} className="text-haldi-600 flex-shrink-0" /> Unlimited proposals</li>
+              <li className="flex items-center gap-3"><Star size={16} className="text-haldi-600 fill-haldi-600 flex-shrink-0" /> Priority search listing</li>
+              <li className="flex items-center gap-3"><Check size={16} className="text-haldi-600 flex-shrink-0" /> Verified Badge</li>
+              <li className="flex items-center gap-3"><Handshake size={16} className="text-haldi-600 flex-shrink-0" /> Dedicated Relationship Manager</li>
+              <li className="flex items-center gap-3"><Smartphone size={16} className="text-haldi-600 flex-shrink-0" /> Premium WhatsApp Support</li>
             </ul>
             <button 
               onClick={() => handleUpgrade('GOLD', 5000)}
@@ -133,7 +133,7 @@ export default function Rules() {
         {/* Feature Comparison Table */}
         <div className="bg-white/90 backdrop-blur-xl border border-border rounded-3xl shadow-premium overflow-hidden">
           <div className="px-8 py-6 border-b border-border">
-            <h2 className="text-2xl font-display font-bold">तुलनात्मक तक्ता</h2>
+            <h2 className="text-2xl font-display font-bold">Feature Comparison</h2>
             <p className="text-muted-foreground mt-1 text-sm font-sans">Detailed feature comparison across all plans</p>
           </div>
           <div className="overflow-x-auto">
@@ -141,9 +141,9 @@ export default function Rules() {
               <thead>
                 <tr className="border-b bg-background/50">
                   <th className="text-left p-4 font-ui font-bold text-foreground/60">Feature</th>
-                  <th className="text-center p-4 font-ui font-bold text-paan-600">मोफत</th>
-                  <th className="text-center p-4 font-ui font-bold text-primary">रौप्य</th>
-                  <th className="text-center p-4 font-ui font-bold text-haldi-700">सुवर्ण</th>
+                  <th className="text-center p-4 font-ui font-bold text-paan-600">Free</th>
+                  <th className="text-center p-4 font-ui font-bold text-primary">Silver</th>
+                  <th className="text-center p-4 font-ui font-bold text-haldi-700">Gold</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/50">

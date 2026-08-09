@@ -512,14 +512,14 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          PRICING — सभासदत्व योजना
+          PRICING — Subscription Plans
       ═══════════════════════════════════════════════════ */}
       <section className="w-full py-24 bg-rangoli-pattern">
         <div className="max-w-6xl mx-auto px-6">
           <Reveal className="text-center mb-16">
-            <span className="text-haldi-500 text-xs font-ui font-bold uppercase tracking-[0.3em] mb-3 block">योजना • Plans</span>
-            <h2 className="section-title text-foreground mb-3">सभासदत्व योजना</h2>
-            <p className="text-muted-foreground text-base max-w-sm mx-auto font-sans">तुमच्या गरजेनुसार योग्य प्लॅन निवडा.</p>
+            <span className="text-haldi-500 text-xs font-ui font-bold uppercase tracking-[0.3em] mb-3 block">Membership Plans</span>
+            <h2 className="section-title text-foreground mb-3">Subscription Plans</h2>
+            <p className="text-muted-foreground text-base max-w-sm mx-auto font-sans">Choose the right plan for your matrimony journey.</p>
           </Reveal>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-7 font-sans">
@@ -528,7 +528,7 @@ export default function Home() {
             <Reveal delay={0.1} className="h-full">
               <div className="bg-white rounded-3xl p-8 border border-border h-full flex flex-col shadow-sm-soft relative overflow-hidden group hover:shadow-md-soft transition-all duration-500">
                 <div className="absolute top-0 left-0 right-0 h-[3px] bg-paan-500" />
-                <h3 className="text-2xl font-display font-bold text-paan-600 mb-1">मोफत</h3>
+                <h3 className="text-2xl font-display font-bold text-paan-600 mb-1">Free</h3>
                 <p className="text-xs font-ui text-foreground/40 uppercase tracking-wider mb-1">Free Plan</p>
                 <div className="flex items-baseline gap-1 mb-2">
                   <span className="text-4xl font-display font-bold text-paan-600">₹0</span>
@@ -537,22 +537,22 @@ export default function Home() {
                 
                 <ul className="space-y-3.5 mb-10 flex-1">
                   <li className="flex items-center gap-3 text-foreground/70 text-sm">
-                    <Check size={16} className="text-paan-500 flex-shrink-0" /> प्रोफाइल तयार करा
+                    <Check size={16} className="text-paan-500 flex-shrink-0" /> Create profile
                   </li>
                   <li className="flex items-center gap-3 text-foreground/70 text-sm">
-                    <Check size={16} className="text-paan-500 flex-shrink-0" /> ३ फोटो अपलोड करा
+                    <Check size={16} className="text-paan-500 flex-shrink-0" /> Upload 3 photos
                   </li>
                   <li className="flex items-center gap-3 text-foreground/70 text-sm">
-                    <Check size={16} className="text-paan-500 flex-shrink-0" /> स्थळे शोधा
+                    <Check size={16} className="text-paan-500 flex-shrink-0" /> Browse profiles
                   </li>
                   <li className="flex items-center gap-3 text-foreground/70 text-sm">
-                    <Check size={16} className="text-paan-500 flex-shrink-0" /> प्रस्ताव प्राप्त करा
+                    <Check size={16} className="text-paan-500 flex-shrink-0" /> Receive proposals
                   </li>
                   <li className="flex items-center gap-3 text-foreground/30 text-sm">
-                    <X size={16} className="text-foreground/15 flex-shrink-0" /> प्रस्ताव पाठवता येत नाही
+                    <X size={16} className="text-foreground/15 flex-shrink-0" /> Cannot send proposals
                   </li>
                   <li className="flex items-center gap-3 text-foreground/30 text-sm">
-                    <X size={16} className="text-foreground/15 flex-shrink-0" /> संपर्क माहिती पाहता येत नाही
+                    <X size={16} className="text-foreground/15 flex-shrink-0" /> Cannot view contact details
                   </li>
                 </ul>
 
@@ -575,7 +575,7 @@ export default function Home() {
                   <Star size={10} fill="currentColor" /> POPULAR
                 </div>
 
-                <h3 className="text-2xl font-display font-bold text-white mb-1 mt-2">रौप्य</h3>
+                <h3 className="text-2xl font-display font-bold text-white mb-1 mt-2">Silver</h3>
                 <p className="text-xs font-ui text-white/50 uppercase tracking-wider mb-1">Silver Plan</p>
                 <div className="flex items-baseline gap-1 mb-2">
                   <span className="text-4xl font-display font-bold text-white">₹2,000</span>
@@ -584,25 +584,25 @@ export default function Home() {
                 
                 <ul className="space-y-3.5 mb-10 flex-1">
                   <li className="flex items-center gap-3 text-white/90 text-sm">
-                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> Free मधील सर्व सुविधा
+                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> All Free features
                   </li>
                   <li className="flex items-center gap-3 text-white/90 text-sm">
-                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> दररोज ४ प्रस्ताव पाठवा
+                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> Send 4 proposals per day
                   </li>
                   <li className="flex items-center gap-3 text-white/90 text-sm">
-                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> संपर्क माहिती पाहा
+                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> View contact info
                   </li>
                   <li className="flex items-center gap-3 text-white/90 text-sm">
-                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> सर्व फोटो पाहा
+                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> View all photos
                   </li>
                   <li className="flex items-center gap-3 text-white/90 text-sm">
-                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> प्रगत शोध फिल्टर
+                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> Advanced search filters
                   </li>
                   <li className="flex items-center gap-3 text-white/90 text-sm">
-                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> कोणी प्रोफाइल पाहिले
+                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> Who viewed your profile
                   </li>
                   <li className="flex items-center gap-3 text-white/90 text-sm">
-                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> ईमेल सपोर्ट
+                    <Check size={16} className="text-haldi-400 flex-shrink-0" /> Email support
                   </li>
                 </ul>
 
@@ -625,7 +625,7 @@ export default function Home() {
                   👑 PREMIUM
                 </div>
 
-                <h3 className="text-2xl font-display font-bold text-haldi-700 mb-1 mt-2">सुवर्ण</h3>
+                <h3 className="text-2xl font-display font-bold text-haldi-700 mb-1 mt-2">Gold</h3>
                 <p className="text-xs font-ui text-foreground/40 uppercase tracking-wider mb-1">Gold Plan</p>
                 <div className="flex items-baseline gap-1 mb-2">
                   <span className="text-4xl font-display font-bold text-haldi-700">₹5,000</span>
@@ -634,19 +634,19 @@ export default function Home() {
                 
                 <ul className="space-y-3.5 mb-10 flex-1">
                   <li className="flex items-center gap-3 text-foreground/70 text-sm">
-                    <Check size={16} className="text-haldi-600 flex-shrink-0" /> Silver मधील सर्व सुविधा
+                    <Check size={16} className="text-haldi-600 flex-shrink-0" /> All Silver features
                   </li>
                   <li className="flex items-center gap-3 text-foreground/70 text-sm">
-                    <Check size={16} className="text-haldi-600 flex-shrink-0" /> अमर्यादित प्रस्ताव
+                    <Check size={16} className="text-haldi-600 flex-shrink-0" /> Unlimited proposals
                   </li>
                   <li className="flex items-center gap-3 text-foreground/70 text-sm">
-                    <Star size={16} className="text-haldi-600 fill-haldi-600 flex-shrink-0" /> शोधात प्राधान्य
+                    <Star size={16} className="text-haldi-600 fill-haldi-600 flex-shrink-0" /> Priority search listing
                   </li>
                   <li className="flex items-center gap-3 text-foreground/70 text-sm">
                     <div className="w-4 h-4 bg-paan-500 rounded flex items-center justify-center flex-shrink-0">
                       <Check size={12} className="text-white" strokeWidth={3} />
                     </div>
-                    Verified बॅज
+                    Verified Badge
                   </li>
                   <li className="flex items-start gap-3 text-foreground/70 text-sm">
                     <Handshake size={16} className="text-haldi-600 flex-shrink-0 mt-0.5" /> 
